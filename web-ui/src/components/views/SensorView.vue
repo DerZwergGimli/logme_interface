@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col m-3">
+  <div class="flex flex-col ">
     <Accordion>
       <accordion-panel
         v-for="(sensor, idx) in sensorStore.sensors"

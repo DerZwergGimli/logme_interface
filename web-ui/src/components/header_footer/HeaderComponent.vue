@@ -52,7 +52,7 @@
               >Settings</router-link
             >
           </li>
-          <li>
+          <li class="flex items-center justify-center">
             <DarkModeButton />
           </li>
         </ul>

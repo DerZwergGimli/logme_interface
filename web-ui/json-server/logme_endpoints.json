@@ -11,31 +11,11 @@
     }
   },
   "wifi": {
-    "status": {
       "ip": "0.0.1.130",
       "netmask": "0.0.255.0",
       "gateway": "0.0.1.1",
       "ssid": "-TEST-",
       "rssi": -99
-    },
-    "networks": [
-      {
-        "ssid": "NETWORK A",
-        "rssi": -99
-      },
-      {
-        "ssid": "NETWORK B",
-        "rssi": -88
-      },
-      {
-        "ssid": "NETWORK C",
-        "rssi": -77
-      },
-      {
-        "ssid": "",
-        "rssi": -77
-      }
-    ]
   },
   "ap": [
     {

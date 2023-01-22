@@ -1,18 +1,21 @@
 <template>
   <div>
-    <div class="flex flex-col m-3 space-y-5">
+    <div class="flex flex-col  space-y-5">
       <SimpleTable
+        class="rounded-none sm:rounded-lg"
         :header="['REST GET-Requests']"
         :body="[['/system'], ['/wifi'], ['/sensors']]"
         :button_text="'GET'"
         @button_clicked="handle_get_button"
       />
       <SimpleTable
+        class="rounded-none sm:rounded-lg"
         :header="['REST POST-Requests']"
         :body="[['/wifiConfig']]"
         :button_text="'POST'"
       />
       <SimpleTable
+        class="rounded-none sm:rounded-lg"
         :header="['Websocket']"
         :body="[['/websocket']]"
         :button_text="'WS'"

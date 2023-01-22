@@ -1,20 +1,16 @@
 <template>
-  <div class="flex flex-col m-3">
+  <div class="flex flex-col ">
     <Accordion>
       <accordion-panel>
         <accordion-header>System</accordion-header>
         <accordion-content>
-          <div>
             <system-info-element />
-          </div>
         </accordion-content>
       </accordion-panel>
       <accordion-panel>
         <accordion-header>Network</accordion-header>
         <accordion-content>
-          <div>
             <network-element />
-          </div>
         </accordion-content>
       </accordion-panel>
       <accordion-panel>

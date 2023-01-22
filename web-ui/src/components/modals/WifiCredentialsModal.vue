@@ -49,17 +49,15 @@ function send_wifi_config() {
 </script>
 
 <template>
-  <Modal :size="pros.size" v-if="pros.isShown" @close="closeModal">
+  <Modal :size="pros.size" v-if="pros.isShown" @close="$emit('closeModal')">
     <template #header>
       <h2 class="flex items-center text-lg">Wifi Setup</h2>
-      {{ pros.ssid }}
-      {{ network_ssid_user }}
     </template>
     <template #body>
       <div class="flex flex-col space-y-5">
         <p>You are about to connect to a new AccessPoint.</p>
         <div class="flex flex-col space-y-2">
-          <div class="flex flex-row space-x-3">
+          <div class="flex flex-col md:flex-row space-y-1 md:space-x-3 md:space-y-0">
             <p class="basis-1/4">SSID:</p>
             <Input
               class="basis-auto"
@@ -68,7 +66,7 @@ function send_wifi_config() {
               :value="pros.ssid"
             />
           </div>
-          <div class="flex flex-row space-x-3">
+          <div class="flex flex-col md:flex-row space-y-1 md:space-x-3 md:space-y-0">
             <p class="basis-1/4">Password:</p>
             <Input
               class="basis-auto"

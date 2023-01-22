@@ -1,5 +1,5 @@
 <template>
-  <div class="m-3">
+  <div class="mx-3">
     <div
       v-for="(sensor, idx) in sensorStore.sensors"
       :key="idx"
