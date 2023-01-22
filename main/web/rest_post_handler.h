@@ -13,23 +13,21 @@ static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
  * POST-Request
  * -> '/wifiConfig'
  */
-static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req)
-{
+static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
     int total_len = req->content_len;
     int cur_len = 0;
-    char *buf = ((rest_server_context_t *)(req->user_ctx))->scratch;
+    char *buf = ((rest_server_context_t *) (req->user_ctx))->scratch;
     int received = 0;
-    if (total_len >= SCRATCH_BUFSIZE)
-    {
+    if (total_len >= SCRATCH_BUFSIZE) {
         /* Respond with 500 Internal Server Error */
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "content too long");
         return ESP_FAIL;
     }
-    while (cur_len < total_len)
-    {
+    while (cur_len < total_len) {
         received = httpd_req_recv(req, buf + cur_len, total_len);
-        if (received <= 0)
-        {
+        if (received <= 0) {
             /* Respond with 500 Internal Server Error */
             httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to post control value");
             return ESP_FAIL;
@@ -40,11 +38,9 @@ static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req)
 
     cJSON *root = cJSON_Parse(buf);
 
-    if (root == NULL)
-    {
+    if (root == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL)
-        {
+        if (error_ptr != NULL) {
             ESP_LOGE(RESTSERVER_PUT, "Error before: %s\n", error_ptr);
         }
         cJSON_Delete(root);
@@ -55,23 +51,46 @@ static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req)
     const cJSON *network_ssid_json = cJSON_GetObjectItemCaseSensitive(root, "ssid");
     const cJSON *network_password_json = cJSON_GetObjectItemCaseSensitive(root, "password");
 
+
     char network_ssid[30] = "none";
     char network_password[30] = "none";
-    if (network_ssid_json)
-    {
+    if (network_ssid_json) {
         snprintf(network_ssid, "%s", network_ssid_json->valuestring);
     }
 
-    if (network_password_json)
-    {
+    if (network_password_json) {
         snprintf(network_password, "%s", network_password_json->valuestring);
     }
 
     ESP_LOGI(RESTSERVER_PUT, "ssid: %s", network_ssid);
     ESP_LOGI(RESTSERVER_PUT, "passwd: %s", network_password);
 
+    if (network_ssid_json && network_password_json) {
+        ESP_LOGI(RESTSERVER_PUT, "Starting wifi new config...");
+
+        wifi_config_t *config = wifi_manager_get_wifi_sta_config();
+        memset(config, 0x00, sizeof(wifi_config_t));
+        memcpy(config->sta.ssid, network_ssid, 30);
+        memcpy(config->sta.password, network_password, 30);
+        ESP_LOGD(RESTSERVER_PUT, "http_server_post_handler: wifi_manager_connect_async() call");
+        wifi_manager_connect_async();
+
+        /* free memory */
+        free(network_ssid);
+        free(network_password);
+
+        httpd_resp_set_status(req, http_200_hdr);
+        httpd_resp_set_type(req, http_content_type_json);
+        httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+        httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+        httpd_resp_send(req, NULL, 0);
+
+    } else {
+        httpd_resp_sendstr(req, "Post wifiConfig unsuccessful!");
+
+    }
+
     cJSON_Delete(root);
-    httpd_resp_sendstr(req, "Post wifiConfig successfully");
 
     return ESP_OK;
 }

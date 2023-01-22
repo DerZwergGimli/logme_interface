@@ -364,13 +364,13 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
         //     .user_ctx = rest_context};
         // httpd_register_uri_handler(server, &rest_get_sensors_uri);
 
-        // /* URI handler for WiFi-Config  */
-        // httpd_uri_t rest_post_wifiConfig_uri = {
-        //     .uri = "/wificonfig",
-        //     .method = HTTP_POST,
-        //     .handler = rest_post_wifiConfig_handler,
-        //     .user_ctx = rest_context};
-        // httpd_register_uri_handler(server, &rest_post_wifiConfig_uri);
+         /* URI handler for WiFi-Config  */
+         httpd_uri_t rest_post_wifiConfig_uri = {
+             .uri = "/wificonfig",
+             .method = HTTP_POST,
+             .handler = rest_post_wifiConfig_handler,
+             .user_ctx = rest_context};
+         httpd_register_uri_handler(server_handle, &rest_post_wifiConfig_uri);
 
         // httpd_uri_t wss_sensor_uri = {
         //     .uri = "/websocket",
