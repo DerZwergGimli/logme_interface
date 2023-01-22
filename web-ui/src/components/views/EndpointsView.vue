@@ -10,7 +10,7 @@
       <SimpleTable
         :header="['REST POST-Requests']"
         :body="[['/wifiConfig']]"
-        :button_text="'PUT'"
+        :button_text="'POST'"
       />
       <SimpleTable
         :header="['Websocket']"

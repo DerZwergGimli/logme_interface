@@ -37,6 +37,14 @@
       }
     ]
   },
+  "ap": [
+    {
+      "ssid": "SSS",
+      "chan": 2,
+      "rssi": -28,
+      "auth": 3
+    }
+  ],
   "sensors": [
     {
       "id": 0,

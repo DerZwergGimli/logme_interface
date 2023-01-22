@@ -7,9 +7,14 @@ h1{
 }
 
 h2{
-    @apply text-2xl
+    @apply text-2xl dark:text-white
+
 }
 
 h3{
-    @apply text-xl
+    @apply  text-xl
+}
+
+p {
+    @apply dark:text-white
 }
