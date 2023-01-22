@@ -33,9 +33,9 @@ function send_wifi_config() {
       password: network_password_user.value,
     }),
   })
-    .then(response => response.json())
+    .then(response => response.text())
     .then(response => {
-      console.log(JSON.stringify(response));
+      console.log(response);
       createToast('New Wifi-Config send!', TOAST_INFO);
     })
     .catch(err => {
