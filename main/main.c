@@ -24,6 +24,7 @@
 #include <esp_http_server.h>
 
 #include "wifi/wifi_manager.h"
+#include "wifi/nvs_sync.h"
 #include "web/rest_types.h"
 #include "web/rest_server_helper.h"
 
@@ -39,9 +40,8 @@ smart_meter_sensor_t sensors[CONFIG_SMART_METER_SENSOR_LENGTH];
 // esp_netif_t *wifi_init_sta(void);
 // esp_err_t start_rest_server(const char *base_path, esp_netif_t *netif_config, smart_meter_sensor_t *sensors);
 
-void cb_connection_ok(void *pvParameter)
-{
-    ip_event_got_ip_t *param = (ip_event_got_ip_t *)pvParameter;
+void cb_connection_ok(void *pvParameter) {
+    ip_event_got_ip_t *param = (ip_event_got_ip_t *) pvParameter;
 
     /* transform IP to human readable string */
     char str_ip[16];
@@ -50,29 +50,26 @@ void cb_connection_ok(void *pvParameter)
     ESP_LOGI(TAG_MAIN, "I have a connection and my IP is %s!", str_ip);
 }
 
-void monitoring_task(void *pvParameter)
-{
-    for (;;)
-    {
+void monitoring_task(void *pvParameter) {
+    for (;;) {
         ESP_LOGI(TAG_MAIN, "free heap: %lu", esp_get_free_heap_size());
         vTaskDelay(pdMS_TO_TICKS(10000));
     }
 }
 
-void app_main(void)
-{
+void app_main(void) {
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
-    // ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
+
+    ESP_ERROR_CHECK(init_fs());
+    ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
 
     ESP_ERROR_CHECK(ret);
-    ESP_ERROR_CHECK(init_fs());
 
     wifi_manager_start();
 
