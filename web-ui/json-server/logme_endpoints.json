@@ -6,16 +6,17 @@
       "major_rev": 3,
       "minor_rev": 0,
       "flash_size_MB": 4,
-      "free_heap": 211592,
-      "uptime": 7710
+      "total_heap": 299712,
+      "free_heap": 174384,
+      "uptime_ms": 1502
     }
   },
   "wifi": {
-      "ip": "0.0.1.130",
-      "netmask": "0.0.255.0",
-      "gateway": "0.0.1.1",
-      "ssid": "-TEST-",
-      "rssi": -99
+    "ip": "0.0.1.130",
+    "netmask": "0.0.255.0",
+    "gateway": "0.0.1.1",
+    "ssid": "-TEST-",
+    "rssi": -99
   },
   "ap": [
     {

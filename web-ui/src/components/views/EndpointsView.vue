@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-col  space-y-5">
+    <div class="flex flex-col space-y-5">
       <SimpleTable
         class="rounded-none sm:rounded-lg"
         :header="['REST GET-Requests']"
@@ -11,7 +11,7 @@
       <SimpleTable
         class="rounded-none sm:rounded-lg"
         :header="['REST POST-Requests']"
-        :body="[['/wifiConfig']]"
+        :body="[['/wificonfig']]"
         :button_text="'POST'"
       />
       <SimpleTable

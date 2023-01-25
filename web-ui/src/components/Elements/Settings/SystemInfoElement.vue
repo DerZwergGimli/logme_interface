@@ -21,6 +21,7 @@ const system_info_table_content = ref([
   ['Chip Version', '---'],
   ['CPU', '---'],
   ['Flash size', '---'],
+  ['Total HEAP', '---'],
   ['Free HEAP', '---'],
   ['Uptime', '---'],
 ]);
@@ -35,9 +36,10 @@ onMounted(async () => {
         json.info.major_rev + '.' + json.info.minor_rev;
       system_info_table_content.value[2][1] = json.info.cores + ' Cores';
       system_info_table_content.value[3][1] = json.info.flash_size_MB + ' MB';
-      system_info_table_content.value[4][1] = json.info.free_heap;
-      system_info_table_content.value[5][1] =
-        convert_time(json.info.uptime) ?? 'error';
+      system_info_table_content.value[4][1] = json.info.total_heap;
+      system_info_table_content.value[5][1] = json.info.free_heap;
+      system_info_table_content.value[6][1] =
+        convert_time(json.info.uptime_ms) ?? 'error';
     });
 });
 
