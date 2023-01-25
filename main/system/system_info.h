@@ -31,10 +31,6 @@ typedef struct {
     void *param;
 } queue_system_message;
 
-#define JSON_SYSTEM_INFO_SIZE 250
-
-static const char *SYSTEM_INFO_TAG = "SYSTEM_INFO";
-
 
 void system_info(void *pvParameters);
 

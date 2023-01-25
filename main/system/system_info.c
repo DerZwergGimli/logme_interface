@@ -14,6 +14,9 @@
 #include <esp_flash.h>
 #include "cJSON.h"
 
+#define JSON_SYSTEM_INFO_SIZE 250
+static const char *SYSTEM_INFO_TAG = "system-info";
+
 QueueHandle_t system_info_queue;
 SemaphoreHandle_t system_info_json_mutex = NULL;
 static EventGroupHandle_t system_info_event_group;

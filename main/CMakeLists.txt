@@ -5,6 +5,7 @@ idf_component_register(SRCS "main.c"
         "wifi/nvs_sync.c"
         "web/rest_server.c"
         "system/system_info.c"
+        "sensors/sensor_manager.c"
         INCLUDE_DIRS ".")
 
 if (CONFIG_EXAMPLE_WEB_DEPLOY_SF)
@@ -15,6 +16,14 @@ if (CONFIG_EXAMPLE_WEB_DEPLOY_SF)
         message(FATAL_ERROR "${WEB_SRC_DIR}/dist doesn't exit. Please run 'npm run build' in ${WEB_SRC_DIR}")
     endif ()
 endif ()
+
+## Link to mount storage_db
+#set(DB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../db")
+#if (EXISTS ${DB_SRC_DIR})
+#    spiffs_create_partition_image(db ${DB_SRC_DIR} FLASH_IN_PROJECT)
+#else ()
+#    message(FATAL_ERROR "${DB_SRC_DIR} doesn't exit. Please run 'npm run build' in ${DB_SRC_DIR}")
+#endif ()
 
 if (DEFINED ENV{INSIGHTS_PATH})
     set(INSIGHTS_PATH $ENV{INSIGHTS_PATH})

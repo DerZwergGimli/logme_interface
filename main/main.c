@@ -17,8 +17,6 @@
 
 #include "web/mdns.h"
 #include "fs/fs.h"
-#include "sml_sensor/smart_meter_t.h"
-#include "sensor_tasks.h"
 
 #include <esp_http_server.h>
 
@@ -27,6 +25,7 @@
 #include "web/rest_types.h"
 #include "web/rest_server_helper.h"
 #include "system/system_info.h"
+#include "sensors/sensor_manager.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "main";
@@ -34,8 +33,6 @@ static const char TAG_MAIN[] = "main";
 esp_netif_t *netif_config;
 esp_netif_ip_info_t ip_info;
 
-// SmartMeter
-smart_meter_sensor_t sensors[CONFIG_SMART_METER_SENSOR_LENGTH];
 //
 // esp_netif_t *wifi_init_sta(void);
 // esp_err_t start_rest_server(const char *base_path, esp_netif_t *netif_config, smart_meter_sensor_t *sensors);
@@ -78,35 +75,19 @@ void app_main(void) {
     // Initialize SystemInfo
     system_info_start(false);
 
-    
+    // Initialize Sensor Manager
+    sensor_manager_start(true);
+
+
     // ESP_LOGI("WiFI-Config", "ESP_WIFI_MODE_STA");
 
     // netif_config = wifi_init_sta();
     // ESP_ERROR_CHECK(esp_netif_get_ip_info(netif_config, &ip_info));
 
-    snprintf(sensors[0].name, "%s", "Sensor_1");
-    snprintf(sensors[1].name, "%s", "Sensor_2");
-    snprintf(sensors[2].name, "%s", "Sensor_3");
-    snprintf(sensors[3].name, "%s", "Sensor_4");
 
-    // ESP_LOGI("TEST", "IP is:" IPSTR,
-    //          IP2STR(&ip_info->ip));
 
-    // ESP_ERROR_CHECK(esp_netif_init());
-    // ESP_ERROR_CHECK(esp_event_loop_create_default());
-    // initialise_mdns();
-    // netbiosns_init();
-    //    netbiosns_set_name(CONFIG_EXAMPLE_MDNS_HOST_NAME);
 
-    // ESP_ERROR_CHECK(example_connect());
-    // ESP_ERROR_CHECK(init_fs());
 
-    ESP_LOGI("main", "starting tasks");
-    sensor_task_paramater_t sensorTaskParamater;
-    sensorTaskParamater.sensors = &sensors;
-    // xTaskCreate(sensor_task, "Sensor Task", 2048, (void *)&sensorTaskParamater, 1, NULL);
-    //    vTaskStartScheduler();
+    ESP_LOGI("main", "-- end --");
 
-    ESP_LOGI("main", "starting webserver");
-    // ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, NULL, NULL));
 }

@@ -94,42 +94,42 @@ static esp_err_t rest_get_ap_handler(httpd_req_t *req) {
  * -> '/sensors'
  */
 static esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
-    rest_server_context_t *rest_context = (rest_server_context_t *) req->user_ctx;
-    smart_meter_sensor_t *sensors = rest_context->sensors;
-
-    httpd_resp_set_type(req, "application/json");
-
-    cJSON *sensors_array = cJSON_CreateArray();
-
-    for (size_t i = 0; i < CONFIG_SMART_METER_SENSOR_LENGTH; i++) {
-        cJSON *sensor_item = cJSON_CreateObject();
-        cJSON_AddNumberToObject(sensor_item, "id", sensors[i].id);
-        cJSON_AddStringToObject(sensor_item, "name", sensors[i].name);
-        cJSON_AddNumberToObject(sensor_item, "count", sensors[i].count);
-        cJSON_AddNumberToObject(sensor_item, "power", sensors[i].power);
-
-        cJSON *history = cJSON_CreateObject();
-        cJSON *history_day = cJSON_CreateArray();
-        cJSON *history_week = cJSON_CreateArray();
-        cJSON *history_month = cJSON_CreateArray();
-
-        cJSON_AddArrayToObject(history_day, sensors[i].history.day_24_kw);
-        cJSON_AddArrayToObject(history_week, sensors[i].history.week_7_kw);
-        cJSON_AddArrayToObject(history_month, sensors[i].history.month_30_kw);
-
-        cJSON_AddItemToObject(history, "day_24_kw", history_day);
-        cJSON_AddItemToObject(history, "week_7_kw", history_week);
-        cJSON_AddItemToObject(history, "month_30_kw", history_month);
-
-        cJSON_AddItemToObject(sensor_item, "history", history);
-
-        cJSON_AddItemToArray(sensors_array, sensor_item);
-    }
-
-    const char *response = cJSON_Print(sensors_array);
-    httpd_resp_sendstr(req, response);
-    free((void *) response);
-    cJSON_Delete(sensors_array);
+//    rest_server_context_t *rest_context = (rest_server_context_t *) req->user_ctx;
+//    smart_meter_sensor_t *sensors = rest_context->sensors;
+//
+//    httpd_resp_set_type(req, "application/json");
+//
+//    cJSON *sensors_array = cJSON_CreateArray();
+//
+//    for (size_t i = 0; i < CONFIG_SMART_METER_SENSOR_LENGTH; i++) {
+//        cJSON *sensor_item = cJSON_CreateObject();
+//        cJSON_AddNumberToObject(sensor_item, "id", sensors[i].id);
+//        cJSON_AddStringToObject(sensor_item, "name", sensors[i].name);
+//        cJSON_AddNumberToObject(sensor_item, "count", sensors[i].count);
+//        cJSON_AddNumberToObject(sensor_item, "power", sensors[i].power);
+//
+//        cJSON *history = cJSON_CreateObject();
+//        cJSON *history_day = cJSON_CreateArray();
+//        cJSON *history_week = cJSON_CreateArray();
+//        cJSON *history_month = cJSON_CreateArray();
+//
+//        cJSON_AddArrayToObject(history_day, sensors[i].history.day_24_kw);
+//        cJSON_AddArrayToObject(history_week, sensors[i].history.week_7_kw);
+//        cJSON_AddArrayToObject(history_month, sensors[i].history.month_30_kw);
+//
+//        cJSON_AddItemToObject(history, "day_24_kw", history_day);
+//        cJSON_AddItemToObject(history, "week_7_kw", history_week);
+//        cJSON_AddItemToObject(history, "month_30_kw", history_month);
+//
+//        cJSON_AddItemToObject(sensor_item, "history", history);
+//
+//        cJSON_AddItemToArray(sensors_array, sensor_item);
+//    }
+//
+//    const char *response = cJSON_Print(sensors_array);
+//    httpd_resp_sendstr(req, response);
+//    free((void *) response);
+//    cJSON_Delete(sensors_array);
     return ESP_OK;
 }
 
