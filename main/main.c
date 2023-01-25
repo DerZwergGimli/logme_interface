@@ -10,7 +10,6 @@
 #include "esp_log.h"
 #include "mdns.h"
 #include "lwip/apps/netbiosns.h"
-#include "protocol_examples_common.h"
 
 #if CONFIG_EXAMPLE_WEB_DEPLOY_SD
 #include "driver/sdmmc_host.h"
@@ -27,6 +26,7 @@
 #include "wifi/nvs_sync.h"
 #include "web/rest_types.h"
 #include "web/rest_server_helper.h"
+#include "system/system_info.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "main";
@@ -65,15 +65,18 @@ void app_main(void) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
-
+    ESP_ERROR_CHECK(ret);
     ESP_ERROR_CHECK(init_fs());
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
 
-    ESP_ERROR_CHECK(ret);
 
+    // Initialize WIFI
     wifi_manager_start();
-
     wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_connection_ok);
+
+
+    // Initialize SystemInfo
+    system_info_start();
 
     xTaskCreatePinnedToCore(&monitoring_task, "monitoring_task", 2048, NULL, 1, NULL, 1);
 

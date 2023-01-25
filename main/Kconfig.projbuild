@@ -137,6 +137,6 @@ menu "Wifi Manager Configuration"
         default 100
         help
         100ms is the recommended default.
-    
+
     endmenu
     
