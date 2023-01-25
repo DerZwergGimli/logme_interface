@@ -6,34 +6,24 @@
 #include "rest_types.h"
 #include "cJSON.h"
 
+#include "system/system_info.h"
+
 /**
  * GET-Request
  * -> '/system'
  */
 static esp_err_t rest_get_system_handler(httpd_req_t *req) {
 
-    esp_chip_info_t chip_info;
-    esp_chip_info(&chip_info);
-    uint32_t flash_size;
-    ESP_ERROR_CHECK(esp_flash_get_size(NULL, &flash_size));
+    const char *json_info = system_info_get_info_json();
+    
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+    httpd_resp_set_type(req, http_content_type_json);
 
-    httpd_resp_set_type(req, "application/json");
-    cJSON *root = cJSON_CreateObject();
+    httpd_resp_sendstr(req, json_info);
+    free((void *) json_info);
 
-    cJSON *info = cJSON_CreateObject();
-    cJSON_AddStringToObject(info, "target", CONFIG_IDF_TARGET);
-    cJSON_AddNumberToObject(info, "cores", chip_info.cores);
-    cJSON_AddNumberToObject(info, "major_rev", chip_info.revision / 100);
-    cJSON_AddNumberToObject(info, "minor_rev", chip_info.revision % 100);
-    cJSON_AddNumberToObject(info, "flash_size_MB", flash_size / (uint32_t)(1024 * 1024));
-    cJSON_AddNumberToObject(info, "free_heap", esp_get_minimum_free_heap_size());
-    cJSON_AddNumberToObject(info, "uptime", xTaskGetTickCount() * portTICK_PERIOD_MS);
-    cJSON_AddItemToObject(root, "info", info);
-
-    const char *sys_info = cJSON_Print(root);
-    httpd_resp_sendstr(req, sys_info);
-    free((void *) sys_info);
-    cJSON_Delete(root);
     return ESP_OK;
 }
 

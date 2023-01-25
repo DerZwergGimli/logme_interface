@@ -76,10 +76,9 @@ void app_main(void) {
 
 
     // Initialize SystemInfo
-    system_info_start();
+    system_info_start(false);
 
-    xTaskCreatePinnedToCore(&monitoring_task, "monitoring_task", 2048, NULL, 1, NULL, 1);
-
+    
     // ESP_LOGI("WiFI-Config", "ESP_WIFI_MODE_STA");
 
     // netif_config = wifi_init_sta();
