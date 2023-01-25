@@ -15,14 +15,13 @@
 static esp_err_t rest_get_system_handler(httpd_req_t *req) {
 
     const char *json_info = system_info_get_info_json();
-    
+
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
     httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
     httpd_resp_set_type(req, http_content_type_json);
 
     httpd_resp_sendstr(req, json_info);
-    free((void *) json_info);
 
     return ESP_OK;
 }

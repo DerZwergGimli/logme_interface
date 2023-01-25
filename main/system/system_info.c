@@ -9,9 +9,10 @@
 #include <freertos/event_groups.h>
 #include <string.h>
 #include <esp_log.h>
-#include "esp_flash.h"
+#include <esp_chip_info.h>
+#include <esp_timer.h>
+#include <esp_flash.h>
 #include "cJSON.h"
-#include "esp_chip_info.h"
 
 QueueHandle_t system_info_queue;
 SemaphoreHandle_t system_info_json_mutex = NULL;
@@ -28,7 +29,6 @@ void system_info_start(bool log_enable) {
     }
     ESP_LOGI(SYSTEM_INFO_TAG, "Starting up System-Info task...");
     system_info_queue = xQueueCreate(3, sizeof(queue_system_message));
-    system_info_json_mutex = xSemaphoreCreateMutex();
 
     system_info_json = (char *) malloc(sizeof(char) * JSON_SYSTEM_INFO_SIZE);
     system_info_clear_info_json();
@@ -140,7 +140,7 @@ esp_err_t system_info_generate_info_json() {
     cJSON_AddNumberToObject(info, "flash_size_MB", (uint32_t) (flash_size / (uint32_t) (1024 * 1024)));
     cJSON_AddNumberToObject(info, "total_heap", heap_caps_get_total_size(MALLOC_CAP_8BIT));
     cJSON_AddNumberToObject(info, "free_heap", esp_get_minimum_free_heap_size());
-    cJSON_AddNumberToObject(info, "uptime_ms", pdMS_TO_TICKS(xTaskGetTickCount()));
+    cJSON_AddNumberToObject(info, "uptime_ms", (uint32_t) (esp_timer_get_time() / 1000));
     cJSON_AddItemToObject(root, "info", info);
 
     const char *json_object = cJSON_Print(root);
