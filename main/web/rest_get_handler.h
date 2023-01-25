@@ -14,15 +14,26 @@
  */
 static esp_err_t rest_get_system_handler(httpd_req_t *req) {
 
-    const char *json_info = system_info_get_info_json();
+    if (system_info_lock_info_json_buffer((TickType_t) 10)) {
+        const char *json_buff = system_info_get_info_json();
+        if (json_buff) {
+            httpd_resp_set_status(req, http_200_hdr);
+            httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+            httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+            httpd_resp_set_type(req, http_content_type_json);
+            httpd_resp_sendstr(req, json_buff);
 
-    httpd_resp_set_status(req, http_200_hdr);
-    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
-    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
-    httpd_resp_set_type(req, http_content_type_json);
+        } else {
+            httpd_resp_set_status(req, http_503_hdr);
+            httpd_resp_send(req, NULL, 0);
+        }
+        system_info_unlock_info_json_buffer();
 
-    httpd_resp_sendstr(req, json_info);
-
+    } else {
+        httpd_resp_set_status(req, http_503_hdr);
+        httpd_resp_send(req, NULL, 0);
+        ESP_LOGE("REST_GET-System", "failed to obtain mutex");
+    }
     return ESP_OK;
 }
 
@@ -39,7 +50,7 @@ static esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
             httpd_resp_set_type(req, http_content_type_json);
             httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
             httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
-            httpd_resp_send(req, buff, strlen(buff));
+            httpd_resp_sendstr(req, buff);
             wifi_manager_unlock_json_buffer();
         } else {
             httpd_resp_set_status(req, http_503_hdr);
@@ -48,7 +59,7 @@ static esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
     } else {
         httpd_resp_set_status(req, http_503_hdr);
         httpd_resp_send(req, NULL, 0);
-        ESP_LOGE("Get-Wifi", "http_server_netconn_serve: GET /status.json failed to obtain mutex");
+        ESP_LOGE("REST_GET-Wifi", "failed to obtain mutex");
     }
     return ESP_OK;
 }
