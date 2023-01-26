@@ -329,6 +329,14 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
                 .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &rest_get_sensors_uri);
 
+        /* URI handler for Restart  */
+        httpd_uri_t rest_post_restart_uri = {
+                .uri = "/restart",
+                .method = HTTP_POST,
+                .handler = rest_post_restart_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &rest_post_restart_uri);
+
         /* URI handler for WiFi-Config  */
         httpd_uri_t rest_post_wifiConfig_uri = {
                 .uri = "/wificonfig",

@@ -21,31 +21,19 @@ static const char *HTTP_SERVER_TAG = "REST-Server";
 #define FILE_PATH_MAX (ESP_VFS_PATH_MAX + 128)
 
 /* Set HTTP response content type according to file extension */
-static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath)
-{
+static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath) {
     const char *type = "text/plain";
-    if (CHECK_FILE_EXTENSION(filepath, ".html"))
-    {
+    if (CHECK_FILE_EXTENSION(filepath, ".html")) {
         type = "text/html";
-    }
-    else if (CHECK_FILE_EXTENSION(filepath, ".js"))
-    {
+    } else if (CHECK_FILE_EXTENSION(filepath, ".js")) {
         type = "application/javascript";
-    }
-    else if (CHECK_FILE_EXTENSION(filepath, ".css"))
-    {
+    } else if (CHECK_FILE_EXTENSION(filepath, ".css")) {
         type = "text/css";
-    }
-    else if (CHECK_FILE_EXTENSION(filepath, ".png"))
-    {
+    } else if (CHECK_FILE_EXTENSION(filepath, ".png")) {
         type = "image/png";
-    }
-    else if (CHECK_FILE_EXTENSION(filepath, ".ico"))
-    {
+    } else if (CHECK_FILE_EXTENSION(filepath, ".ico")) {
         type = "image/x-icon";
-    }
-    else if (CHECK_FILE_EXTENSION(filepath, ".svg"))
-    {
+    } else if (CHECK_FILE_EXTENSION(filepath, ".svg")) {
         type = "text/xml";
     }
     return httpd_resp_set_type(req, type);
@@ -58,6 +46,7 @@ const static char http_400_hdr[] = "400 Bad Request";
 const static char http_404_hdr[] = "404 Not Found";
 const static char http_503_hdr[] = "503 Service Unavailable";
 const static char http_location_hdr[] = "Location";
+const static char http_content_type_plain[] = "text/plain";
 const static char http_content_type_html[] = "text/html";
 const static char http_content_type_js[] = "text/javascript";
 const static char http_content_type_css[] = "text/css";

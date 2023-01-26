@@ -12,6 +12,24 @@ static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
 
 /**
  * POST-Request
+ * -> '/restart'
+ */
+static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+    httpd_resp_set_type(req, http_content_type_plain);
+    httpd_resp_sendstr(req, "Restart triggerd...!");
+    vTaskDelay(pdTICKS_TO_MS(3000));
+    esp_restart();
+    return ESP_OK;
+}
+
+
+/**
+ * POST-Request
  * -> '/wifiConfig'
  */
 static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {
@@ -79,7 +97,7 @@ static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {
         /* free memory */
         //free(network_ssid);
         //free(network_password);
-        
+
         httpd_resp_sendstr(req, "Post wifiConfig initialized!");
 
     } else {

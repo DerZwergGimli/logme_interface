@@ -14,7 +14,8 @@
  * -> '/system'
  */
 static esp_err_t rest_get_system_handler(httpd_req_t *req) {
-    ESP_LOGI("REST_GET", "/system");
+    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
+
 
     if (system_info_lock_info_json_buffer((TickType_t) 10)) {
         const char *json_buff = system_info_get_info_json();
@@ -44,7 +45,8 @@ static esp_err_t rest_get_system_handler(httpd_req_t *req) {
  * -> '/wifi'
  */
 static esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
-    ESP_LOGI("REST_GET", "/wifi");
+    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
+
 
     if (wifi_manager_lock_json_buffer((TickType_t) 10)) {
         char *buff = wifi_manager_get_ip_info_json();
@@ -72,7 +74,8 @@ static esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
  * -> '/ap'
  */
 static esp_err_t rest_get_ap_handler(httpd_req_t *req) {
-    ESP_LOGI("REST_GET", "/ap");
+    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
+
 
     if (wifi_manager_lock_json_buffer((TickType_t) 10)) {
         httpd_resp_set_status(req, http_200_hdr);
@@ -98,7 +101,8 @@ static esp_err_t rest_get_ap_handler(httpd_req_t *req) {
  * -> '/sensors'
  */
 static esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
-    ESP_LOGI("REST_GET", "/sensors");
+    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
+
 
     if (sensor_manager_lock_json_buffer((TickType_t) 10)) {
         const char *json_buff = sensor_manager_get_json();

@@ -1,8 +1,8 @@
-
 <script setup lang="ts">
-import { Button } from 'flowbite-vue'
+import { Button } from 'flowbite-vue';
 import { Progress } from 'flowbite-vue';
 import { defineProps } from 'vue';
+import { action_post } from '../../scripts/action_commands';
 
 const props = defineProps({
   header: {
@@ -26,7 +26,6 @@ function calc_percentage(a: number, b: number): number {
   return parseFloat(percentage.toFixed(1));
 }
 </script>
-
 
 <template>
   <div class="overflow-x-auto relative rounded-md">
@@ -73,12 +72,20 @@ function calc_percentage(a: number, b: number): number {
           </td>
         </tr>
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td  class="py-4 px-6">Reset-WiFi</td>
-          <td  class="py-4 px-6 float-right"><Button class="w-24" color="red">Reset</Button></td>
+          <td class="py-4 px-6">Reset-WiFi</td>
+          <td class="py-4 px-6 float-right">
+            <Button class="w-24" color="red" @click="action_post('/restart')"
+              >Reset</Button
+            >
+          </td>
         </tr>
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td  class="py-4 px-6">Restart</td>
-          <td  class="py-4 px-6 float-right"><Button class="w-24"  color="yellow">Restart</Button></td>
+          <td class="py-4 px-6">Restart</td>
+          <td class="py-4 px-6 float-right">
+            <Button class="w-24" color="yellow" @click="action_post('/restart')"
+              >Restart</Button
+            >
+          </td>
         </tr>
       </tbody>
     </table>
