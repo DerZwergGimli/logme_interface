@@ -933,7 +933,7 @@ void wifi_manager(void *pvParameters) {
     /// http_app_start(false);
 
     // ESP_LOGI("main", "starting webserver");
-    ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, false));
+    //ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, false));
 
     /* wifi scanner config */
     wifi_scan_config_t scan_config = {
@@ -1215,8 +1215,8 @@ void wifi_manager(void *pvParameters) {
                         /// http_app_stop();
                         /// http_app_start(false);
 
-                        ESP_ERROR_CHECK(stop_rest_server());
-                        ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, false));
+                        //ESP_ERROR_CHECK(stop_rest_server());
+                        //ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, false));
 
                         /* callback */
                         if (cb_ptr_arr[msg.code])

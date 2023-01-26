@@ -4,9 +4,9 @@
 #include "esp_flash.h"
 #include "esp_wifi.h"
 #include "esp_log.h"
-#include "rest_types.h"
 #include "cJSON.h"
 #include "wifi/wifi_manager.h"
+#include "rest_server.h"
 
 static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
 
@@ -23,6 +23,7 @@ static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
     httpd_resp_set_type(req, http_content_type_plain);
     httpd_resp_sendstr(req, "Restart triggerd...!");
     vTaskDelay(pdTICKS_TO_MS(3000));
+
     esp_restart();
     return ESP_OK;
 }

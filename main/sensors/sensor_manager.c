@@ -43,7 +43,6 @@ void sensor_manager(void *pvParameters) {
             switch (msg.code) {
                 case SM_IDLE: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SM_IDLE");
-                    sensor_manager_send_message(SM_LOOP, NULL);
                 }
                     break;
                 case SM_INIT: {
@@ -71,7 +70,7 @@ void sensor_manager(void *pvParameters) {
                             ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to read file : %s", filepath);
                         } else if (read_bytes > 0) {
                             ESP_LOGI(SENSOR_MANAGER_TAG, "Loading json data...");
-                            if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(10))) {
+                            if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
                                 sensor_manager_json_parse(chunk);
                                 ESP_ERROR_CHECK(sensor_manager_generate_json());
                                 sensor_manager_unlock_json_buffer();
@@ -88,12 +87,6 @@ void sensor_manager(void *pvParameters) {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "%s", sensors[0].name);
                     sensor_manager_send_message(SM_IDLE, NULL);
 
-                }
-                    break;
-                case SM_LOOP: {
-                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_LOOP");
-                    vTaskDelay(pdMS_TO_TICKS(2000));
-                    sensor_manager_send_message(SM_LOOP, NULL);
                 }
                     break;
                 case SM_SAVE: {

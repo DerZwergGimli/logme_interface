@@ -17,39 +17,6 @@ static httpd_handle_t server_handle = NULL;
 static char *http_root_url = NULL;
 static char *http_redirect_url = NULL;
 
-/* Simple handler for light brightness control */
-static esp_err_t
-light_brightness_post_handler(httpd_req_t *req) {
-    int total_len = req->content_len;
-    int cur_len = 0;
-    char *buf = ((rest_server_context_t *) (req->user_ctx))->scratch;
-    int received = 0;
-    if (total_len >= SCRATCH_BUFSIZE) {
-        /* Respond with 500 Internal Server Error */
-        httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "content too long");
-        return ESP_FAIL;
-    }
-    while (cur_len < total_len) {
-        received = httpd_req_recv(req, buf + cur_len, total_len);
-        if (received <= 0) {
-            /* Respond with 500 Internal Server Error */
-            httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to post control value");
-            return ESP_FAIL;
-        }
-        cur_len += received;
-    }
-    buf[total_len] = '\0';
-
-    cJSON *root = cJSON_Parse(buf);
-    int red = cJSON_GetObjectItem(root, "red")->valueint;
-    int green = cJSON_GetObjectItem(root, "green")->valueint;
-    int blue = cJSON_GetObjectItem(root, "blue")->valueint;
-    ESP_LOGI(REST_TAG, "Light control: red = %d, green = %d, blue = %d", red, green, blue);
-    cJSON_Delete(root);
-    httpd_resp_sendstr(req, "Post control value successfully");
-    return ESP_OK;
-}
-
 static esp_err_t base_get_handler(httpd_req_t *req) {
     char *host = NULL;
     size_t buf_len;
@@ -144,7 +111,6 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
             if (fd == -1) {
                 ESP_LOGE(HTTP_SERVER_TAG, "Failed to open file : %s", filepath);
                 /* Respond with 500 Internal Server Error */
-
                 httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to read existing file");
                 return ESP_FAIL;
             }
@@ -289,7 +255,7 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         }
 
         httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-        config.stack_size = config.stack_size * 2;
+        //config.stack_size = config.stack_size * 4;
         config.uri_match_fn = httpd_uri_match_wildcard;
         config.lru_purge_enable = lru_purge_enable;
 
@@ -362,7 +328,7 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         // httpd_register_uri_handler(server, &wss_subscribe_uri);
 
         httpd_uri_t common_base_get_uri = {
-                .uri = "*",
+                .uri = "/*",
                 .method = HTTP_GET,
                 .handler = base_get_handler,
                 .user_ctx = rest_context};
@@ -403,5 +369,7 @@ esp_err_t stop_rest_server() {
         httpd_stop(server_handle);
         server_handle = NULL;
     }
+
+    ESP_LOGI(HTTP_SERVER_TAG, "Stopped reset server!");
     return ESP_OK;
 }

@@ -39,7 +39,7 @@ void system_info_start(bool log_enable) {
     system_info_json_mutex = xSemaphoreCreateMutex();
     system_info_event_group = xEventGroupCreate();
 
-    xTaskCreate(&system_info, "system_info", 4096, NULL, 5, &system_info_task);
+    xTaskCreate(&system_info, "system_info", 4096, NULL, 1, &system_info_task);
 
 }
 
@@ -69,13 +69,13 @@ void system_info(void *pvParameters) {
 
     ESP_LOGI(SYSTEM_INFO_TAG, "Creating Task...");
     for (;;) {
-        xStatus = xQueueReceive(system_info_queue, &msg, pdMS_TO_TICKS(1000));
+        xStatus = xQueueReceive(system_info_queue, &msg, pdMS_TO_TICKS(100));
 
         if (xStatus == pdPASS) {
             switch (msg.code) {
                 case SI_INIT: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_INIT");
-                    system_info_send_message(SI_SLEEP, NULL);
+                    system_info_send_message(SI_UPDATE, NULL);
                 }
                     break;
                 case SI_UPDATE: {
@@ -91,8 +91,8 @@ void system_info(void *pvParameters) {
                     break;
                 case SI_SLEEP: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_SLEEP");
-                    vTaskDelay(pdMS_TO_TICKS(1000));
-                    system_info_send_message(SI_UPDATE, NULL);
+                    //vTaskDelay(pdMS_TO_TICKS(1000));
+                    //system_info_send_message(SI_UPDATE, NULL);
                 }
                     break;
                 default: {

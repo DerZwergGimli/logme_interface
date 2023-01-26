@@ -13,8 +13,13 @@
 #include "web/rest_server_helper.h"
 #include "web/rest_get_handler.h"
 #include "web/rest_post_handler.h"
+#include "rest_post_handler.h"
 
 static const char *REST_TAG = "RESTSERVER_GET";
+
+#include "esp_netif.h"
+#include "esp_vfs.h"
+
 
 esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable);
 

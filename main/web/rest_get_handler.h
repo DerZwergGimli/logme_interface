@@ -17,7 +17,7 @@ static esp_err_t rest_get_system_handler(httpd_req_t *req) {
     ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
 
 
-    if (system_info_lock_info_json_buffer((TickType_t) 10)) {
+    if (system_info_lock_info_json_buffer(pdMS_TO_TICKS(1000))) {
         const char *json_buff = system_info_get_info_json();
         if (json_buff) {
             httpd_resp_set_status(req, http_200_hdr);
@@ -104,7 +104,7 @@ static esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
     ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
 
 
-    if (sensor_manager_lock_json_buffer((TickType_t) 10)) {
+    if (sensor_manager_lock_json_buffer(portMAX_DELAY)) {
         const char *json_buff = sensor_manager_get_json();
         if (json_buff) {
             httpd_resp_set_status(req, http_200_hdr);

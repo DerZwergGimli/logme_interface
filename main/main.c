@@ -26,6 +26,7 @@
 #include "web/rest_server_helper.h"
 #include "system/system_info.h"
 #include "sensors/sensor_manager.h"
+#include "web/rest_server.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "main";
@@ -37,15 +38,13 @@ esp_netif_ip_info_t ip_info;
 // esp_netif_t *wifi_init_sta(void);
 // esp_err_t start_rest_server(const char *base_path, esp_netif_t *netif_config, smart_meter_sensor_t *sensors);
 
-void cb_connection_ok(void *pvParameter) {
-    ip_event_got_ip_t *param = (ip_event_got_ip_t *) pvParameter;
 
-    /* transform IP to human readable string */
-    char str_ip[16];
-    esp_ip4addr_ntoa(&param->ip_info.ip, str_ip, 16);
-
-    ESP_LOGI(TAG_MAIN, "I have a connection and my IP is %s!", str_ip);
+void cb_restart_rest_server(void *pvParameter) {
+    ESP_LOGI(TAG_MAIN, "Restarting WebServer...");
+    ESP_ERROR_CHECK(stop_rest_server());
+    ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
 }
+
 
 void monitoring_task(void *pvParameter) {
     for (;;) {
@@ -62,6 +61,7 @@ void app_main(void) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
+
     ESP_ERROR_CHECK(ret);
     ESP_ERROR_CHECK(init_fs());
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
@@ -69,16 +69,21 @@ void app_main(void) {
 
     // Initialize WIFI
     wifi_manager_start();
-    wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_connection_ok);
+
+    //Initialize WebServer
+    ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
+    wifi_manager_set_callback(WM_ORDER_START_AP, &cb_restart_rest_server);
+    wifi_manager_set_callback(WM_ORDER_STOP_AP, &cb_restart_rest_server);
 
 
     // Initialize SystemInfo
-    system_info_start(false);
+    //system_info_start(true);
 
     // Initialize Sensor Manager
-    sensor_manager_start(true);
+    //sensor_manager_start(true);
 
 
     ESP_LOGI("main", "...Done!");
+
 
 }
