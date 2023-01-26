@@ -65,7 +65,6 @@ import ValueElement from './ValueElement.vue';
 import AreaChart from '../../charts/AreaChart.vue';
 import { ref, PropType } from 'vue';
 import { useAppStore } from '../../../stores/AppStore.js';
-import { Sensor } from '../../../stores/type_Sensor';
 import { useSensorStore } from '../../../stores/SensorStore.js';
 import BarChart from '../../charts/BarChart.vue';
 
