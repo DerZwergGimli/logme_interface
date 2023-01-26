@@ -1,20 +1,26 @@
 <template>
   <div class="flex flex-col ">
-    <Accordion>
+    <Accordion flush class="border-2 rounded-xl border-gray-700">
       <accordion-panel>
         <accordion-header>System</accordion-header>
         <accordion-content>
-            <system-info-element />
+          <system-info-element />
         </accordion-content>
       </accordion-panel>
       <accordion-panel>
         <accordion-header>Network</accordion-header>
         <accordion-content>
-            <network-element />
+          <network-element />
         </accordion-content>
       </accordion-panel>
       <accordion-panel>
-        <accordion-header>App</accordion-header>
+        <accordion-header>Sensor-Store</accordion-header>
+        <accordion-content>
+         <sensor-store-settings-table/>
+        </accordion-content>
+      </accordion-panel>
+      <accordion-panel>
+        <accordion-header>WebUI</accordion-header>
         <accordion-content>
           <web-app-element />
         </accordion-content>
@@ -35,6 +41,7 @@ import {
   AccordionHeader,
   AccordionContent,
 } from 'flowbite-vue';
+import SensorStoreSettingsTable from "../tables/SensorStoreSettingsTable.vue";
 
 onMounted(async () => {
   createToast('Loading data...', TOAST_INFO);
