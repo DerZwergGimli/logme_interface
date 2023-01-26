@@ -1,9 +1,24 @@
-# LogME
+# LogME (LogMeter)
 
-This project is for reading data from:
+![logme-header](images/logme_header.png)
+[...] unleash the power of your smart-meters!
 
-- [Smart meter]('https://en.wikipedia.org/wiki/Smart_meter')
-- [Heat meter]('https://en.wikipedia.org/wiki/Heat_meter')
+# About
+
+This project is written with ESP-IDFv5.0 using an ESP-32WROOM
+
+This project is for reading data using OptialInterfaces from the following devices:
+
+- [Smart meter]('https://en.wikipedia.org/wiki/Smart_meter') via SmartMeterLanguage(SML) - Serial
+- [Heat meter]('https://en.wikipedia.org/wiki/Heat_meter') [under-construction]
+
+## Features
+
+- WebUI
+- Restful-API
+- Create a default fallback AP
+- WiFi-Setup can be configured via WEB-UI
+- HomeAssist Plugin (planned)
 
 ---
 
@@ -14,6 +29,7 @@ The WebUI is written with Vite.js (Vue3.js) and can be found under `./web-ui/`
 ### Endpoints (REST)
 
 LogMe supports some basic REST-Requests for providing data back and forth from the WebUI.
+(more: [logme_endpoints.json](web-ui/json-server/logme_endpoints.json))
 
 #### GET
 
@@ -23,13 +39,13 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
 
 #### PUT
 
-- `/wifiConfig`
+- `/wificonfig`
 
 #### Websocket
 
 - `/websocket`
 
-## Development
+## Flash Project
 
 [for Linux]
 

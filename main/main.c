@@ -79,15 +79,6 @@ void app_main(void) {
     sensor_manager_start(true);
 
 
-    // ESP_LOGI("WiFI-Config", "ESP_WIFI_MODE_STA");
-
-    // netif_config = wifi_init_sta();
-    // ESP_ERROR_CHECK(esp_netif_get_ip_info(netif_config, &ip_info));
-
-
-
-
-
-    ESP_LOGI("main", "-- end --");
+    ESP_LOGI("main", "...Done!");
 
 }
