@@ -1,6 +1,7 @@
+![logme-header](images/logme_header.png)
+
 # LogME (LogMeter)
 
-![logme-header](images/logme_header.png)
 [...] unleash the power of your smart-meters!
 
 # About
