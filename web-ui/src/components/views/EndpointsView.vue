@@ -3,15 +3,26 @@
     <div class="flex flex-col space-y-5">
       <SimpleTable
         class="rounded-none sm:rounded-lg"
-        :header="['REST GET-Requests']"
-        :body="[['/system'], ['/wifi'], ['/sensors']]"
+        :header="['REST GET-Requests', 'Description']"
+        :body="[
+          ['/system', 'Requests a system-info object'],
+          ['/wifi', 'Requests a wifi-info object'],
+          ['/sensors', 'Requests the sensors object'],
+          ['/sensorstore.json', 'Requests the sensors-store form flash'],
+        ]"
         :button_text="'GET'"
         @button_clicked="handle_get_button"
       />
       <SimpleTable
         class="rounded-none sm:rounded-lg"
-        :header="['REST POST-Requests']"
-        :body="[['/wificonfig']]"
+        :header="['REST POST-Requests', 'Description']"
+        :body="[
+          ['/restart', 'Force a device restart'],
+          ['/wifireset', 'Force a WiFi-config reset'],
+          ['/wificonfig', 'Writes a given wifi-config'],
+          ['/sensorsave', 'Force save sensor-config'],
+          ['/sensorhistoryclear', 'Force delete all sensor-history'],
+        ]"
         :button_text="'POST'"
       />
       <SimpleTable
