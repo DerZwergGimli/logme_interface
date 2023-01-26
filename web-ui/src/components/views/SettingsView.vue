@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col ">
-    <Accordion flush class="border-2 rounded-xl border-gray-700">
+    <Accordion flush class="border-2 rounded-xl dark:border-gray-700">
       <accordion-panel>
         <accordion-header>System</accordion-header>
         <accordion-content>

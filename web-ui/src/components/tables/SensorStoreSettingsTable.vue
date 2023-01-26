@@ -15,13 +15,13 @@
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
         >
           <td class="py-4 px-6">Save-History to Flash</td>
-          <td class="py-4 px-6 float-right"> <Button color="default">Save</Button></td>
+          <td class="py-4 px-6 float-right"> <Button  class="w-24"  color="yellow">Save</Button></td>
         </tr>
         <tr
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
         >
           <td class="py-4 px-6">Clear-History in RAM</td>
-          <td class="py-4 px-6 float-right"> <Button color="default">Clear</Button></td>
+          <td class="py-4 px-6 float-right"> <Button  class="w-24"  color="red">Clear</Button></td>
         </tr>
       </tbody>
     </table>
