@@ -58,11 +58,46 @@ static int parse_sml_smart_meter_sensors(sml_smart_meter_sensor_t *sensor_array,
             sensor_array[index].count = (int16_t) cJSON_GetObjectItem(sensor, "count")->valueint;
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "power")))
             sensor_array[index].power = (int16_t) cJSON_GetObjectItem(sensor, "power")->valueint;
+
+
+        if (cJSON_IsObject(cJSON_GetObjectItem(sensor, "history"))) {
+            cJSON *history = cJSON_GetObjectItem(sensor, "history");
+
+            if (cJSON_IsArray(cJSON_GetObjectItem(history, "day_24_kw"))) {
+                cJSON *element = NULL;
+                int i = 0;
+                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "day_24_kw")) {
+                    sensor_array[index].history.day_24_kw[i] = (int16_t) cJSON_GetNumberValue(element);
+                    i++;
+                }
+            }
+            if (cJSON_IsArray(cJSON_GetObjectItem(history, "week_7_kw"))) {
+                cJSON *element = NULL;
+                int i = 0;
+                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "week_7_kw")) {
+                    sensor_array[index].history.week_7_kw[i] = (int16_t) cJSON_GetNumberValue(element);
+                    i++;
+                }
+            }
+            if (cJSON_IsArray(cJSON_GetObjectItem(history, "month_30_kw"))) {
+                cJSON *element = NULL;
+                int i = 0;
+                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "month_30_kw")) {
+                    sensor_array[index].history.month_30_kw[i] = (int16_t) cJSON_GetNumberValue(element);
+                    i++;
+                }
+            }
+        }
         index++;
     }
 
     cJSON_Delete(sensors);
     return status;
 }
+
+static void to_json_sml_smart_meter_sensors(sml_smart_meter_sensor_t *sensor_array, const char *json_data) {
+   
+}
+
 
 #endif //LOGME_INTERFACE_SML_SENSOR_T_H
