@@ -10,8 +10,13 @@
 #include <esp_log.h>
 #include <stdbool.h>
 #include <freertos/portmacro.h>
+#include <cJSON.h>
+#include <string.h>
 
 #include "sml_sensor_t.h"
+
+#define NELEMS(x)  (sizeof(x) / sizeof((x)[0]))
+
 
 #define USE_SENSOR SML
 typedef enum message_sensor_manager_t {
@@ -35,10 +40,19 @@ void sensor_manager_start(bool log_enable);
 
 void sensor_manager_destroy();
 
+esp_err_t sensor_manager_generate_json();
+
+esp_err_t sensor_manager_json_parse(const char *json_data);
+
 void sensor_manager_clear_info_json();
 
-bool sensor_store_lock_json_buffer(TickType_t xTicksToWait);
+bool sensor_manager_lock_json_buffer(TickType_t xTicksToWait);
+
+void sensor_manager_unlock_json_buffer();
+
+char *sensor_manager_get_json();
 
 BaseType_t sensor_manager_send_message(message_sensor_manager_t code, void *param);
+
 
 #endif //LOGME_INTERFACE_SENSOR_MANAGER_H

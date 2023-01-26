@@ -6,9 +6,6 @@
 #define LOGME_INTERFACE_SML_SENSOR_T_H
 
 
-#include <cJSON.h>
-#include <string.h>
-
 typedef struct sml_smart_meter_history_t {
     int16_t day_24_kw[24];
     int16_t week_7_kw[7];
@@ -18,7 +15,7 @@ typedef struct sml_smart_meter_history_t {
 typedef struct sml_smart_meter_sensor_t {
     int16_t id;
     char name[20];
-    int16_t count;
+    int32_t count;
     int16_t power;
     sml_smart_meter_history_t history;
 } sml_smart_meter_sensor_t;
@@ -29,75 +26,6 @@ typedef struct sml_smart_meter_ws_t {
     int32_t timestamp;
     int16_t value;
 } sml_smart_meter_ws_t;
-
-static int parse_sml_smart_meter_sensors(sml_smart_meter_sensor_t *sensor_array, const char *json_data) {
-    const cJSON *sensor = NULL;
-    cJSON *sensors = cJSON_Parse(json_data);
-    int status = 0;
-    if (sensors == NULL) {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL) {
-            ESP_LOGE("SML-Parser", "Error before: %s\n", error_ptr);
-        }
-        status = 0;
-
-        cJSON_Delete(sensors);
-        return status;
-    }
-
-    int index = 0;
-    cJSON_ArrayForEach(sensor, sensors) {
-        //cJSON *id = cJSON_GetObjectItem(sensors, "id");
-
-        //Mapping JSON
-        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "id")))
-            sensor_array[index].id = (int16_t) cJSON_GetObjectItem(sensor, "id")->valueint;
-        if (cJSON_IsString(cJSON_GetObjectItem(sensor, "name")))
-            strcpy(sensor_array[index].name, cJSON_GetObjectItem(sensor, "name")->valuestring);
-        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "count")))
-            sensor_array[index].count = (int16_t) cJSON_GetObjectItem(sensor, "count")->valueint;
-        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "power")))
-            sensor_array[index].power = (int16_t) cJSON_GetObjectItem(sensor, "power")->valueint;
-
-
-        if (cJSON_IsObject(cJSON_GetObjectItem(sensor, "history"))) {
-            cJSON *history = cJSON_GetObjectItem(sensor, "history");
-
-            if (cJSON_IsArray(cJSON_GetObjectItem(history, "day_24_kw"))) {
-                cJSON *element = NULL;
-                int i = 0;
-                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "day_24_kw")) {
-                    sensor_array[index].history.day_24_kw[i] = (int16_t) cJSON_GetNumberValue(element);
-                    i++;
-                }
-            }
-            if (cJSON_IsArray(cJSON_GetObjectItem(history, "week_7_kw"))) {
-                cJSON *element = NULL;
-                int i = 0;
-                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "week_7_kw")) {
-                    sensor_array[index].history.week_7_kw[i] = (int16_t) cJSON_GetNumberValue(element);
-                    i++;
-                }
-            }
-            if (cJSON_IsArray(cJSON_GetObjectItem(history, "month_30_kw"))) {
-                cJSON *element = NULL;
-                int i = 0;
-                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "month_30_kw")) {
-                    sensor_array[index].history.month_30_kw[i] = (int16_t) cJSON_GetNumberValue(element);
-                    i++;
-                }
-            }
-        }
-        index++;
-    }
-
-    cJSON_Delete(sensors);
-    return status;
-}
-
-static void to_json_sml_smart_meter_sensors(sml_smart_meter_sensor_t *sensor_array, const char *json_data) {
-   
-}
 
 
 #endif //LOGME_INTERFACE_SML_SENSOR_T_H

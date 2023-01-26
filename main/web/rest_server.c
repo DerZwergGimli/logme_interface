@@ -19,23 +19,19 @@ static char *http_redirect_url = NULL;
 
 /* Simple handler for light brightness control */
 static esp_err_t
-light_brightness_post_handler(httpd_req_t *req)
-{
+light_brightness_post_handler(httpd_req_t *req) {
     int total_len = req->content_len;
     int cur_len = 0;
-    char *buf = ((rest_server_context_t *)(req->user_ctx))->scratch;
+    char *buf = ((rest_server_context_t *) (req->user_ctx))->scratch;
     int received = 0;
-    if (total_len >= SCRATCH_BUFSIZE)
-    {
+    if (total_len >= SCRATCH_BUFSIZE) {
         /* Respond with 500 Internal Server Error */
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "content too long");
         return ESP_FAIL;
     }
-    while (cur_len < total_len)
-    {
+    while (cur_len < total_len) {
         received = httpd_req_recv(req, buf + cur_len, total_len);
-        if (received <= 0)
-        {
+        if (received <= 0) {
             /* Respond with 500 Internal Server Error */
             httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to post control value");
             return ESP_FAIL;
@@ -54,8 +50,7 @@ light_brightness_post_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
-static esp_err_t base_get_handler(httpd_req_t *req)
-{
+static esp_err_t base_get_handler(httpd_req_t *req) {
     char *host = NULL;
     size_t buf_len;
     esp_err_t ret = ESP_OK;
@@ -72,31 +67,36 @@ static esp_err_t base_get_handler(httpd_req_t *req)
     size_t req_hdr_host_len = httpd_req_get_hdr_value_len(req, "Host");
     char req_hdr_host_val[req_hdr_host_len + 1];
 
-    esp_err_t res = httpd_req_get_hdr_value_str(req, "Host", (char *)&req_hdr_host_val, sizeof(char) * req_hdr_host_len + 1);
-    if (res != ESP_OK)
-    {
+    esp_err_t res = httpd_req_get_hdr_value_str(req, "Host", (char *) &req_hdr_host_val,
+                                                sizeof(char) * req_hdr_host_len + 1);
+    if (res != ESP_OK) {
         ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: %d", res);
 
-        switch (res)
-        {
-        case ESP_ERR_NOT_FOUND:
-            ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: ESP_ERR_NOT_FOUND: Key not found: %d", res);
-            break;
+        switch (res) {
+            case ESP_ERR_NOT_FOUND:
+                ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: ESP_ERR_NOT_FOUND: Key not found: %d",
+                         res);
+                break;
 
-        case ESP_ERR_INVALID_ARG:
-            ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: ESP_ERR_INVALID_ARG: Null arguments: %d", res);
-            break;
+            case ESP_ERR_INVALID_ARG:
+                ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: ESP_ERR_INVALID_ARG: Null arguments: %d",
+                         res);
+                break;
 
-        case ESP_ERR_HTTPD_INVALID_REQ:
-            ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: ESP_ERR_HTTPD_INVALID_REQ: Invalid HTTP request pointer: %d", res);
-            break;
+            case ESP_ERR_HTTPD_INVALID_REQ:
+                ESP_LOGE(HTTP_SERVER_TAG,
+                         "failed getting HOST header value: ESP_ERR_HTTPD_INVALID_REQ: Invalid HTTP request pointer: %d",
+                         res);
+                break;
 
-        case ESP_ERR_HTTPD_RESULT_TRUNC:
-            ESP_LOGE(HTTP_SERVER_TAG, "failed getting HOST header value: ESP_ERR_HTTPD_RESULT_TRUNC: Value string truncated: %d", res);
-            break;
+            case ESP_ERR_HTTPD_RESULT_TRUNC:
+                ESP_LOGE(HTTP_SERVER_TAG,
+                         "failed getting HOST header value: ESP_ERR_HTTPD_RESULT_TRUNC: Value string truncated: %d",
+                         res);
+                break;
 
-        default:
-            break;
+            default:
+                break;
         }
     }
 
@@ -104,8 +104,7 @@ static esp_err_t base_get_handler(httpd_req_t *req)
 
     const char redir_trigger_host[] = "connectivitycheck.gstatic.com";
 
-    if (strncmp(req_hdr_host_val, redir_trigger_host, strlen(redir_trigger_host)) == 0)
-    {
+    if (strncmp(req_hdr_host_val, redir_trigger_host, strlen(redir_trigger_host)) == 0) {
         const char resp[] = "302 Found";
 
         ESP_LOGI(HTTP_SERVER_TAG, "Detected redirect trigger HOST: %s", redir_trigger_host);
@@ -120,12 +119,9 @@ static esp_err_t base_get_handler(httpd_req_t *req)
 
         httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
         return ESP_OK;
-    }
-    else
-    {
+    } else {
 
-        if (host != NULL && !strstr(host, DEFAULT_AP_IP) && !access_from_sta_ip)
-        {
+        if (host != NULL && !strstr(host, DEFAULT_AP_IP) && !access_from_sta_ip) {
 
             /* Captive Portal functionality */
             /* 302 Redirect to IP of the access point */
@@ -133,26 +129,19 @@ static esp_err_t base_get_handler(httpd_req_t *req)
             httpd_resp_set_hdr(req, http_location_hdr, http_redirect_url);
             httpd_resp_send(req, NULL, 0);
             return ESP_OK;
-        }
-
-        else
-        {
+        } else {
 
             char filepath[FILE_PATH_MAX];
 
-            rest_server_context_t *rest_context = (rest_server_context_t *)req->user_ctx;
+            rest_server_context_t *rest_context = (rest_server_context_t *) req->user_ctx;
             strlcpy(filepath, rest_context->base_path, sizeof(filepath));
-            if (strcmp(req->uri, http_root_url) == 0)
-            {
+            if (strcmp(req->uri, http_root_url) == 0) {
                 strlcat(filepath, "/index.html", sizeof(filepath));
-            }
-            else
-            {
+            } else {
                 strlcat(filepath, req->uri, sizeof(filepath));
             }
             int fd = open(filepath, O_RDONLY, 0);
-            if (fd == -1)
-            {
+            if (fd == -1) {
                 ESP_LOGE(HTTP_SERVER_TAG, "Failed to open file : %s", filepath);
                 /* Respond with 500 Internal Server Error */
 
@@ -164,19 +153,14 @@ static esp_err_t base_get_handler(httpd_req_t *req)
 
             char *chunk = rest_context->scratch;
             ssize_t read_bytes;
-            do
-            {
+            do {
                 /* Read file in chunks into the scratch buffer */
                 read_bytes = read(fd, chunk, SCRATCH_BUFSIZE);
-                if (read_bytes == -1)
-                {
+                if (read_bytes == -1) {
                     ESP_LOGE(HTTP_SERVER_TAG, "Failed to read file : %s", filepath);
-                }
-                else if (read_bytes > 0)
-                {
+                } else if (read_bytes > 0) {
                     /* Send the buffer contents as HTTP response chunk */
-                    if (httpd_resp_send_chunk(req, chunk, read_bytes) != ESP_OK)
-                    {
+                    if (httpd_resp_send_chunk(req, chunk, read_bytes) != ESP_OK) {
                         close(fd);
                         ESP_LOGE(HTTP_SERVER_TAG, "File sending failed!");
                         /* Abort sending file */
@@ -197,8 +181,7 @@ static esp_err_t base_get_handler(httpd_req_t *req)
     }
 }
 
-static esp_err_t rest_common_get_handler(httpd_req_t *req)
-{
+static esp_err_t rest_common_get_handler(httpd_req_t *req) {
     char *host = NULL;
     size_t buf_len;
     esp_err_t ret = ESP_OK;
@@ -210,8 +193,7 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
     bool access_from_sta_ip = host != NULL ? strstr(host, wifi_manager_get_sta_ip_string()) : false;
     wifi_manager_unlock_sta_ip_string();
 
-    if (host != NULL && !strstr(host, DEFAULT_AP_IP) && !access_from_sta_ip)
-    {
+    if (host != NULL && !strstr(host, DEFAULT_AP_IP) && !access_from_sta_ip) {
 
         /* Captive Portal functionality */
         /* 302 Redirect to IP of the access point */
@@ -219,25 +201,19 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
         httpd_resp_set_hdr(req, http_location_hdr, http_redirect_url);
         httpd_resp_send(req, NULL, 0);
         return ESP_OK;
-    }
-    else
-    {
+    } else {
 
         char filepath[FILE_PATH_MAX];
 
-        rest_server_context_t *rest_context = (rest_server_context_t *)req->user_ctx;
+        rest_server_context_t *rest_context = (rest_server_context_t *) req->user_ctx;
         strlcpy(filepath, rest_context->base_path, sizeof(filepath));
-        if (strcmp(req->uri, http_root_url) == 0)
-        {
+        if (strcmp(req->uri, http_root_url) == 0) {
             strlcat(filepath, "/index.html", sizeof(filepath));
-        }
-        else
-        {
+        } else {
             strlcat(filepath, req->uri, sizeof(filepath));
         }
         int fd = open(filepath, O_RDONLY, 0);
-        if (fd == -1)
-        {
+        if (fd == -1) {
             ESP_LOGE(HTTP_SERVER_TAG, "Failed to open file : %s", filepath);
             /* Respond with 500 Internal Server Error */
             httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "Failed to read existing file");
@@ -248,19 +224,14 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
 
         char *chunk = rest_context->scratch;
         ssize_t read_bytes;
-        do
-        {
+        do {
             /* Read file in chunks into the scratch buffer */
             read_bytes = read(fd, chunk, SCRATCH_BUFSIZE);
-            if (read_bytes == -1)
-            {
+            if (read_bytes == -1) {
                 ESP_LOGE(HTTP_SERVER_TAG, "Failed to read file : %s", filepath);
-            }
-            else if (read_bytes > 0)
-            {
+            } else if (read_bytes > 0) {
                 /* Send the buffer contents as HTTP response chunk */
-                if (httpd_resp_send_chunk(req, chunk, read_bytes) != ESP_OK)
-                {
+                if (httpd_resp_send_chunk(req, chunk, read_bytes) != ESP_OK) {
                     close(fd);
                     ESP_LOGE(HTTP_SERVER_TAG, "File sending failed!");
                     /* Abort sending file */
@@ -280,11 +251,9 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req)
     }
 }
 
-esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
-{
+esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
 
-    if (server_handle == NULL)
-    {
+    if (server_handle == NULL) {
         ESP_LOGI(REST_TAG, "Starting HTTP Server");
 
         // esp_netif_t *netif_config;
@@ -298,8 +267,7 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
         // rest_context->sensors = sensors;
 
         /* generate the URLs */
-        if (http_root_url == NULL)
-        {
+        if (http_root_url == NULL) {
             int root_len = strlen(CONFIG_WEBAPP_LOCATION);
 
             /* root url, eg "/"   */
@@ -313,12 +281,9 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
             http_redirect_url = malloc(sizeof(char) * redirect_sz);
             *http_redirect_url = '\0';
 
-            if (root_len == 1)
-            {
+            if (root_len == 1) {
                 snprintf(http_redirect_url, redirect_sz, "http://%s", DEFAULT_AP_IP);
-            }
-            else
-            {
+            } else {
                 snprintf(http_redirect_url, redirect_sz, "http://%s%s", DEFAULT_AP_IP, CONFIG_WEBAPP_LOCATION);
             }
         }
@@ -334,43 +299,43 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
         // Add Endpoints to REST-Server
         /* URI handler for fetching SYSTEM-info */
         httpd_uri_t rest_get_system_uri = {
-            .uri = "/system",
-            .method = HTTP_GET,
-            .handler = rest_get_system_handler,
-            .user_ctx = rest_context};
+                .uri = "/system",
+                .method = HTTP_GET,
+                .handler = rest_get_system_handler,
+                .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &rest_get_system_uri);
 
         /* URI handler for fetching WIFI-info */
         httpd_uri_t rest_get_ap_uri = {
-            .uri = "/ap",
-            .method = HTTP_GET,
-            .handler = rest_get_ap_handler,
-            .user_ctx = rest_context};
+                .uri = "/ap",
+                .method = HTTP_GET,
+                .handler = rest_get_ap_handler,
+                .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &rest_get_ap_uri);
 
         /* URI handler for fetching WIFI-info */
         httpd_uri_t rest_get_wifi_uri = {
-            .uri = "/wifi",
-            .method = HTTP_GET,
-            .handler = rest_get_wifi_handler,
-            .user_ctx = rest_context};
+                .uri = "/wifi",
+                .method = HTTP_GET,
+                .handler = rest_get_wifi_handler,
+                .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &rest_get_wifi_uri);
 
-        // /* URI handler for fetching Sensors */
-        // httpd_uri_t rest_get_sensors_uri = {
-        //     .uri = "/sensors",
-        //     .method = HTTP_GET,
-        //     .handler = rest_get_sensors_handler,
-        //     .user_ctx = rest_context};
-        // httpd_register_uri_handler(server, &rest_get_sensors_uri);
+        /* URI handler for fetching Sensors */
+        httpd_uri_t rest_get_sensors_uri = {
+                .uri = "/sensors",
+                .method = HTTP_GET,
+                .handler = rest_get_sensors_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &rest_get_sensors_uri);
 
-         /* URI handler for WiFi-Config  */
-         httpd_uri_t rest_post_wifiConfig_uri = {
-             .uri = "/wificonfig",
-             .method = HTTP_POST,
-             .handler = rest_post_wifiConfig_handler,
-             .user_ctx = rest_context};
-         httpd_register_uri_handler(server_handle, &rest_post_wifiConfig_uri);
+        /* URI handler for WiFi-Config  */
+        httpd_uri_t rest_post_wifiConfig_uri = {
+                .uri = "/wificonfig",
+                .method = HTTP_POST,
+                .handler = rest_post_wifiConfig_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &rest_post_wifiConfig_uri);
 
         // httpd_uri_t wss_sensor_uri = {
         //     .uri = "/websocket",
@@ -389,10 +354,10 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
         // httpd_register_uri_handler(server, &wss_subscribe_uri);
 
         httpd_uri_t common_base_get_uri = {
-            .uri = "*",
-            .method = HTTP_GET,
-            .handler = base_get_handler,
-            .user_ctx = rest_context};
+                .uri = "*",
+                .method = HTTP_GET,
+                .handler = base_get_handler,
+                .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &common_base_get_uri);
 
         /* URI handler for getting web server files */
@@ -406,27 +371,23 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable)
         // wss_server_send_messages(&server, sensors);
 
         return ESP_OK;
-    err_start:
+        err_start:
         free(rest_context);
-    err:
+        err:
         return ESP_FAIL;
     }
     return ESP_OK;
 }
 
-esp_err_t stop_rest_server()
-{
-    if (server_handle != NULL)
-    {
+esp_err_t stop_rest_server() {
+    if (server_handle != NULL) {
 
         /* dealloc URLs */
-        if (http_root_url)
-        {
+        if (http_root_url) {
             free(http_root_url);
             http_root_url = NULL;
         }
-        if (http_redirect_url)
-        {
+        if (http_redirect_url) {
             free(http_redirect_url);
             http_redirect_url = NULL;
         }
