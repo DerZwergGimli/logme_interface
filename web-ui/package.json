@@ -13,7 +13,7 @@
     "@vueuse/core": "^9.10.0",
     "apexcharts": "^3.36.3",
     "chart.js": "^4.1.1",
-    "flowbite": "^1.6.2",
+    "flowbite": "^1.6.3",
     "flowbite-vue": "^0.0.10",
     "mosha-vue-toastify": "^1.0.23",
     "pinia": "^2.0.28",

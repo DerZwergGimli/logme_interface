@@ -3,7 +3,7 @@
     <div class="space-y-3">
       <h3 class="text-center dark:text-white underline pb-2">System Info</h3>
       <div>
-        <simple-table
+        <system-table
           :header="system_info_table_header"
           :body="system_info_table_content"
         />
@@ -12,17 +12,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import SimpleTable from '../../tables/SimpleTable.vue';
 import { onMounted, ref } from 'vue';
+import SystemTable from "../../tables/SystemTable.vue";
 
 const system_info_table_header = ref(['System', 'Value']);
 const system_info_table_content = ref([
   ['Target', '---'],
   ['Chip Version', '---'],
   ['CPU', '---'],
-  ['Flash size', '---'],
-  ['Total HEAP', '---'],
-  ['Free HEAP', '---'],
+  ['Flash Size', '---'],
+  ['HEAP', '10' , '1'],
   ['Uptime', '---'],
 ]);
 
@@ -37,8 +36,8 @@ onMounted(async () => {
       system_info_table_content.value[2][1] = json.info.cores + ' Cores';
       system_info_table_content.value[3][1] = json.info.flash_size_MB + ' MB';
       system_info_table_content.value[4][1] = json.info.total_heap;
-      system_info_table_content.value[5][1] = json.info.free_heap;
-      system_info_table_content.value[6][1] =
+      system_info_table_content.value[4][2] = json.info.free_heap;
+      system_info_table_content.value[5][1] =
         convert_time(json.info.uptime_ms) ?? 'error';
     });
 });
