@@ -100,7 +100,12 @@ function action_wifi_modal(network_ssid: any) {
             /></Button>
           </div>
         </div>
-        <simple-table
+        <div v-if="networks_table_content.length === 0">
+          <p class="flex text-center">
+            - Please refresh networks - 
+          </p>
+        </div>
+        <simple-table v-else
           :header="networks_table_header"
           :body="networks_table_content"
           :button_text="'Connect'"

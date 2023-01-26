@@ -10,7 +10,7 @@ sensorStore.fetch()
 <template>
   <div class="flex flex-col justify-between min-h-screen">
     <header-component class="border-b mb-3 sticky top-0 z-50" />
-    <router-view class="mb-auto my-3 sm:mx-2"></router-view>
+    <router-view class="mb-auto my-3 mx-1 sm:mx-2"></router-view>
     <footer-component class="w-full bottom-0" />
   </div>
 </template>
