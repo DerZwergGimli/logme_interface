@@ -22,14 +22,14 @@
         :key="idx"
         class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
       >
-        <td v-if="element[0] === 'HEAP'"  class="py-4 px-6">
+        <td v-if="element[0]  === 'HEAP'"  class="py-4 px-6">
           HEAP
         </td>
         <td v-if="element[0] === 'HEAP'"  class="py-4 px-6">
-          <Progress :progress="calc_percentage(element[2], element[1])" :labelProgress="true" labelPosition="inside" size="lg"></Progress>
+          <Progress :progress="calc_percentage(parseInt(element[2]), parseInt(element[1]))" :labelProgress="true" labelPosition="inside" size="lg"></Progress>
           <div class="flex flex-row mx-1">
             <div class="flex w-full">USED/TOTAL</div>
-            <div class=" text-right">{{element[2]}}/{{element[1]}}</div>
+            <div class=" text-right">{{parseInt(element[2])}}/ {{parseInt(element[1])}}</div>
           </div>
         </td>
         <td v-else v-for="e in element" :key="e" class="py-4 px-6">
@@ -51,7 +51,6 @@ const props = defineProps({
     default: ['System', 'Value'],
   },
   body: {
-    type: Array,
     default: [
       ['Target', '---'],
       ['Chip Version', '---'],
