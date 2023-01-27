@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-row space-x-2 rounded-lg border-2 dark:border-black dark:shadow-inner p-1 dark:text-white dark:bg-gradient-to-r dark:from-indigo-500 dark:via-purple-500 dark:to-pink-500"
+    class="flex flex-row space-x-2 rounded-lg border-2 dark:border-black dark:shadow-inner p-1 dark:text-white bg-gradient-to-r from-indigo-400 to-pink-400 dark:from-indigo-800 dark:to-pink-800"
   >
     <div class="flex m-2 items-center justify-center">
       <div v-if="props.icon === 'info'">

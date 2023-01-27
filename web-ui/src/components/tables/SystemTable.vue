@@ -74,13 +74,13 @@ function calc_percentage(a: number, b: number): number {
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <td class="py-4 px-6">Reset-WiFi</td>
           <td class="py-4 px-6 float-right">
-            <Button class="w-24" color="red" @click="action_post('/reset')"
+            <Button class="w-24" color="red" @click="action_post('/wifireset')"
               >Reset</Button
             >
           </td>
         </tr>
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td class="py-4 px-6">Restart</td>
+          <td class="py-4 px-6">Device-Restart</td>
           <td class="py-4 px-6 float-right">
             <Button class="w-24" color="yellow" @click="action_post('/restart')"
               >Restart</Button

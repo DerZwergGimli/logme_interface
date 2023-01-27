@@ -35,6 +35,26 @@ static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
 
 /**
  * POST-Request
+ * -> '/wifireset'
+ */
+static esp_err_t rest_post_wifi_reset_handler(httpd_req_t *req) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+    httpd_resp_set_type(req, http_content_type_plain);
+    httpd_resp_sendstr(req, "WiFi set to: AP-Mode!");
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+    wifi_manager_send_message(WM_ORDER_START_AP, NULL);
+
+    return ESP_OK;
+}
+
+
+/**
+ * POST-Request
  * -> '/wifiConfig'
  */
 static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {

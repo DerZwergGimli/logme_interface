@@ -308,6 +308,17 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
                 .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &rest_post_restart_uri);
 
+
+
+        /* URI handler for Restart  */
+        httpd_uri_t rest_post_wifi_reset_uri = {
+                .uri = "/wifireset",
+                .method = HTTP_POST,
+                .handler = rest_post_wifi_reset_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &rest_post_wifi_reset_uri);
+
+
         /* URI handler for WiFi-Config  */
         httpd_uri_t rest_post_wifiConfig_uri = {
                 .uri = "/wificonfig",
@@ -374,7 +385,7 @@ esp_err_t stop_rest_server() {
         httpd_stop(server_handle);
         server_handle = NULL;
 
-    ESP_LOGI(HTTP_SERVER_TAG, "Stopped reset server!");
+        ESP_LOGI(HTTP_SERVER_TAG, "Stopped reset server!");
     }
 
     return ESP_OK;
