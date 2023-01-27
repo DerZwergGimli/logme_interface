@@ -56,7 +56,7 @@ jobs:
         with:
           tag_name: ${{ github.run_number}}
           release_name: Release ${{ github.run_number}}
-      - name: Upload release asset
+      - name: Upload release assets
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -64,3 +64,10 @@ jobs:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: ./LogME.zip
           asset_name: site-v${{ github.run_number }}.zip
+      - name: Upload release binary
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: LogME/*/*.bin
+          generateReleaseNotes: true
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
