@@ -36,7 +36,6 @@ jobs:
     needs: build-project
     
     steps:
-      - name: Download artifact
 
       - name: Create Github-Release
         uses: actions/create-release@v1
