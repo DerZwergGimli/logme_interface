@@ -44,8 +44,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: LogME
-      - name: Test artifact
-        run: ls -R
       - name: Archive Project
         uses: thedoctor0/zip-release@master
         with:
