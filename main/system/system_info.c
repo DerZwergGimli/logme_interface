@@ -12,6 +12,7 @@
 #include <esp_chip_info.h>
 #include <esp_timer.h>
 #include <esp_flash.h>
+#include <lwip/apps/sntp.h>
 #include "cJSON.h"
 
 #define JSON_SYSTEM_INFO_SIZE 250
@@ -76,6 +77,9 @@ void system_info(void *pvParameters) {
                 case SI_INIT: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_INIT");
                     system_info_send_message(SI_UPDATE, NULL);
+                    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+                    sntp_setservername(0, "pool.ntp.org");
+                    sntp_init();
                 }
                     break;
                 case SI_IDLE: {
@@ -135,6 +139,8 @@ esp_err_t system_info_generate_info_json() {
     esp_chip_info(&chip_info);
     uint32_t flash_size;
     ESP_ERROR_CHECK(esp_flash_get_size(NULL, &flash_size));
+    time_t time_now = time(0);
+    char timestamp[20];
 
     //Build JSON
     cJSON *root = cJSON_CreateObject();
@@ -147,6 +153,8 @@ esp_err_t system_info_generate_info_json() {
     cJSON_AddNumberToObject(info, "total_heap", heap_caps_get_total_size(MALLOC_CAP_8BIT));
     cJSON_AddNumberToObject(info, "free_heap", esp_get_minimum_free_heap_size());
     cJSON_AddNumberToObject(info, "uptime_ms", (uint32_t) (esp_timer_get_time() / 1000));
+    snprintf(timestamp, sizeof(timestamp), "%s", asctime(localtime(&time_now)));
+    cJSON_AddStringToObject(info, "time", timestamp);
     cJSON_AddItemToObject(root, "info", info);
 
     const char *json_object = cJSON_Print(root);

@@ -13,7 +13,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import SystemTable from "../../tables/SystemTable.vue";
+import SystemTable from '../../tables/SystemTable.vue';
 
 const system_info_table_header = ref(['System', 'Value']);
 const system_info_table_content = ref([
@@ -21,8 +21,9 @@ const system_info_table_content = ref([
   ['Chip Version', '---'],
   ['CPU', '---'],
   ['Flash Size', '---'],
-  ['HEAP', '10' , '1'],
+  ['HEAP', '10', '1'],
   ['Uptime', '---'],
+  ['Time [UTC]', '---'],
 ]);
 
 onMounted(async () => {
@@ -39,6 +40,7 @@ onMounted(async () => {
       system_info_table_content.value[4][2] = json.info.free_heap;
       system_info_table_content.value[5][1] =
         convert_time(json.info.uptime_ms) ?? 'error';
+      system_info_table_content.value[6][1] = json.info.time;
     });
 });
 

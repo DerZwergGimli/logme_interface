@@ -8,7 +8,8 @@
       "flash_size_MB": 4,
       "total_heap": 299712,
       "free_heap": 174384,
-      "uptime_ms": 1502
+      "uptime_ms": 1502,
+      "time": "Fri Jan 27 14:33:57"
     }
   },
   "wifi": {
