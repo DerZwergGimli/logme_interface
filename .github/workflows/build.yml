@@ -1,6 +1,9 @@
 name: Build LogME
 
-on: push
+on:
+  push:
+    tags:
+      - 'v*'
 
 permissions:
   contents: write
@@ -53,8 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number}}
-          release_name: Release ${{ github.run_number}}
+          tag_name: ${{ github.ref}}
+          release_name: Release ${{ github.ref}}
       - name: Upload release assets .zip
         uses: actions/upload-release-asset@v1
         env:
@@ -62,7 +65,7 @@ jobs:
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: ./LogME.zip
-          asset_name: site-v${{ github.run_number }}.zip
+          asset_name: site-v${{ github.ref }}.zip
           asset_content_type: application/zip
       - name: Upload release assets .bin
         uses: actions/upload-release-asset@v1
@@ -71,13 +74,5 @@ jobs:
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: ./logme_interface.bin
-          asset_name: logme_interface_v${{ github.run_number }}.bin
+          asset_name: logme_interface_v${{ github.ref }}.bin
           asset_content_type: application/bin
-      - name: Upload release binary
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: LogME/*.bin
-          generateReleaseNotes: true
-          allowUpdates: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ github.run_number }}
