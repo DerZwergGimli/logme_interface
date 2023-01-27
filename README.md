@@ -8,7 +8,7 @@
 
 This project is written with ESP-IDFv5.0 using an ESP-32WROOM
 
-This project is for reading data using OptialInterfaces from the following devices:
+This project is for reading data using Optical-Interfaces from the following devices:
 
 - [Smart meter]('https://en.wikipedia.org/wiki/Smart_meter') via SmartMeterLanguage(SML) - Serial
 - [Heat meter]('https://en.wikipedia.org/wiki/Heat_meter') [under-construction]
