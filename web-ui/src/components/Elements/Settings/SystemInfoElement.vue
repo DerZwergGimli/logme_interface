@@ -23,7 +23,7 @@ const system_info_table_content = ref([
   ['Flash Size', '---'],
   ['HEAP', '10', '1'],
   ['Uptime', '---'],
-  ['Time [UTC ]', '---'],
+  ['Time [UTC]', '---'],
 ]);
 
 onMounted(async () => {

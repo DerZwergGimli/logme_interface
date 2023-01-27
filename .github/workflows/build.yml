@@ -3,7 +3,7 @@ name: Build LogME
 on: [ push ]
 
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
 
 jobs:
