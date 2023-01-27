@@ -68,7 +68,7 @@ jobs:
       - name: Upload release binary
         uses: ncipollo/release-action@v1
         with:
-          artifacts: LogME/*/*.bin
+          artifacts: ./LogME/*.bin
           generateReleaseNotes: true
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
