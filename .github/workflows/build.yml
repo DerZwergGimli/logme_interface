@@ -72,7 +72,7 @@ jobs:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: ./Logme/logme_interface.bin
           asset_name: v${{ github.run_number }}.bin
-          asset_content_type: application/zip
+          asset_content_type: application/bin
       - name: Upload release binary
         uses: ncipollo/release-action@v1
         with:
