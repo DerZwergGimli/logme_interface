@@ -1,6 +1,6 @@
 name: Build LogME
 
-on: [ push ]
+on: push
 
 permissions:
   contents: write
