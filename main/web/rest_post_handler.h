@@ -22,11 +22,14 @@ static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
     httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
 
-    cJSON *response_json = NULL;
+    cJSON *response_json = cJSON_CreateObject();
     json_status_response_create(response_json, STATUS_OK, "Restarting in 3s...");
     httpd_resp_set_type(req, http_content_type_json);
-    httpd_resp_sendstr(req, cJSON_Print(response_json));
+    const char *json_buff = cJSON_Print(response_json);
+    httpd_resp_sendstr(req, json_buff);
+    free((void *) json_buff);
     cJSON_Delete(response_json);
+
 
     vTaskDelay(pdMS_TO_TICKS(3000));
 

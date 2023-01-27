@@ -14,20 +14,20 @@ typedef enum status_response_t {
 } status_response_t;
 
 static void json_status_response_create(cJSON *json_response, status_response_t status, char *message) {
-    json_response = cJSON_CreateObject();
+
 
     switch (status) {
         case STATUS_OK:
-            cJSON_AddNumberToObject(json_response, "status_code", status);
-            cJSON_AddStringToObject(json_response, "status_code", "STATUS_OK");
+            cJSON_AddNumberToObject(json_response, "code", status);
+            cJSON_AddStringToObject(json_response, "status", "STATUS_OK");
             break;
         case STATUS_ERROR:
-            cJSON_AddNumberToObject(json_response, "status_code", status);
-            cJSON_AddStringToObject(json_response, "status_code", "STATUS_ERROR");
+            cJSON_AddNumberToObject(json_response, "code", status);
+            cJSON_AddStringToObject(json_response, "status", "STATUS_ERROR");
             break;
         case STATUS_WARNING:
-            cJSON_AddNumberToObject(json_response, "status_code", status);
-            cJSON_AddStringToObject(json_response, "status_code", "STATUS_WARNING");
+            cJSON_AddNumberToObject(json_response, "code", status);
+            cJSON_AddStringToObject(json_response, "status", "STATUS_WARNING");
             break;
         default:
             break;
