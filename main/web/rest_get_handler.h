@@ -15,7 +15,7 @@
  */
 static esp_err_t rest_get_system_handler(httpd_req_t *req) {
     ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
-
+    system_info_send_message(SI_UPDATE, NULL);
 
     if (system_info_lock_info_json_buffer(pdMS_TO_TICKS(1000))) {
         const char *json_buff = system_info_get_info_json();

@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import SimpleTable from '../../tables/SimpleTable.vue';
@@ -15,7 +14,6 @@ const selected_network_ssid = ref('network_ssid');
 const wifi_config_table_header = ref(['WiFi', 'Value']);
 const wifi_config_table_content = ref([
   ['SSID', '---'],
-  ['RSSI', '---'],
   ['IP', '---'],
   ['Netmask', '---'],
   ['Gateway', '---'],
@@ -36,10 +34,9 @@ function fetch_endpoint_wifi() {
     .then(json => {
       console.info(json);
       wifi_config_table_content.value[0][1] = json.ssid;
-      wifi_config_table_content.value[1][1] = json.rssi;
-      wifi_config_table_content.value[2][1] = json.ip;
-      wifi_config_table_content.value[3][1] = json.netmask;
-      wifi_config_table_content.value[4][1] = json.gateway;
+      wifi_config_table_content.value[1][1] = json.ip;
+      wifi_config_table_content.value[2][1] = json.netmask;
+      wifi_config_table_content.value[3][1] = json.gateway;
     })
     .catch(err => console.error(err));
 }
@@ -100,12 +97,14 @@ function action_wifi_modal(network_ssid: any) {
             /></Button>
           </div>
         </div>
-        <div v-if="networks_table_content.length === 0" class="flex text-center">
-          <p>
-            --- Please refresh networks ---
-          </p>
+        <div
+          v-if="networks_table_content.length === 0"
+          class="flex text-center"
+        >
+          <p>--- Please refresh networks ---</p>
         </div>
-        <simple-table v-else
+        <simple-table
+          v-else
           :header="networks_table_header"
           :body="networks_table_content"
           :button_text="'Connect'"
@@ -116,7 +115,6 @@ function action_wifi_modal(network_ssid: any) {
           "
         />
       </div>
-
     </div>
   </div>
   <div v-if="modalShown">

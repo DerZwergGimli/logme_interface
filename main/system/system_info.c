@@ -78,6 +78,10 @@ void system_info(void *pvParameters) {
                     system_info_send_message(SI_UPDATE, NULL);
                 }
                     break;
+                case SI_IDLE: {
+                    ESP_LOGI(SYSTEM_INFO_TAG, "SI_IDLE");
+                }
+                    break;
                 case SI_UPDATE: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_UPDATE");
                     if (system_info_lock_info_json_buffer(pdMS_TO_TICKS(1000))) {
@@ -86,15 +90,10 @@ void system_info(void *pvParameters) {
                     } else {
                         ESP_LOGE(SYSTEM_INFO_TAG, "could not get access to json mutex in system_info");
                     }
-                    system_info_send_message(SI_SLEEP, NULL);
+                    system_info_send_message(SI_IDLE, NULL);
                 }
                     break;
-                case SI_SLEEP: {
-                    ESP_LOGI(SYSTEM_INFO_TAG, "SI_SLEEP");
-                    //vTaskDelay(pdMS_TO_TICKS(1000));
-                    //system_info_send_message(SI_UPDATE, NULL);
-                }
-                    break;
+
                 case SI_KILL: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_KILL");
                     system_info_destroy();
@@ -155,7 +154,6 @@ esp_err_t system_info_generate_info_json() {
     free((void *) json_object);
 
     cJSON_Delete(root);
-    ESP_LOGI(SYSTEM_INFO_TAG, "%s", system_info_json);
     return ESP_OK;
 }
 
