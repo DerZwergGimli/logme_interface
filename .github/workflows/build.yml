@@ -31,7 +31,7 @@ jobs:
           name: LogME
           path: ./build
   
-  create-release:
+  create-project:
     runs-on: ubuntu-latest
     needs: build-project
     
@@ -42,6 +42,10 @@ jobs:
           name: LogME
       - name: Test artifact
         run: ls -R
+      - name: Archive Project
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: LogME.zip
 
       - name: Create Github-Release
         uses: actions/create-release@v1
