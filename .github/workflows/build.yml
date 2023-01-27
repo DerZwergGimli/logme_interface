@@ -62,5 +62,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          assets_path: ./LogME.zip
+          asset_path: ./LogME.zip
           asset_name: site-v${{ github.run_number }}.zip
