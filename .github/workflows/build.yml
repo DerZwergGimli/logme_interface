@@ -1,12 +1,11 @@
-name: build-esp-idf
+name: Build LogME
 
 on: [push]
 
 jobs:
-  build:
-
+  build-project:
     runs-on: ubuntu-latest
-
+    
     steps:
     - name: Checkout repo
       uses: actions/checkout@v2
@@ -26,6 +25,19 @@ jobs:
         esp_idf_version: v5.0
         target: esp32
         path: './'
+    - name: Upload project
+      uses: actions/upload-artifact@v3
+      with:
+        name: logME
+        path: ./build
+        
+  create-release:
+    runs-on: ubuntu-latest
+    needs: build-project
+    
+    steps:
+    - name: Download artifact
+    
     - name: Create Github-Release
       uses: actions/create-release@v1
       env:
