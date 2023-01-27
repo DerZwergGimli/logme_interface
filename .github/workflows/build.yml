@@ -70,7 +70,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: ./*.bin
+          asset_path: ./logme_interface.bin
           asset_name: v${{ github.run_number }}.bin
           asset_content_type: application/bin
       - name: Upload release binary
