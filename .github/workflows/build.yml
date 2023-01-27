@@ -53,5 +53,3 @@ jobs:
         with:
           tag_name: ${{ github.run_number}}
           release_name: Release ${{ github.run_number}}
-          
-          
