@@ -25,6 +25,7 @@ typedef enum message_sensor_manager_t {
     SM_INIT = 2,
     SM_LOOP = 3,
     SM_SAVE = 4,
+    SM_KILL = 5,
 
 } message_sensor_manager_t;
 

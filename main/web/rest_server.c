@@ -17,6 +17,10 @@ static httpd_handle_t server_handle = NULL;
 static char *http_root_url = NULL;
 static char *http_redirect_url = NULL;
 
+httpd_handle_t *get_rest_server() {
+    return &server_handle;
+};
+
 static esp_err_t base_get_handler(httpd_req_t *req) {
     char *host = NULL;
     size_t buf_len;
@@ -260,6 +264,7 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         config.lru_purge_enable = lru_purge_enable;
 
         REST_CHECK(httpd_start(&server_handle, &config) == ESP_OK, "Start server failed", err_start);
+
         ESP_LOGI(REST_TAG, "Started HTTP Server");
 
         // Add Endpoints to REST-Server
@@ -368,8 +373,9 @@ esp_err_t stop_rest_server() {
 
         httpd_stop(server_handle);
         server_handle = NULL;
-    }
 
     ESP_LOGI(HTTP_SERVER_TAG, "Stopped reset server!");
+    }
+
     return ESP_OK;
 }

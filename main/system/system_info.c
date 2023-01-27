@@ -95,6 +95,10 @@ void system_info(void *pvParameters) {
                     //system_info_send_message(SI_UPDATE, NULL);
                 }
                     break;
+                case SI_KILL: {
+                    ESP_LOGI(SYSTEM_INFO_TAG, "SI_KILL");
+                    system_info_destroy();
+                }
                 default: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_DEFAULT");
                     ESP_LOGE(SYSTEM_INFO_TAG, "Destroy");

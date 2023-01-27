@@ -23,7 +23,8 @@ typedef enum message_system_code_t {
     SI_NONE = 0,
     SI_INIT = 1,
     SI_UPDATE = 2,
-    SI_SLEEP = 3
+    SI_SLEEP = 3,
+    SI_KILL = 4,
 } message_system_code_t;
 
 typedef struct {

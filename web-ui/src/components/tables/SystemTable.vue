@@ -63,7 +63,7 @@ function calc_percentage(a: number, b: number): number {
             <div class="flex flex-row mx-1">
               <div class="flex w-full">USED/TOTAL</div>
               <div class="text-right">
-                {{ parseInt(element[2]) }}/ {{ parseInt(element[1]) }}
+                {{ parseInt(element[2]) }}/{{ parseInt(element[1]) }}
               </div>
             </div>
           </td>
@@ -74,7 +74,7 @@ function calc_percentage(a: number, b: number): number {
         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <td class="py-4 px-6">Reset-WiFi</td>
           <td class="py-4 px-6 float-right">
-            <Button class="w-24" color="red" @click="action_post('/restart')"
+            <Button class="w-24" color="red" @click="action_post('/reset')"
               >Reset</Button
             >
           </td>

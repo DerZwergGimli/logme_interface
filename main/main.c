@@ -77,13 +77,13 @@ void app_main(void) {
 
 
     // Initialize SystemInfo
-    //system_info_start(true);
+    system_info_start(true);
 
     // Initialize Sensor Manager
-    //sensor_manager_start(true);
+    sensor_manager_start(true);
 
 
-    ESP_LOGI("main", "...Done!");
+    ESP_LOGI("main", "--- DEVICE BOOTED ---");
 
 
 }

@@ -95,6 +95,10 @@ void sensor_manager(void *pvParameters) {
 
                 }
                     break;
+                case SM_KILL: {
+                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_KILL");
+                    sensor_manager_destroy();
+                }
                 default: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SI_DEFAULT");
                     ESP_LOGE(SENSOR_MANAGER_TAG, "Destroy");

@@ -20,6 +20,7 @@ static const char *REST_TAG = "RESTSERVER_GET";
 #include "esp_netif.h"
 #include "esp_vfs.h"
 
+httpd_handle_t *get_rest_server();
 
 esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable);
 

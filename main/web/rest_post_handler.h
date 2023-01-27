@@ -21,8 +21,12 @@ static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
     httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
     httpd_resp_set_type(req, http_content_type_plain);
-    httpd_resp_sendstr(req, "Restart triggerd...!");
-    vTaskDelay(pdTICKS_TO_MS(3000));
+    httpd_resp_sendstr(req, "Restart triggerd...(3s)!");
+    vTaskDelay(pdMS_TO_TICKS(3000));
+
+    system_info_send_message(SI_KILL, NULL);
+    sensor_manager_send_message(SM_KILL, NULL);
+    wifi_manager_send_message(WM_ORDER_KILL, NULL);
 
     esp_restart();
     return ESP_OK;

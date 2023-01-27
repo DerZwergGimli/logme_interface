@@ -184,217 +184,217 @@ extern "C"
  */
 #define WPA2_MINIMUM_PASSWORD_LENGTH 8
 
-    /**
-     * @brief Defines the complete list of all messages that the wifi_manager can process.
-     *
-     * Some of these message are events ("EVENT"), and some of them are action ("ORDER")
-     * Each of these messages can trigger a callback function and each callback function is stored
-     * in a function pointer array for convenience. Because of this behavior, it is extremely important
-     * to maintain a strict sequence and the top level special element 'MESSAGE_CODE_COUNT'
-     *
-     * @see wifi_manager_set_callback
-     */
-    typedef enum message_code_t
-    {
-        NONE = 0,
-        WM_ORDER_START_HTTP_SERVER = 1,
-        WM_ORDER_STOP_HTTP_SERVER = 2,
-        WM_ORDER_START_DNS_SERVICE = 3,
-        WM_ORDER_STOP_DNS_SERVICE = 4,
-        WM_ORDER_START_WIFI_SCAN = 5,
-        WM_ORDER_LOAD_AND_RESTORE_STA = 6,
-        WM_ORDER_CONNECT_STA = 7,
-        WM_ORDER_DISCONNECT_STA = 8,
-        WM_ORDER_START_AP = 9,
-        WM_EVENT_STA_DISCONNECTED = 10,
-        WM_EVENT_SCAN_DONE = 11,
-        WM_EVENT_STA_GOT_IP = 12,
-        WM_ORDER_STOP_AP = 13,
-        WM_MESSAGE_CODE_COUNT = 14 /* important for the callback array */
+/**
+ * @brief Defines the complete list of all messages that the wifi_manager can process.
+ *
+ * Some of these message are events ("EVENT"), and some of them are action ("ORDER")
+ * Each of these messages can trigger a callback function and each callback function is stored
+ * in a function pointer array for convenience. Because of this behavior, it is extremely important
+ * to maintain a strict sequence and the top level special element 'MESSAGE_CODE_COUNT'
+ *
+ * @see wifi_manager_set_callback
+ */
+typedef enum message_code_t {
+    NONE = 0,
+    WM_ORDER_START_HTTP_SERVER = 1,
+    WM_ORDER_STOP_HTTP_SERVER = 2,
+    WM_ORDER_START_DNS_SERVICE = 3,
+    WM_ORDER_STOP_DNS_SERVICE = 4,
+    WM_ORDER_START_WIFI_SCAN = 5,
+    WM_ORDER_LOAD_AND_RESTORE_STA = 6,
+    WM_ORDER_CONNECT_STA = 7,
+    WM_ORDER_DISCONNECT_STA = 8,
+    WM_ORDER_START_AP = 9,
+    WM_EVENT_STA_DISCONNECTED = 10,
+    WM_EVENT_SCAN_DONE = 11,
+    WM_EVENT_STA_GOT_IP = 12,
+    WM_ORDER_STOP_AP = 13,
+    WM_MESSAGE_CODE_COUNT = 14,
+    WM_ORDER_KILL = 15/* important for the callback array */
 
-    } message_code_t;
+} message_code_t;
 
-    /**
-     * @brief simplified reason codes for a lost connection.
-     *
-     * esp-idf maintains a big list of reason codes which in practice are useless for most typical application.
-     */
-    typedef enum update_reason_code_t
-    {
-        UPDATE_CONNECTION_OK = 0,
-        UPDATE_FAILED_ATTEMPT = 1,
-        UPDATE_USER_DISCONNECT = 2,
-        UPDATE_LOST_CONNECTION = 3
-    } update_reason_code_t;
+/**
+ * @brief simplified reason codes for a lost connection.
+ *
+ * esp-idf maintains a big list of reason codes which in practice are useless for most typical application.
+ */
+typedef enum update_reason_code_t {
+    UPDATE_CONNECTION_OK = 0,
+    UPDATE_FAILED_ATTEMPT = 1,
+    UPDATE_USER_DISCONNECT = 2,
+    UPDATE_LOST_CONNECTION = 3
+} update_reason_code_t;
 
-    typedef enum connection_request_made_by_code_t
-    {
-        CONNECTION_REQUEST_NONE = 0,
-        CONNECTION_REQUEST_USER = 1,
-        CONNECTION_REQUEST_AUTO_RECONNECT = 2,
-        CONNECTION_REQUEST_RESTORE_CONNECTION = 3,
-        CONNECTION_REQUEST_MAX = 0x7fffffff /*force the creation of this enum as a 32 bit int */
-    } connection_request_made_by_code_t;
+typedef enum connection_request_made_by_code_t {
+    CONNECTION_REQUEST_NONE = 0,
+    CONNECTION_REQUEST_USER = 1,
+    CONNECTION_REQUEST_AUTO_RECONNECT = 2,
+    CONNECTION_REQUEST_RESTORE_CONNECTION = 3,
+    CONNECTION_REQUEST_MAX = 0x7fffffff /*force the creation of this enum as a 32 bit int */
+} connection_request_made_by_code_t;
 
-    /**
-     * The actual WiFi settings in use
-     */
-    struct wifi_settings_t
-    {
-        uint8_t ap_ssid[MAX_SSID_SIZE];
-        uint8_t ap_pwd[MAX_PASSWORD_SIZE];
-        uint8_t ap_channel;
-        uint8_t ap_ssid_hidden;
-        wifi_bandwidth_t ap_bandwidth;
-        bool sta_only;
-        wifi_ps_type_t sta_power_save;
-        bool sta_static_ip;
-        esp_netif_ip_info_t sta_static_ip_config;
-    };
-    extern struct wifi_settings_t wifi_settings;
+/**
+ * The actual WiFi settings in use
+ */
+struct wifi_settings_t {
+    uint8_t ap_ssid[MAX_SSID_SIZE];
+    uint8_t ap_pwd[MAX_PASSWORD_SIZE];
+    uint8_t ap_channel;
+    uint8_t ap_ssid_hidden;
+    wifi_bandwidth_t ap_bandwidth;
+    bool sta_only;
+    wifi_ps_type_t sta_power_save;
+    bool sta_static_ip;
+    esp_netif_ip_info_t sta_static_ip_config;
+};
+extern struct wifi_settings_t wifi_settings;
 
-    /**
-     * @brief Structure used to store one message in the queue.
-     */
-    typedef struct
-    {
-        message_code_t code;
-        void *param;
-    } queue_message;
+/**
+ * @brief Structure used to store one message in the queue.
+ */
+typedef struct {
+    message_code_t code;
+    void *param;
+} queue_message;
 
-    /**
-     * @brief returns the current esp_netif object for the STAtion
-     */
-    esp_netif_t *wifi_manager_get_esp_netif_sta();
+/**
+ * @brief returns the current esp_netif object for the STAtion
+ */
+esp_netif_t *wifi_manager_get_esp_netif_sta();
 
-    /**
-     * @brief returns the current esp_netif object for the Access Point
-     */
-    esp_netif_t *wifi_manager_get_esp_netif_ap();
+/**
+ * @brief returns the current esp_netif object for the Access Point
+ */
+esp_netif_t *wifi_manager_get_esp_netif_ap();
 
-    /**
-     * Allocate heap memory for the wifi manager and start the wifi_manager RTOS task
-     */
-    void wifi_manager_start();
+/**
+ * Allocate heap memory for the wifi manager and start the wifi_manager RTOS task
+ */
+void wifi_manager_start();
 
-    /**
-     * Frees up all memory allocated by the wifi_manager and kill the task.
-     */
-    void wifi_manager_destroy();
+/**
+ * Frees up all memory allocated by the wifi_manager and kill the task.
+ */
+void wifi_manager_destroy();
 
-    /**
-     * Filters the AP scan list to unique SSIDs
-     */
-    void filter_unique(wifi_ap_record_t *aplist, uint16_t *ap_num);
+/**
+ * Filters the AP scan list to unique SSIDs
+ */
+void filter_unique(wifi_ap_record_t *aplist, uint16_t *ap_num);
 
-    /**
-     * Main task for the wifi_manager
-     */
-    void wifi_manager(void *pvParameters);
+/**
+ * Main task for the wifi_manager
+ */
+void wifi_manager(void *pvParameters);
 
-    char *wifi_manager_get_ap_list_json();
-    char *wifi_manager_get_ip_info_json();
+char *wifi_manager_get_ap_list_json();
 
-    void wifi_manager_scan_async();
+char *wifi_manager_get_ip_info_json();
 
-    /**
-     * @brief saves the current STA wifi config to flash ram storage.
-     */
-    esp_err_t wifi_manager_save_sta_config();
+void wifi_manager_scan_async();
 
-    /**
-     * @brief fetch a previously STA wifi config in the flash ram storage.
-     * @return true if a previously saved config was found, false otherwise.
-     */
-    bool wifi_manager_fetch_wifi_sta_config();
+/**
+ * @brief saves the current STA wifi config to flash ram storage.
+ */
+esp_err_t wifi_manager_save_sta_config();
 
-    wifi_config_t *wifi_manager_get_wifi_sta_config();
+/**
+ * @brief fetch a previously STA wifi config in the flash ram storage.
+ * @return true if a previously saved config was found, false otherwise.
+ */
+bool wifi_manager_fetch_wifi_sta_config();
 
-    /**
-     * @brief requests a connection to an access point that will be process in the main task thread.
-     */
-    void wifi_manager_connect_async();
+wifi_config_t *wifi_manager_get_wifi_sta_config();
 
-    /**
-     * @brief requests a wifi scan
-     */
-    void wifi_manager_scan_awifi_manager_send_messagesync();
+/**
+ * @brief requests a connection to an access point that will be process in the main task thread.
+ */
+void wifi_manager_connect_async();
 
-    /**
-     * @brief requests to disconnect and forget about the access point.
-     */
-    void wifi_manager_disconnect_async();
+/**
+ * @brief requests a wifi scan
+ */
+void wifi_manager_scan_awifi_manager_send_messagesync();
 
-    /**
-     * @brief Tries to get access to json buffer mutex.
-     *
-     * The HTTP server can try to access the json to serve clients while the wifi manager thread can try
-     * to update it. These two tasks are synchronized through a mutex.
-     *
-     * The mutex is used by both the access point list json and the connection status json.\n
-     * These two resources should technically have their own mutex but we lose some flexibility to save
-     * on memory.
-     *
-     * This is a simple wrapper around freeRTOS function xSemaphoreTake.
-     *
-     * @param xTicksToWait The time in ticks to wait for the semaphore to become available.
-     * @return true in success, false otherwise.
-     */
-    bool wifi_manager_lock_json_buffer(TickType_t xTicksToWait);
+/**
+ * @brief requests to disconnect and forget about the access point.
+ */
+void wifi_manager_disconnect_async();
 
-    /**
-     * @brief Releases the json buffer mutex.
-     */
-    void wifi_manager_unlock_json_buffer();
+/**
+ * @brief Tries to get access to json buffer mutex.
+ *
+ * The HTTP server can try to access the json to serve clients while the wifi manager thread can try
+ * to update it. These two tasks are synchronized through a mutex.
+ *
+ * The mutex is used by both the access point list json and the connection status json.\n
+ * These two resources should technically have their own mutex but we lose some flexibility to save
+ * on memory.
+ *
+ * This is a simple wrapper around freeRTOS function xSemaphoreTake.
+ *
+ * @param xTicksToWait The time in ticks to wait for the semaphore to become available.
+ * @return true in success, false otherwise.
+ */
+bool wifi_manager_lock_json_buffer(TickType_t xTicksToWait);
 
-    /**
-     * @brief Generates the connection status json: ssid and IP addresses.
-     * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
-     */
-    void wifi_manager_generate_ip_info_json(update_reason_code_t update_reason_code);
-    /**
-     * @brief Clears the connection status json.
-     * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
-     */
-    void wifi_manager_clear_ip_info_json();
+/**
+ * @brief Releases the json buffer mutex.
+ */
+void wifi_manager_unlock_json_buffer();
 
-    /**
-     * @brief Generates the list of access points after a wifi scan.
-     * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
-     */
-    void wifi_manager_generate_acess_points_json();
+/**
+ * @brief Generates the connection status json: ssid and IP addresses.
+ * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
+ */
+void wifi_manager_generate_ip_info_json(update_reason_code_t update_reason_code);
 
-    /**
-     * @brief Clear the list of access points.
-     * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
-     */
-    void wifi_manager_clear_access_points_json();
+/**
+ * @brief Clears the connection status json.
+ * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
+ */
+void wifi_manager_clear_ip_info_json();
 
-    /**
-     * @brief Start the mDNS service
-     */
-    void wifi_manager_initialise_mdns();
+/**
+ * @brief Generates the list of access points after a wifi scan.
+ * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
+ */
+void wifi_manager_generate_acess_points_json();
 
-    bool wifi_manager_lock_sta_ip_string(TickType_t xTicksToWait);
-    void wifi_manager_unlock_sta_ip_string();
+/**
+ * @brief Clear the list of access points.
+ * @note This is not thread-safe and should be called only if wifi_manager_lock_json_buffer call is successful.
+ */
+void wifi_manager_clear_access_points_json();
 
-    /**
-     * @brief gets the string representation of the STA IP address, e.g.: "192.168.1.69"
-     */
-    char *wifi_manager_get_sta_ip_string();
+/**
+ * @brief Start the mDNS service
+ */
+void wifi_manager_initialise_mdns();
 
-    /**
-     * @brief thread safe char representation of the STA IP update
-     */
-    void wifi_manager_safe_update_sta_ip_string(uint32_t ip);
+bool wifi_manager_lock_sta_ip_string(TickType_t xTicksToWait);
 
-    /**
-     * @brief Register a callback to a custom function when specific event message_code happens.
-     */
-    void wifi_manager_set_callback(message_code_t message_code, void (*func_ptr)(void *));
+void wifi_manager_unlock_sta_ip_string();
 
-    BaseType_t wifi_manager_send_message(message_code_t code, void *param);
-    BaseType_t wifi_manager_send_message_to_front(message_code_t code, void *param);
+/**
+ * @brief gets the string representation of the STA IP address, e.g.: "192.168.1.69"
+ */
+char *wifi_manager_get_sta_ip_string();
+
+/**
+ * @brief thread safe char representation of the STA IP update
+ */
+void wifi_manager_safe_update_sta_ip_string(uint32_t ip);
+
+/**
+ * @brief Register a callback to a custom function when specific event message_code happens.
+ */
+void wifi_manager_set_callback(message_code_t message_code, void (*func_ptr)(void *));
+
+BaseType_t wifi_manager_send_message(message_code_t code, void *param);
+
+BaseType_t wifi_manager_send_message_to_front(message_code_t code, void *param);
 
 #ifdef __cplusplus
 }
