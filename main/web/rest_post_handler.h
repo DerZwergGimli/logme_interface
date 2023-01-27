@@ -7,6 +7,7 @@
 #include "cJSON.h"
 #include "wifi/wifi_manager.h"
 #include "rest_server.h"
+#include "status_reponse.h"
 
 static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
 
@@ -20,8 +21,13 @@ static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
     httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
-    httpd_resp_set_type(req, http_content_type_plain);
-    httpd_resp_sendstr(req, "Restart triggerd...(3s)!");
+
+    cJSON *response_json = NULL;
+    json_status_response_create(response_json, STATUS_OK, "Restarting in 3s...");
+    httpd_resp_set_type(req, http_content_type_json);
+    httpd_resp_sendstr(req, cJSON_Print(response_json));
+    cJSON_Delete(response_json);
+
     vTaskDelay(pdMS_TO_TICKS(3000));
 
     system_info_send_message(SI_KILL, NULL);
