@@ -1,4 +1,4 @@
-name: Build LogME
+name: Release LogME
 
 on:
   push:
@@ -65,7 +65,7 @@ jobs:
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: ./LogME.zip
-          asset_name: logme_build${{github.ref}}.zip
+          asset_name: logme_build${{ github.ref }}.zip
           asset_content_type: application/zip
       - name: Upload release assets .bin
         uses: actions/upload-release-asset@v1
@@ -74,5 +74,5 @@ jobs:
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
           asset_path: ./logme_interface.bin
-          asset_name: logme_interface{{github.ref}}.bin
+          asset_name: logme_interface{{ github.ref }}.bin
           asset_content_type: application/bin

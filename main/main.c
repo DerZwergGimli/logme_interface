@@ -28,6 +28,7 @@
 #include "sensors/sensor_manager.h"
 #include "web/rest_server.h"
 
+
 // GLOBALS
 static const char TAG_MAIN[] = "main";
 // WiFi-Config
@@ -54,6 +55,7 @@ void monitoring_task(void *pvParameter) {
 }
 
 void app_main(void) {
+    printf("APPVERSION= %s", CONFIG_LOGME_VERSION);
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();

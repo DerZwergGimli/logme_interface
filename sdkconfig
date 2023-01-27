@@ -317,6 +317,12 @@ CONFIG_EXAMPLE_WEB_MOUNT_POINT="/www"
 # end of Example Configuration
 
 #
+# LogME
+#
+CONFIG_LOGME_VERSION="0.0.1"
+# end of LogME
+
+#
 # Wifi Manager Configuration
 #
 CONFIG_WIFI_MANAGER_TASK_PRIORITY=5

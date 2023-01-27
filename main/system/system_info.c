@@ -155,6 +155,7 @@ esp_err_t system_info_generate_info_json() {
     cJSON_AddNumberToObject(info, "uptime_ms", (uint32_t) (esp_timer_get_time() / 1000));
     snprintf(timestamp, sizeof(timestamp), "%s", asctime(localtime(&time_now)));
     cJSON_AddStringToObject(info, "time", timestamp);
+    cJSON_AddStringToObject(info, "bin_version", CONFIG_LOGME_VERSION);
     cJSON_AddItemToObject(root, "info", info);
 
     const char *json_object = cJSON_Print(root);

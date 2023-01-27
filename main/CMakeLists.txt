@@ -31,6 +31,10 @@ else ()
     set(INSIGHTS_PATH ${CMAKE_CURRENT_LIST_DIR}/../..)
 endif (DEFINED ENV{INSIGHTS_PATH})
 
+execute_process(COMMAND "git tag --sort=-v:refname --list " v[0-9]*" | head -n 1 | cut -c 2-" APPVERSION file_contents)
+set(LOGME_VERSION 0.2.1)
+set(CONFIG_LOGME_VERSION 0.2.1)
+
 # Add RainMaker components
 set(EXTRA_COMPONENT_DIRS ${INSIGHTS_PATH}/components ${INSIGHTS_PATH}/examples/common)
 

@@ -57,6 +57,14 @@ menu "Example Configuration"
 
 endmenu
 
+menu "LogME"
+    config LOGME_VERSION
+        string "Set APP Version"
+        default "0.0.0"
+        help
+            Sets the APP_Version for LogME
+
+endmenu
 
 menu "Wifi Manager Configuration"
 

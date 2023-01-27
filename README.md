@@ -60,3 +60,7 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
     1. `idf.py build`
     2. `idf.py flash`
     3. `idf.py monitor`
+
+GET-GIT-Vserion
+
+git tag --sort=-v:refname --list "v[0-9]*" | head -n 1 | cut -c 2-
