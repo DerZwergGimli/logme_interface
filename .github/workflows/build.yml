@@ -1,49 +1,49 @@
 name: Build LogME
 
-on: [push]
+on: [ push ]
 
 jobs:
   build-project:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16.x'
-    - name: Install dependencies
-      run: cd web-ui && npm install
-    - name: Compile build
-      run: cd web-ui && npm run build
-    - name: esp-idf build
-      uses: espressif/esp-idf-ci-action@v1
-      with:
-        esp_idf_version: v5.0
-        target: esp32
-        path: './'
-    - name: Upload project
-      uses: actions/upload-artifact@v3
-      with:
-        name: logME
-        path: ./build
-        
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Install dependencies
+        run: cd web-ui && npm install
+      - name: Compile build
+        run: cd web-ui && npm run build
+      - name: esp-idf build
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.0
+          target: esp32
+          path: './'
+      - name: Upload project
+        uses: actions/upload-artifact@v3
+        with:
+          name: logME
+          path: ./build
+  
   create-release:
     runs-on: ubuntu-latest
     needs: build-project
     
     steps:
-    - name: Download artifact
-    
-    - name: Create Github-Release
-      uses: actions/create-release@v1
-      env:
+      - name: Download artifact
+
+      - name: Create Github-Release
+        uses: actions/create-release@v1
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.run_number}}
-        release_name: Release ${{ github.run_number}}
+        with:
+          tag_name: ${{ github.run_number}}
+          release_name: Release ${{ github.run_number}}
           
           
