@@ -100,7 +100,26 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
             httpd_resp_set_hdr(req, http_location_hdr, http_redirect_url);
             httpd_resp_send(req, NULL, 0);
             return ESP_OK;
+
+
+        } else if (strcmp(req->uri, "/system") == 0) {
+            ESP_ERROR_CHECK(rest_get_system_handler(req));
+            return ESP_OK;
+
+        } else if (strcmp(req->uri, "/wifi") == 0) {
+            ESP_ERROR_CHECK(rest_get_wifi_handler(req));
+            return ESP_OK;
+
+        } else if (strcmp(req->uri, "/ap") == 0) {
+            ESP_ERROR_CHECK(rest_get_ap_handler(req));
+            return ESP_OK;
+
+        } else if (strcmp(req->uri, "/sensors") == 0) {
+            ESP_ERROR_CHECK(rest_get_sensors_handler(req));
+            return ESP_OK;
+
         } else {
+
 
             char filepath[FILE_PATH_MAX];
 
@@ -221,6 +240,7 @@ static esp_err_t rest_common_get_handler(httpd_req_t *req) {
     }
 }
 
+
 esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
 
     if (server_handle == NULL) {
@@ -269,36 +289,6 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
 
         // Add Endpoints to REST-Server
         /* URI handler for fetching SYSTEM-info */
-        httpd_uri_t rest_get_system_uri = {
-                .uri = "/system",
-                .method = HTTP_GET,
-                .handler = rest_get_system_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_get_system_uri);
-
-        /* URI handler for fetching WIFI-info */
-        httpd_uri_t rest_get_ap_uri = {
-                .uri = "/ap",
-                .method = HTTP_GET,
-                .handler = rest_get_ap_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_get_ap_uri);
-
-        /* URI handler for fetching WIFI-info */
-        httpd_uri_t rest_get_wifi_uri = {
-                .uri = "/wifi",
-                .method = HTTP_GET,
-                .handler = rest_get_wifi_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_get_wifi_uri);
-
-        /* URI handler for fetching Sensors */
-        httpd_uri_t rest_get_sensors_uri = {
-                .uri = "/sensors",
-                .method = HTTP_GET,
-                .handler = rest_get_sensors_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_get_sensors_uri);
 
         /* URI handler for Restart  */
         httpd_uri_t rest_post_restart_uri = {
@@ -327,6 +317,23 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
                 .user_ctx = rest_context};
         httpd_register_uri_handler(server_handle, &rest_post_wifiConfig_uri);
 
+        /* URI handler for clearing  */
+        httpd_uri_t rest_post_sensor_history_clear_uri = {
+                .uri = "/sensorhistoryclear",
+                .method = HTTP_POST,
+                .handler = rest_post_sensor_history_clear_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &rest_post_sensor_history_clear_uri);
+
+
+        /* URI handler for clearing  */
+        httpd_uri_t rest_post_sensor_save_uri = {
+                .uri = "/sensorsave",
+                .method = HTTP_POST,
+                .handler = rest_post_sensor_save_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &rest_post_sensor_save_uri);
+
         // httpd_uri_t wss_sensor_uri = {
         //     .uri = "/websocket",
         //     .method = HTTP_GET,
@@ -344,7 +351,7 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         // httpd_register_uri_handler(server, &wss_subscribe_uri);
 
         httpd_uri_t common_base_get_uri = {
-                .uri = "/*",
+                .uri = "*",
                 .method = HTTP_GET,
                 .handler = base_get_handler,
                 .user_ctx = rest_context};

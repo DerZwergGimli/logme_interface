@@ -27,7 +27,9 @@
 #include "system/system_info.h"
 #include "sensors/sensor_manager.h"
 #include "web/rest_server.h"
+#include "timer/timer_manager.h"
 
+#include "timer/timer_manager.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "main";
@@ -47,12 +49,12 @@ void cb_restart_rest_server(void *pvParameter) {
 }
 
 
-void monitoring_task(void *pvParameter) {
-    for (;;) {
-        ESP_LOGI(TAG_MAIN, "free heap: %lu", esp_get_free_heap_size());
-        vTaskDelay(pdMS_TO_TICKS(10000));
-    }
-}
+//void monitoring_task(void *pvParameter) {
+//    for (;;) {
+//        ESP_LOGI(TAG_MAIN, "free heap: %lu", esp_get_free_heap_size());
+//        vTaskDelay(pdMS_TO_TICKS(10000));
+//    }
+//}
 
 void app_main(void) {
     printf("APPVERSION= %s", CONFIG_LOGME_VERSION);
@@ -83,6 +85,9 @@ void app_main(void) {
 
     // Initialize Sensor Manager
     sensor_manager_start(true);
+
+    //Time Manger for updating history
+    time_manager_start(true);
 
 
     ESP_LOGI("main", "--- DEVICE BOOTED ---");

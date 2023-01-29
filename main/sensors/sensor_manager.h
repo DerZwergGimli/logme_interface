@@ -24,13 +24,25 @@ typedef enum message_sensor_manager_t {
     SM_IDLE = 1,
     SM_INIT = 2,
     SM_LOOP = 3,
-    SM_SAVE = 4,
-    SM_KILL = 5,
+    SM_SAVE_CONFIG = 4,
+    SM_CLEAR_HISTORY = 5,
+    SM_KILL = 6,
+    SM_UPDATE_HISTORY,
 
 } message_sensor_manager_t;
 
+typedef enum sensor_manager_history_t {
+    SM_HISTORY_NONE = 0,
+    SM_HISTORY_SECOUND = 1,
+    SM_HISTORY_MINUTE = 3,
+    SM_HISTORY_HOUR = 4,
+    SM_HISTORY_DAY = 5,
+
+} sensor_manager_history_t;
+
 typedef struct {
     message_sensor_manager_t code;
+    sensor_manager_history_t timeframe;
     void *param;
 } queue_sensor_manager;
 
@@ -54,6 +66,8 @@ void sensor_manager_unlock_json_buffer();
 char *sensor_manager_get_json();
 
 BaseType_t sensor_manager_send_message(message_sensor_manager_t code, void *param);
+
+esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe);
 
 
 #endif //LOGME_INTERFACE_SENSOR_MANAGER_H

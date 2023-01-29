@@ -66,6 +66,54 @@ static esp_err_t rest_post_wifi_reset_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+/**
+ * POST-Request
+ * -> '/sensorhistoryclear'
+ */
+static esp_err_t rest_post_sensor_history_clear_handler(httpd_req_t *req) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+
+    cJSON *response_json = cJSON_CreateObject();
+    json_status_response_create(response_json, STATUS_OK, "Clearing sensor history");
+    httpd_resp_set_type(req, http_content_type_json);
+    const char *json_buff = cJSON_Print(response_json);
+    httpd_resp_sendstr(req, json_buff);
+    free((void *) json_buff);
+    cJSON_Delete(response_json);
+
+    sensor_manager_send_message(SM_CLEAR_HISTORY, NULL);
+
+    return ESP_OK;
+}
+
+/**
+ * POST-Request
+ * -> '/sensorsave'
+ */
+static esp_err_t rest_post_sensor_save_handler(httpd_req_t *req) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+
+    cJSON *response_json = cJSON_CreateObject();
+    json_status_response_create(response_json, STATUS_OK, "Saved sensor history");
+    httpd_resp_set_type(req, http_content_type_json);
+    const char *json_buff = cJSON_Print(response_json);
+    httpd_resp_sendstr(req, json_buff);
+    free((void *) json_buff);
+    cJSON_Delete(response_json);
+
+    sensor_manager_send_message(SM_SAVE_CONFIG, NULL);
+
+    return ESP_OK;
+}
+
 
 /**
  * POST-Request

@@ -77,9 +77,7 @@ void system_info(void *pvParameters) {
                 case SI_INIT: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_INIT");
                     system_info_send_message(SI_UPDATE, NULL);
-                    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-                    sntp_setservername(0, "pool.ntp.org");
-                    sntp_init();
+                    
                 }
                     break;
                 case SI_IDLE: {

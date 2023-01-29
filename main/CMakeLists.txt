@@ -6,7 +6,9 @@ idf_component_register(SRCS "main.c"
         "web/rest_server.c"
         "system/system_info.c"
         "sensors/sensor_manager.c"
-        INCLUDE_DIRS ".")
+        "timer/timer_manager.c"
+        INCLUDE_DIRS "."
+        )
 
 if (CONFIG_EXAMPLE_WEB_DEPLOY_SF)
     set(WEB_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../web-ui")
@@ -36,5 +38,6 @@ set(LOGME_VERSION 0.2.1)
 set(CONFIG_LOGME_VERSION 0.2.1)
 
 # Add RainMaker components
-set(EXTRA_COMPONENT_DIRS ${INSIGHTS_PATH}/components ${INSIGHTS_PATH}/examples/common)
+
+set(EXTRA_COMPONENT_DIRS ${INSIGHTS_PATH}/components ${INSIGHTS_PATH}/examples/common $ENV{IDF_PATH}/components/esp_cron)
 

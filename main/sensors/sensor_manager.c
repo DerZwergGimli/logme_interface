@@ -89,8 +89,45 @@ void sensor_manager(void *pvParameters) {
 
                 }
                     break;
-                case SM_SAVE: {
-                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_SAVE");
+                case SM_SAVE_CONFIG: {
+                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_SAVE_CONFIG");
+                    char filepath[ESP_VFS_PATH_MAX + 128];
+                    strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
+                    strlcat(filepath, "/sensorstore.json", sizeof(filepath));
+                    FILE *f = fopen(filepath, "w");
+                    if (f == NULL) {
+                        ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for reading: %s", filepath);
+                    } else {
+                        ESP_LOGI(SENSOR_MANAGER_TAG, "Opened storage file");
+                    }
+
+                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                        const char *json_sensor_config = sensor_manager_get_json();
+                        fprintf(f, "%s", json_sensor_config);
+                        sensor_manager_unlock_json_buffer();
+                    } else {
+                        ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
+                    }
+                    fclose(f);
+                    sensor_manager_send_message(SM_IDLE, NULL);
+
+                }
+                    break;
+                case SM_CLEAR_HISTORY: {
+                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_CLEAR_HISTORY");
+                    for (int i = 0; i < sizeof(sensors) / sizeof(sensors[0]); i++) {
+                        memset(sensors[i].history.day_24_kw, 0, sizeof sensors[i].history.day_24_kw);
+                        memset(sensors[i].history.week_7_kw, 0, sizeof sensors[i].history.week_7_kw);
+                        memset(sensors[i].history.month_30_kw, 0, sizeof sensors[i].history.month_30_kw);
+                    }
+
+                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                        ESP_ERROR_CHECK(sensor_manager_generate_json());
+                        sensor_manager_unlock_json_buffer();
+                    } else {
+                        ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
+                    }
+                    ESP_LOGI(SENSOR_MANAGER_TAG, "...history cleared!");
                     sensor_manager_send_message(SM_IDLE, NULL);
 
                 }
@@ -99,6 +136,14 @@ void sensor_manager(void *pvParameters) {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SM_KILL");
                     sensor_manager_destroy();
                 }
+                    break;
+                case SM_UPDATE_HISTORY: {
+
+                    sensor_manager_history_t *evt_history = (sensor_manager_history_t *) msg.param;
+                    sensor_manager_update_history_save(*evt_history);
+                    
+                }
+                    break;
                 default: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SI_DEFAULT");
                     ESP_LOGE(SENSOR_MANAGER_TAG, "Destroy");
@@ -295,3 +340,37 @@ esp_err_t sensor_manager_json_parse(const char *json_data) {
     return ESP_OK;
 }
 
+esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe) {
+    ESP_LOGI(SENSOR_MANAGER_TAG, "Updating history: %i", timeframe);
+    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+        switch (timeframe) {
+            case SM_HISTORY_MINUTE: {
+//                for (int i = 0; i < sizeof(sensors) / sizeof(sensors[0]); i++) {
+//                    for (int k = 0;
+//                         k < sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0]); k++) {
+//                        memmove(&sensors[i].history.day_24_kw[k + 1], &sensors[i].history.day_24_kw[k],
+//                                ((sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0])) - k -
+//                                 1) *
+//                                sizeof(double));
+//
+//                    }
+//                    sensors[i].history.day_24_kw[sizeof(sensors) / sizeof(sensors[0]) - 1] = sensors[i].count;
+//                }
+            }
+                break;
+            case SM_HISTORY_HOUR:
+                break;
+            case SM_HISTORY_DAY:
+                break;
+            default:
+                break;
+
+        }
+        //ESP_ERROR_CHECK(sensor_manager_generate_json());
+        sensor_manager_unlock_json_buffer();
+
+    } else {
+        ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in sensor_manager");
+    }
+    return ESP_OK;
+}
