@@ -1,14 +1,15 @@
 <template>
-  <div class="flex flex-col ">
+  <div class="flex flex-col " id="glowElement">
     <Accordion>
       <accordion-panel
+
         v-for="(sensor, idx) in sensorStore.sensors"
         :key="idx"
       >
         <accordion-header>{{ sensor.name }}</accordion-header>
         <accordion-content>
           <div>
-            <SensorElement :sensor="sensor" />
+            <SensorElement :sensor="sensor"  />
           </div>
         </accordion-content>
       </accordion-panel>

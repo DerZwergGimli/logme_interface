@@ -18,3 +18,7 @@ h3{
 p {
     @apply dark:text-white
 }
+
+#glowElement {
+    @apply border-2 dark:border-cyan-800 shadow-md dark:shadow-cyan-700  rounded-none sm:rounded-lg
+}

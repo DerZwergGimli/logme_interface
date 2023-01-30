@@ -1,9 +1,10 @@
 <template>
-  <div class="mx-3">
+  <div class="mx-3 flex flex-col space-y-3">
     <div
+      id="glowElement"
       v-for="(sensor, idx) in sensorStore.sensors"
       :key="idx"
-      class="space-y-5"
+      class=""
     >
       <div
         class="flex flex-row border-2 rounded-lg p-2 bg-gradient-to-r from-cyan-400 to-blue-400 dark:from-cyan-800 dark:to-blue-800"

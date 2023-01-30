@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="flex flex-col space-y-5">
+    <div class="flex flex-col space-y-5 pb-5">
       <SimpleTable
-        class="rounded-none sm:rounded-lg"
+        id="glowElement"
         :header="['REST GET-Requests', 'Description']"
         :body="[
           ['/system', 'Requests a system-info object'],
@@ -14,7 +14,7 @@
         @button_clicked="handle_get_button"
       />
       <SimpleTable
-        class="rounded-none sm:rounded-lg"
+        id="glowElement"
         :header="['REST POST-Requests', 'Description']"
         :body="[
           ['/restart', 'Force a device restart'],
@@ -26,7 +26,7 @@
         :button_text="'POST'"
       />
       <SimpleTable
-        class="rounded-none sm:rounded-lg"
+        id="glowElement"
         :header="['Websocket']"
         :body="[['/websocket']]"
         :button_text="'WS'"
@@ -41,3 +41,7 @@ function handle_get_button(event: [string]) {
   window.open(event[0], '_blank');
 }
 </script>
+
+<style scoped>
+
+</style>
