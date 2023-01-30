@@ -19,6 +19,7 @@
 #include "fs/fs.h"
 
 #include <esp_http_server.h>
+#include <esp_heap_trace.h>
 
 #include "wifi/wifi_manager.h"
 #include "wifi/nvs_sync.h"
@@ -55,6 +56,11 @@ void cb_restart_rest_server(void *pvParameter) {
 //        vTaskDelay(pdMS_TO_TICKS(10000));
 //    }
 //}
+#define NUM_RECORDS 100
+static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in internal RAM
+
+
+
 
 void app_main(void) {
     printf("APPVERSION= %s", CONFIG_LOGME_VERSION);
@@ -88,6 +94,8 @@ void app_main(void) {
 
     //Time Manger for updating history
     time_manager_start(true);
+
+    ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
 
 
     ESP_LOGI("main", "--- DEVICE BOOTED ---");

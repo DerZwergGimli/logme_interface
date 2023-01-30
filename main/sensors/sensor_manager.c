@@ -11,6 +11,7 @@
 #include "cJSON.h"
 #include "esp_vfs.h"
 #include <fcntl.h>
+#include <esp_heap_trace.h>
 
 #define JSON_SENSOR_MANGER_SIZE 10240
 static const char *SENSOR_MANAGER_TAG = "sensor-manager";
@@ -138,10 +139,10 @@ void sensor_manager(void *pvParameters) {
                 }
                     break;
                 case SM_UPDATE_HISTORY: {
-
+                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_UPDATE_HISTORY");
                     sensor_manager_history_t *evt_history = (sensor_manager_history_t *) msg.param;
                     sensor_manager_update_history_save(*evt_history);
-                    
+
                 }
                     break;
                 default: {
@@ -180,53 +181,73 @@ void sensor_manager_start(bool log_enable) {
 
 
 esp_err_t sensor_manager_generate_json() {
-    memset(sensor_manager_json, 0x00, JSON_SENSOR_MANGER_SIZE);
+    //ESP_ERROR_CHECK(heap_trace_start(HEAP_TRACE_LEAKS));
 
-    cJSON *root = cJSON_CreateArray();
+    //memset(sensor_manager_json, 0x00, JSON_SENSOR_MANGER_SIZE);
 
-    for (int index = 0; index < 4; index++) {
-        cJSON *element = cJSON_CreateObject();
+    //free(sensor_manager_json);
+    //sensor_manager_json = (char *) malloc(sizeof(char) * JSON_SENSOR_MANGER_SIZE);
+    //cJSON *root = cJSON_CreateArray();
+    //cJSON *element = NULL;
+    //cJSON *history = NULL;
+    strcpy(sensor_manager_json, "[");
+    for (int i = 0; i < NELEMS(sensors); i++) {
+        //  element = cJSON_CreateObject();
+        //  cJSON_AddItemToArray(root, element);
+        char buffer[500];
+        sprintf(buffer, "{\n\"ip\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %i,\n",
+                sensors[i].id,
+                sensors[i].name,
+                sensors[i].count,
+                sensors[i].power);
+        strcat(sensor_manager_json, buffer);
 
-        cJSON_AddNumberToObject(element, "id", sensors[index].id);
-        cJSON_AddStringToObject(element, "name", sensors[index].name);
-        cJSON_AddNumberToObject(element, "count", sensors[index].count);
-        cJSON_AddNumberToObject(element, "power", sensors[index].power);
+        strcat(sensor_manager_json, "\"history\": {");
+        strcat(sensor_manager_json, "\"day_24_kw\": [");
 
-        cJSON *history = cJSON_CreateObject();
-        cJSON_AddItemToObject(element, "history", history);
-
-        cJSON *day_24_kw = cJSON_AddArrayToObject(history, "day_24_kw");
-        for (int i = 0; i < NELEMS(sensors[index].history.day_24_kw); i++) {
-            if (cJSON_IsNumber(cJSON_CreateNumber(sensors[index].history.day_24_kw[i]))) {
-                cJSON *value = cJSON_CreateNumber(sensors[index].history.day_24_kw[i]);
-                cJSON_AddItemToArray(day_24_kw, value);
-            }
+        for (int j = 0; j < NELEMS(sensors[i].history.day_24_kw); j++) {
+            sprintf(buffer, "%i", sensors[i].history.day_24_kw[j]);
+            strcat(sensor_manager_json, buffer);
+            if (j + 1 < NELEMS(sensors[i].history.day_24_kw))
+                strcat(sensor_manager_json, ",");
         }
+        strcat(sensor_manager_json, "]");
 
-        cJSON *week_7_kw = cJSON_AddArrayToObject(history, "week_7_kw");
-        for (int i = 0; i < NELEMS(sensors[index].history.week_7_kw); i++) {
-            if (cJSON_IsNumber(cJSON_CreateNumber(sensors[index].history.week_7_kw[i]))) {
-                cJSON *value = cJSON_CreateNumber(sensors[index].history.week_7_kw[i]);
-                cJSON_AddItemToArray(week_7_kw, value);
-            }
+
+        strcat(sensor_manager_json, ",");
+        strcat(sensor_manager_json, "\"week_7_kw\": [");
+
+        for (int j = 0; j < NELEMS(sensors[i].history.week_7_kw); j++) {
+            sprintf(buffer, "%i", sensors[i].history.week_7_kw[j]);
+            strcat(sensor_manager_json, buffer);
+            if (j + 1 < NELEMS(sensors[i].history.week_7_kw))
+                strcat(sensor_manager_json, ",");
         }
+        strcat(sensor_manager_json, "]");
 
-        cJSON *month_30_kw = cJSON_AddArrayToObject(history, "month_30_kw");
-        for (int i = 0; i < NELEMS(sensors[index].history.month_30_kw); i++) {
-            if (cJSON_IsNumber(cJSON_CreateNumber(sensors[index].history.month_30_kw[i]))) {
-                cJSON *value = cJSON_CreateNumber(sensors[index].history.month_30_kw[i]);
-                cJSON_AddItemToArray(month_30_kw, value);
-            }
+        strcat(sensor_manager_json, ",");
+        strcat(sensor_manager_json, "\"month_30_kw\": [");
+
+        for (int j = 0; j < NELEMS(sensors[i].history.month_30_kw); j++) {
+            sprintf(buffer, "%i", sensors[i].history.month_30_kw[j]);
+            strcat(sensor_manager_json, buffer);
+            if (j + 1 < NELEMS(sensors[i].history.month_30_kw))
+                strcat(sensor_manager_json, ",");
         }
+        strcat(sensor_manager_json, "]");
 
-        cJSON_AddItemToArray(root, element);
+        strcat(sensor_manager_json, "}}");
+        if (i + 1 < NELEMS(sensors))
+            strcat(sensor_manager_json, ",");
+
     }
 
-    const char *json_object = cJSON_Print(root);
-    strcat(sensor_manager_json, json_object);
-    free((void *) json_object);
+    strcat(sensor_manager_json, "]");
 
-    cJSON_Delete(root);
+
+    // ESP_ERROR_CHECK(heap_trace_stop());
+    // heap_trace_dump();
+
     return ESP_OK;
 }
 
@@ -344,18 +365,20 @@ esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe)
     ESP_LOGI(SENSOR_MANAGER_TAG, "Updating history: %i", timeframe);
     if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
         switch (timeframe) {
-            case SM_HISTORY_MINUTE: {
-//                for (int i = 0; i < sizeof(sensors) / sizeof(sensors[0]); i++) {
+            case SM_HISTORY_SECOUND: {
+//                for (int i = 0; i < (sizeof(sensors) / sizeof(sensors[0])); i++) {
 //                    for (int k = 0;
-//                         k < sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0]); k++) {
-//                        memmove(&sensors[i].history.day_24_kw[k + 1], &sensors[i].history.day_24_kw[k],
+//                         k < (sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0])); k++) {
+//                        printf("%i; ", k);
+//                        memmove(&sensors[i].history.day_24_kw[k + 1],
+//                                &sensors[i].history.day_24_kw[k],
 //                                ((sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0])) - k -
 //                                 1) *
-//                                sizeof(double));
-//
-//                    }
-//                    sensors[i].history.day_24_kw[sizeof(sensors) / sizeof(sensors[0]) - 1] = sensors[i].count;
-//                }
+//                                sizeof(int16_t));
+
+                //            }
+                //sensors[i].history.day_24_kw[sizeof(sensors) / sizeof(sensors[0]) - 1] = (int16_t) sensors[i].count;
+                //      }
             }
                 break;
             case SM_HISTORY_HOUR:
@@ -366,7 +389,7 @@ esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe)
                 break;
 
         }
-        //ESP_ERROR_CHECK(sensor_manager_generate_json());
+        ESP_ERROR_CHECK(sensor_manager_generate_json());
         sensor_manager_unlock_json_buffer();
 
     } else {
