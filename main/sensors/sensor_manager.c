@@ -195,7 +195,7 @@ esp_err_t sensor_manager_generate_json() {
         //  element = cJSON_CreateObject();
         //  cJSON_AddItemToArray(root, element);
         char buffer[500];
-        sprintf(buffer, "{\n\"ip\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %i,\n",
+        sprintf(buffer, "{\n\"ip\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %li,\n",
                 sensors[i].id,
                 sensors[i].name,
                 sensors[i].count,
@@ -206,7 +206,7 @@ esp_err_t sensor_manager_generate_json() {
         strcat(sensor_manager_json, "\"day_24_kw\": [");
 
         for (int j = 0; j < NELEMS(sensors[i].history.day_24_kw); j++) {
-            sprintf(buffer, "%i", sensors[i].history.day_24_kw[j]);
+            sprintf(buffer, "%li", sensors[i].history.day_24_kw[j]);
             strcat(sensor_manager_json, buffer);
             if (j + 1 < NELEMS(sensors[i].history.day_24_kw))
                 strcat(sensor_manager_json, ",");
@@ -218,7 +218,7 @@ esp_err_t sensor_manager_generate_json() {
         strcat(sensor_manager_json, "\"week_7_kw\": [");
 
         for (int j = 0; j < NELEMS(sensors[i].history.week_7_kw); j++) {
-            sprintf(buffer, "%i", sensors[i].history.week_7_kw[j]);
+            sprintf(buffer, "%li", sensors[i].history.week_7_kw[j]);
             strcat(sensor_manager_json, buffer);
             if (j + 1 < NELEMS(sensors[i].history.week_7_kw))
                 strcat(sensor_manager_json, ",");
@@ -229,7 +229,7 @@ esp_err_t sensor_manager_generate_json() {
         strcat(sensor_manager_json, "\"month_30_kw\": [");
 
         for (int j = 0; j < NELEMS(sensors[i].history.month_30_kw); j++) {
-            sprintf(buffer, "%i", sensors[i].history.month_30_kw[j]);
+            sprintf(buffer, "%li", sensors[i].history.month_30_kw[j]);
             strcat(sensor_manager_json, buffer);
             if (j + 1 < NELEMS(sensors[i].history.month_30_kw))
                 strcat(sensor_manager_json, ",");
@@ -317,13 +317,13 @@ esp_err_t sensor_manager_json_parse(const char *json_data) {
 
         //Mapping JSON
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "id")))
-            sensors[index].id = (int16_t) cJSON_GetObjectItem(sensor, "id")->valueint;
+            sensors[index].id = (uint16_t) cJSON_GetObjectItem(sensor, "id")->valueint;
         if (cJSON_IsString(cJSON_GetObjectItem(sensor, "name")))
             strcpy(sensors[index].name, cJSON_GetObjectItem(sensor, "name")->valuestring);
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "count")))
-            sensors[index].count = (int32_t) cJSON_GetObjectItem(sensor, "count")->valueint;
+            sensors[index].count = cJSON_GetObjectItem(sensor, "count")->valueint;
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "power")))
-            sensors[index].power = (int16_t) cJSON_GetObjectItem(sensor, "power")->valueint;
+            sensors[index].power = cJSON_GetObjectItem(sensor, "power")->valueint;
 
 
         if (cJSON_IsObject(cJSON_GetObjectItem(sensor, "history"))) {
@@ -333,7 +333,7 @@ esp_err_t sensor_manager_json_parse(const char *json_data) {
                 cJSON *element = NULL;
                 int i = 0;
                 cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "day_24_kw")) {
-                    sensors[index].history.day_24_kw[i] = (int16_t) cJSON_GetNumberValue(element);
+                    sensors[index].history.day_24_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
                     i++;
                 }
             }
@@ -341,7 +341,7 @@ esp_err_t sensor_manager_json_parse(const char *json_data) {
                 cJSON *element = NULL;
                 int i = 0;
                 cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "week_7_kw")) {
-                    sensors[index].history.week_7_kw[i] = (int16_t) cJSON_GetNumberValue(element);
+                    sensors[index].history.week_7_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
                     i++;
                 }
             }
@@ -349,7 +349,7 @@ esp_err_t sensor_manager_json_parse(const char *json_data) {
                 cJSON *element = NULL;
                 int i = 0;
                 cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "month_30_kw")) {
-                    sensors[index].history.month_30_kw[i] = (int16_t) cJSON_GetNumberValue(element);
+                    sensors[index].history.month_30_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
                     i++;
                 }
             }
@@ -366,19 +366,13 @@ esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe)
     if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
         switch (timeframe) {
             case SM_HISTORY_SECOUND: {
-//                for (int i = 0; i < (sizeof(sensors) / sizeof(sensors[0])); i++) {
-//                    for (int k = 0;
-//                         k < (sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0])); k++) {
-//                        printf("%i; ", k);
-//                        memmove(&sensors[i].history.day_24_kw[k + 1],
-//                                &sensors[i].history.day_24_kw[k],
-//                                ((sizeof(sensors[i].history.day_24_kw) / sizeof(sensors[i].history.day_24_kw[0])) - k -
-//                                 1) *
-//                                sizeof(int16_t));
-
-                //            }
-                //sensors[i].history.day_24_kw[sizeof(sensors) / sizeof(sensors[0]) - 1] = (int16_t) sensors[i].count;
-                //      }
+                for (int i = 0; i < (NELEMS(sensors)); i++) {
+                    for (int k = 1;
+                         k < (NELEMS(sensors[i].history.day_24_kw)); k++) {
+                        sensors[i].history.day_24_kw[k - 1] = sensors[i].history.day_24_kw[k];
+                    }
+                    sensors[i].history.day_24_kw[NELEMS(sensors[i].history.day_24_kw) - 1] = sensors[i].count;
+                }
             }
                 break;
             case SM_HISTORY_HOUR:

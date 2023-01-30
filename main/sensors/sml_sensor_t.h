@@ -7,24 +7,24 @@
 
 
 typedef struct sml_smart_meter_history_t {
-    int16_t day_24_kw[24];
-    int16_t week_7_kw[7];
-    int16_t month_30_kw[30];
+    uint32_t day_24_kw[24];
+    uint32_t week_7_kw[7];
+    uint32_t month_30_kw[30];
 } sml_smart_meter_history_t;
 
 typedef struct sml_smart_meter_sensor_t {
-    int16_t id;
+    uint16_t id;
     char name[20];
-    int32_t count;
-    int16_t power;
+    uint32_t count;
+    uint32_t power;
     sml_smart_meter_history_t history;
 } sml_smart_meter_sensor_t;
 
 
 typedef struct sml_smart_meter_ws_t {
-    int16_t id;
+    uint16_t id;
     int32_t timestamp;
-    int16_t value;
+    uint32_t value;
 } sml_smart_meter_ws_t;
 
 
