@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
-import { Sensor } from './Sensor';
-import sleep from '../scripts/sleep';
-import theme from 'tailwindcss/defaultTheme';
+
 
 export const useAppStore = defineStore('appStore', {
   state: () => ({ themeIsDark: false }),

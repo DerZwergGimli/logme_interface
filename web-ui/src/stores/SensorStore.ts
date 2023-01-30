@@ -9,7 +9,9 @@ export const useSensorStore = defineStore('sensors', {
       await fetch(APP_API_URL + '/sensors')
         .then(resp => resp.json())
         .then(json => {
-          this.sensors = json as Array<Sensor>;
+          console.log(json)
+          this.sensors = json
+         // this.sensors = json as Array<Sensor>;
         });
       console.info("sensorStore fetch")
       this.create_dummy_data()

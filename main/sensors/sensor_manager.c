@@ -183,19 +183,10 @@ void sensor_manager_start(bool log_enable) {
 esp_err_t sensor_manager_generate_json() {
     //ESP_ERROR_CHECK(heap_trace_start(HEAP_TRACE_LEAKS));
 
-    //memset(sensor_manager_json, 0x00, JSON_SENSOR_MANGER_SIZE);
-
-    //free(sensor_manager_json);
-    //sensor_manager_json = (char *) malloc(sizeof(char) * JSON_SENSOR_MANGER_SIZE);
-    //cJSON *root = cJSON_CreateArray();
-    //cJSON *element = NULL;
-    //cJSON *history = NULL;
     strcpy(sensor_manager_json, "[");
     for (int i = 0; i < NELEMS(sensors); i++) {
-        //  element = cJSON_CreateObject();
-        //  cJSON_AddItemToArray(root, element);
         char buffer[500];
-        sprintf(buffer, "{\n\"ip\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %li,\n",
+        sprintf(buffer, "{\n\"id\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %li,\n",
                 sensors[i].id,
                 sensors[i].name,
                 sensors[i].count,
@@ -212,7 +203,6 @@ esp_err_t sensor_manager_generate_json() {
                 strcat(sensor_manager_json, ",");
         }
         strcat(sensor_manager_json, "]");
-
 
         strcat(sensor_manager_json, ",");
         strcat(sensor_manager_json, "\"week_7_kw\": [");
@@ -366,6 +356,18 @@ esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe)
     if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
         switch (timeframe) {
             case SM_HISTORY_SECOUND: {
+//                for (int i = 0; i < (NELEMS(sensors)); i++) {
+//                    for (int k = 1;
+//                         k < (NELEMS(sensors[i].history.day_24_kw)); k++) {
+//                        sensors[i].history.day_24_kw[k - 1] = sensors[i].history.day_24_kw[k];
+//                    }
+//                    sensors[i].history.day_24_kw[NELEMS(sensors[i].history.day_24_kw) - 1] = sensors[i].count;
+//                }
+            }
+                break;
+
+
+            case SM_HISTORY_HOUR: {
                 for (int i = 0; i < (NELEMS(sensors)); i++) {
                     for (int k = 1;
                          k < (NELEMS(sensors[i].history.day_24_kw)); k++) {
@@ -375,9 +377,23 @@ esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe)
                 }
             }
                 break;
-            case SM_HISTORY_HOUR:
-                break;
-            case SM_HISTORY_DAY:
+            case SM_HISTORY_DAY: {
+                for (int i = 0; i < (NELEMS(sensors)); i++) {
+                    for (int k = 1;
+                         k < (NELEMS(sensors[i].history.week_7_kw)); k++) {
+                        sensors[i].history.week_7_kw[k - 1] = sensors[i].history.week_7_kw[k];
+                    }
+                    sensors[i].history.week_7_kw[NELEMS(sensors[i].history.week_7_kw) - 1] = sensors[i].count;
+                }
+
+                for (int i = 0; i < (NELEMS(sensors)); i++) {
+                    for (int k = 1;
+                         k < (NELEMS(sensors[i].history.month_30_kw)); k++) {
+                        sensors[i].history.month_30_kw[k - 1] = sensors[i].history.month_30_kw[k];
+                    }
+                    sensors[i].history.month_30_kw[NELEMS(sensors[i].history.month_30_kw) - 1] = sensors[i].count;
+                }
+            }
                 break;
             default:
                 break;

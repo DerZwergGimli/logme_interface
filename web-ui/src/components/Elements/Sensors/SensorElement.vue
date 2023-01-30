@@ -69,7 +69,7 @@ import { useSensorStore } from '../../../stores/SensorStore.js';
 import BarChart from '../../charts/BarChart.vue';
 
 const time_values_hourly = ref([]);
-for (let i = 23; i > 0; i--) {
+for (let i = 24; i > 0; i--) {
   time_values_hourly.value.push((Date.now() - i * 60 * 60 * 1000) as never);
 }
 
