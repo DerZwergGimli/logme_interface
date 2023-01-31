@@ -1,31 +1,49 @@
 <template>
   <div v-if="sensor" class="space-y-3">
-    <div class="grid grid-cols-2 gap-2">
-      <value-element
-        :value="sensor.id.toString()"
-        icon="id"
-        description="SensorID"
-        unit=""
-      />
-      <value-element
-        :value="sensor.name"
-        icon="info"
-        description="SensorName"
-        unit=""
-      />
-      <value-element
-        :value="sensor.count.toString()"
-        icon="numbers"
-        description="SensorCount"
-        unit="kWh"
-      />
-      <value-element
-        :value="sensor.power.toString()"
-        icon="power-plug"
-        description="SenorPower"
-        unit="W"
-      />
+    <div class="flex flex-row">
+      <smart-meter-icon class="w-24 dark:text-gray-100"></smart-meter-icon>
+      <div class="w-full grid grid-cols-2">
+        <div class="grid grid-cols-1">
+          <value-element
+            :value="sensor.id.toString()"
+            icon="id"
+            description="SensorID"
+            unit=""
+          />
+          <value-element
+            :value="sensor.name.length === 0 ? 'none' : sensor.name"
+            icon="info"
+            description="SensorName"
+            unit=""
+          />
+          <value-element
+            :value="sensor.description"
+            icon="info"
+            description="Description"
+            unit=""
+          />
+        </div>
+
+        <div class="grid grid-cols-1">
+          <value-element
+            :value="sensor.count.toString()"
+            icon="numbers"
+            description="SensorCount"
+            unit="kWh"
+            :editable="false"
+          />
+
+          <value-element
+            :value="sensor.power.toString()"
+            icon="power-plug"
+            description="SenorPower"
+            unit="W"
+            :editable="false"
+          />
+        </div>
+      </div>
     </div>
+
     <area-chart
       chart_heading="Consumption"
       class="border-2 p-1"
@@ -63,10 +81,11 @@
 <script setup lang="ts">
 import ValueElement from './ValueElement.vue';
 import AreaChart from '../../charts/AreaChart.vue';
-import { ref, PropType } from 'vue';
+import { ref } from 'vue';
 import { useAppStore } from '../../../stores/AppStore.js';
 import { useSensorStore } from '../../../stores/SensorStore.js';
 import BarChart from '../../charts/BarChart.vue';
+import SmartMeterIcon from '../../icons/SmartMeterIcon.vue';
 
 const time_values_hourly = ref([]);
 for (let i = 24; i > 0; i--) {
@@ -88,11 +107,15 @@ for (let i = 30; i > 0; i--) {
 }
 
 const props = defineProps({
-  sensor_index: {
+  selected_sensor_index: {
     type: Number,
-    default: 0,
+    default: -1,
   },
 });
 
-const sensor = ref(useSensorStore().sensors[props.sensor_index]);
+function action_edit() {
+  console.log('btn_click');
+}
+
+const sensor = ref(useSensorStore().sensors_power[props.selected_sensor_index]);
 </script>

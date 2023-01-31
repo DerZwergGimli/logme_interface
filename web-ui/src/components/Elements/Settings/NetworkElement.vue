@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import SimpleTable from '../../tables/SimpleTable.vue';
-import { I_AccessPoint } from '../../../stores/interfaces/t_accesspoint';
+import { I_AccessPoint } from '../../../stores/interfaces/T_AccessPoint';
 import { Button } from 'flowbite-vue';
 import ReloadIcon from '../../icons/ReloadIcon.vue';
 import WifiCredentialsModal from '../../modals/WifiCredentialsModal.vue';

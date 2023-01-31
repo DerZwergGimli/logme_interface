@@ -14,8 +14,8 @@ import HomeView from './components/views/HomeView.vue';
 import SensorView from './components/views/SensorView.vue';
 import EndpointsView from './components/views/EndpointsView.vue';
 import SettingsView from './components/views/SettingsView.vue';
-import { useAppStore } from "./stores/AppStore";
-import { useSensorStore } from "./stores/SensorStore";
+import { useAppStore } from './stores/AppStore';
+import { useSensorStore } from './stores/SensorStore';
 
 const routes = [
   { path: '/', component: HomeView },
@@ -29,12 +29,7 @@ const router = createRouter({
   routes,
 });
 
-const pina = createPinia()
+const pina = createPinia();
 const app = createApp(App);
 
-app
-  .use(router)
-  .use(pina)
-  .use(VueApexCharts)
-  .use(moshaToast)
-  .mount('#app');
+app.use(router).use(pina).use(VueApexCharts).use(moshaToast).mount('#app');

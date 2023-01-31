@@ -1,6 +1,7 @@
-export interface Sensor {
+export interface I_Sensor {
   id: number;
   name: string;
+  description: string;
   count: number;
   power: number;
   chart_data: Array<number> | undefined;

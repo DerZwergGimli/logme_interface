@@ -4,7 +4,7 @@
   >
     <div class="flex m-2 items-center justify-center">
       <div v-if="props.icon === 'info'">
-        <info-icon />
+        <info-icon class="" />
       </div>
       <div v-if="props.icon === 'id'">
         <id-icon />
@@ -16,13 +16,18 @@
         <power-plug-icon />
       </div>
     </div>
-    <div class="flex flex-col">
+    <div class="flex flex-col w-full justify-center">
       <div class="flex flex-row space-x-1">
         <div>{{ props.value }}</div>
+
         <div>{{ props.unit }}</div>
       </div>
       <div>{{ props.description }}</div>
     </div>
+
+    <Button pill color="light" v-if="props.editable" @click="action_edit()"
+      ><edit-icon
+    /></Button>
   </div>
 </template>
 
@@ -31,8 +36,16 @@ import InfoIcon from '../../icons/InfoIcon.vue';
 import IdIcon from '../../icons/IdIcon.vue';
 import NumbersIcon from '../../icons/NumbersIcon.vue';
 import PowerPlugIcon from '../../icons/PowerPlugIcon.vue';
+import { Button } from 'flowbite-vue';
+import EditIcon from '../../icons/EditIcon.vue';
+
+defineEmits(['buttonClick']);
 
 const props = defineProps({
+  editable: {
+    type: Boolean,
+    default: true,
+  },
   icon: {
     type: String,
     default: 'info',
@@ -50,6 +63,8 @@ const props = defineProps({
     default: 'SomeDescription',
   },
 });
+
+function action_edit() {}
 </script>
 
 <style scoped></style>

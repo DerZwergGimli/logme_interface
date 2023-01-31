@@ -1,14 +1,20 @@
 import { defineStore } from 'pinia';
-
+import { T_SensorTypes } from './interfaces/T_SensorTypes';
 
 export const useAppStore = defineStore('appStore', {
-  state: () => ({ themeIsDark: false }),
+  state: () => {
+    return {
+      themeIsDark: false,
+      sensor_type: undefined as T_SensorTypes | undefined,
+    };
+  },
 
   actions: {
     init() {
       this.themeIsDark = localStorage.theme === 'dark';
+      this.sensor_type = T_SensorTypes.POWER;
       this.theme_set(this.themeIsDark);
-      console.info("appStore setup")
+      console.info('appStore setup');
     },
     theme_toggle() {
       this.themeIsDark = !this.themeIsDark;
