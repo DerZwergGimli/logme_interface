@@ -9,18 +9,21 @@
             icon="id"
             description="SensorID"
             unit=""
+            :editable="false"
           />
           <value-element
             :value="sensor.name.length === 0 ? 'none' : sensor.name"
             icon="info"
             description="SensorName"
             unit=""
+            @buttonClick="action_edit(sensor.name)"
           />
           <value-element
             :value="sensor.description"
             icon="info"
             description="Description"
             unit=""
+            @buttonClick="action_edit(sensor.name)"
           />
         </div>
 
@@ -76,16 +79,25 @@
       :is_dark="!useAppStore().themeIsDark"
     />
   </div>
+  <value-edit-modal
+    :is-shown="isShowModal"
+    @closeModal="isShowModal = false"
+    :value_to_edit="value_to_edit"
+  ></value-edit-modal>
 </template>
 
 <script setup lang="ts">
 import ValueElement from './ValueElement.vue';
 import AreaChart from '../../charts/AreaChart.vue';
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
 import { useAppStore } from '../../../stores/AppStore.js';
 import { useSensorStore } from '../../../stores/SensorStore.js';
 import BarChart from '../../charts/BarChart.vue';
 import SmartMeterIcon from '../../icons/SmartMeterIcon.vue';
+import ValueEditModal from '../../modals/ValueEditModal.vue';
+
+const isShowModal = ref(false);
+const value_to_edit = ref();
 
 const time_values_hourly = ref([]);
 for (let i = 24; i > 0; i--) {
@@ -113,8 +125,9 @@ const props = defineProps({
   },
 });
 
-function action_edit() {
-  console.log('btn_click');
+function action_edit(value: string) {
+  isShowModal.value = true;
+  value_to_edit.value = value;
 }
 
 const sensor = ref(useSensorStore().sensors_power[props.selected_sensor_index]);

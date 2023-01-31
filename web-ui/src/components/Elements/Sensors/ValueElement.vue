@@ -25,7 +25,11 @@
       <div>{{ props.description }}</div>
     </div>
 
-    <Button pill color="light" v-if="props.editable" @click="action_edit()"
+    <Button
+      pill
+      color="light"
+      v-if="props.editable"
+      @click="$emit('buttonClick')"
       ><edit-icon
     /></Button>
   </div>
