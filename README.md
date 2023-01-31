@@ -37,10 +37,17 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
 - `/wifi`
 - `/system`
 - `/sensors`
+- `/sensorstore.json`
 
 #### PUT
 
+- `/restart`
+- `/wifireset`
 - `/wificonfig`
+- `/sensorsave`
+- `/sensorhistoryclear`
+- `/sensor_edit_name/#`
+- `/sensor_edit_description/#`
 
 #### Websocket
 

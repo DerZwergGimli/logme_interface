@@ -1,6 +1,10 @@
 <template>
-  <div class="flex flex-col ">
-    <Accordion flush class="border-2 rounded-xl dark:border-gray-700" id="glowElement">
+  <div class="flex flex-col">
+    <Accordion
+      flush
+      class="border-2 rounded-xl dark:border-gray-700"
+      id="glowElement"
+    >
       <accordion-panel>
         <accordion-header>System</accordion-header>
         <accordion-content>
@@ -16,7 +20,8 @@
       <accordion-panel>
         <accordion-header>Sensor-Store</accordion-header>
         <accordion-content>
-         <sensor-store-settings-table/>
+          <sensor-type-toggle />
+          <sensor-store-settings-table />
         </accordion-content>
       </accordion-panel>
       <accordion-panel>
@@ -41,7 +46,8 @@ import {
   AccordionHeader,
   AccordionContent,
 } from 'flowbite-vue';
-import SensorStoreSettingsTable from "../tables/SensorStoreSettingsTable.vue";
+import SensorStoreSettingsTable from '../tables/SensorStoreSettingsTable.vue';
+import SensorTypeToggle from '../buttons/SensorTypeToggle.vue';
 
 onMounted(async () => {
   createToast('Loading data...', TOAST_INFO);
