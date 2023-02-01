@@ -39,5 +39,10 @@ set(CONFIG_LOGME_VERSION 0.2.1)
 
 # Add RainMaker components
 
-set(EXTRA_COMPONENT_DIRS ${INSIGHTS_PATH}/components ${INSIGHTS_PATH}/examples/common $ENV{IDF_PATH}/components/esp_cron)
+set(EXTRA_COMPONENT_DIRS
+        ${INSIGHTS_PATH}/components
+        ${INSIGHTS_PATH}/examples/common
+        $ENV{IDF_PATH}/components/esp_cron
+        $ENV{IDF_PATH}/components/esp_mbus
+        )
 
