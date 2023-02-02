@@ -7,6 +7,7 @@ idf_component_register(SRCS "main.c"
         "system/system_info.c"
         "sensors/sensor_manager.c"
         "timer/timer_manager.c"
+        "mbus_serial_scan.c"
         INCLUDE_DIRS "."
         )
 
@@ -38,6 +39,7 @@ set(LOGME_VERSION 0.2.1)
 set(CONFIG_LOGME_VERSION 0.2.1)
 
 # Add RainMaker components
+
 
 set(EXTRA_COMPONENT_DIRS
         ${INSIGHTS_PATH}/components

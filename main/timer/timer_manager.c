@@ -62,7 +62,7 @@ void time_manager(void *pvParameters) {
                     jobs[0] = cron_job_create("0 * * * * *", cron_job_history_callback, (void *) SM_HISTORY_MINUTE);
                     jobs[1] = cron_job_create("0 0 * * * *", cron_job_history_callback, (void *) SM_HISTORY_HOUR);
                     jobs[2] = cron_job_create("0 0 0 * * *", cron_job_history_callback, (void *) SM_HISTORY_DAY);
-                    jobs[3] = cron_job_create("* * * * * *", cron_job_history_callback, (void *) SM_HISTORY_SECOUND);
+                    //jobs[3] = cron_job_create("* * * * * *", cron_job_history_callback, (void *) SM_HISTORY_SECOUND);
                     cron_start();
                 }
                     break;
@@ -81,7 +81,7 @@ void time_manager(void *pvParameters) {
 void cron_job_history_callback(cron_job *job) {
     sensor_manager_history_t timeFrame = (sensor_manager_history_t) job->data;
     sensor_manager_update_history_save(timeFrame);
-    ESP_LOGI(TIME_MANAGER_TAG, "ITS ME %i", timeFrame);
+    ESP_LOGI(TIME_MANAGER_TAG, "Callback on timeframe: %i", timeFrame);
 }
 
 int check_time(int time_value) {

@@ -67,6 +67,7 @@
 
 #include "mbus-protocol.h"
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -89,15 +90,24 @@ typedef struct _mbus_handle {
     int max_search_retry;
     char purge_first_frame;
     char is_serial; /**< _handle type (non zero for serial) */
-    int (*open) (struct _mbus_handle *handle);
-    int (*close) (struct _mbus_handle *handle);
-    int (*send) (struct _mbus_handle *handle, mbus_frame *frame);
-    int (*recv) (struct _mbus_handle *handle, mbus_frame *frame);
-    void (*free_auxdata) (struct _mbus_handle *handle);
-    void (*recv_event) (unsigned char src_type, const char *buff, size_t len);
-    void (*send_event) (unsigned char src_type, const char *buff, size_t len);
-    void (*scan_progress) (struct _mbus_handle *handle, const char *mask);
-    void (*found_event) (struct _mbus_handle *handle, mbus_frame *frame);    
+    int (*open)(struct _mbus_handle *handle);
+
+    int (*close)(struct _mbus_handle *handle);
+
+    int (*send)(struct _mbus_handle *handle, mbus_frame *frame);
+
+    int (*recv)(struct _mbus_handle *handle, mbus_frame *frame);
+
+    void (*free_auxdata)(struct _mbus_handle *handle);
+
+    void (*recv_event)(unsigned char src_type, const char *buff, size_t len);
+
+    void (*send_event)(unsigned char src_type, const char *buff, size_t len);
+
+    void (*scan_progress)(struct _mbus_handle *handle, const char *mask);
+
+    void (*found_event)(struct _mbus_handle *handle, mbus_frame *frame);
+
     void *auxdata;
 } mbus_handle;
 
@@ -107,8 +117,8 @@ typedef struct _mbus_handle {
 typedef struct _mbus_address {
     char is_primary;             /**< Address type (non zero for primary) */
     union {
-        int    primary;         /**< Primary address (for slaves shall be from 1 to 250) */
-        char * secondary;       /**< Secondary address (shall be 16 digits) */
+        int primary;         /**< Primary address (for slaves shall be from 1 to 250) */
+        char *secondary;       /**< Secondary address (shall be 16 digits) */
     };
 } mbus_address;
 
@@ -120,8 +130,8 @@ typedef struct _mbus_address {
  * but so far almost all strings are zero terminated ("texts").
  */
 typedef struct _mbus_string {
-    char * value;               /**< Buffer */
-    int    size;                /**< _size */
+    char *value;               /**< Buffer */
+    int size;                /**< _size */
 } mbus_string;
 
 
@@ -129,7 +139,7 @@ typedef struct _mbus_string {
  * Quantity value type union
  */
 typedef union _mbus_value {
-    double      real_val;   /**< Numerical  */
+    double real_val;   /**< Numerical  */
     mbus_string str_val;    /**< Text/binary */
 } mbus_value;
 
@@ -139,13 +149,13 @@ typedef union _mbus_value {
  */
 typedef struct _mbus_record {
     mbus_value value;          /**< Quantity value */
-    char                is_numeric;      /**< Quantity value type (nonzero is numeric) */
-    char               *unit;           /**< Quantity unit (e.g. Wh) */
-    char               *function_medium; /**< Quantity medium or function (e.g. Electricity) */
-    char               *quantity;       /**< Quantity type (e.g. Energy) */
-    int                 device;         /**< Quantity device */
-    long                tariff;         /**< Quantity tariff */
-    long                storage_number; /**< Quantity storage number */
+    char is_numeric;      /**< Quantity value type (nonzero is numeric) */
+    char *unit;           /**< Quantity unit (e.g. Wh) */
+    char *function_medium; /**< Quantity medium or function (e.g. Electricity) */
+    char *quantity;       /**< Quantity type (e.g. Energy) */
+    int device;         /**< Quantity device */
+    long tariff;         /**< Quantity tariff */
+    long storage_number; /**< Quantity storage number */
 } mbus_record;
 
 /**
@@ -164,8 +174,11 @@ typedef enum _mbus_context_option {
 // Event register functions
 //
 void mbus_register_recv_event(mbus_handle *handle, void (*event)(unsigned char src_type, const char *buff, size_t len));
+
 void mbus_register_send_event(mbus_handle *handle, void (*event)(unsigned char src_type, const char *buff, size_t len));
+
 void mbus_register_scan_progress(mbus_handle *handle, void (*event)(mbus_handle *handle, const char *mask));
+
 void mbus_register_found_event(mbus_handle *handle, void (*event)(mbus_handle *handle, mbus_frame *frame));
 
 /**
@@ -175,7 +188,7 @@ void mbus_register_found_event(mbus_handle *handle, void (*event)(mbus_handle *h
  *
  * @return Initialized "unified" handler when successful, NULL otherwise;
  */
-mbus_handle * mbus_context_serial(const char *device);
+mbus_handle *mbus_context_serial(const char *device);
 
 /**
  * Allocate and initialize M-Bus TCP context.
@@ -185,7 +198,7 @@ mbus_handle * mbus_context_serial(const char *device);
  *
  * @return Initialized "unified" handler when successful, NULL otherwise;
  */
-mbus_handle * mbus_context_tcp(const char *host, uint16_t port);
+mbus_handle *mbus_context_tcp(const char *host, uint16_t port);
 
 /**
  * Deallocate memory used by M-Bus context.
@@ -193,7 +206,7 @@ mbus_handle * mbus_context_tcp(const char *host, uint16_t port);
  * @param handle Initialized handle
  *
  */
-void mbus_context_free(mbus_handle * handle);
+void mbus_context_free(mbus_handle *handle);
 
 /**
  * Connect to serial bus or TCP gateway depending on context.
@@ -202,7 +215,7 @@ void mbus_context_free(mbus_handle * handle);
  *
  * @return Zero when successful.
  */
-int mbus_connect(mbus_handle * handle);
+int mbus_connect(mbus_handle *handle);
 
 /**
  * Disconnects the "unified" handle.
@@ -211,7 +224,7 @@ int mbus_connect(mbus_handle * handle);
  *
  * @return Zero when successful.
  */
-int mbus_disconnect(mbus_handle * handle);
+int mbus_disconnect(mbus_handle *handle);
 
 /**
  * Set option of a M-Bus context.
@@ -222,7 +235,7 @@ int mbus_disconnect(mbus_handle * handle);
  *
  * @return Zero when successful.
  */
-int mbus_context_set_option(mbus_handle * handle, mbus_context_option option, long value);
+int mbus_context_set_option(mbus_handle *handle, mbus_context_option option, long value);
 
 /**
  * Receives a frame using "unified" handle
@@ -232,7 +245,7 @@ int mbus_context_set_option(mbus_handle * handle, mbus_context_option option, lo
  *
  * @return Zero when successful.
  */
-int mbus_recv_frame(mbus_handle * handle, mbus_frame *frame);
+int mbus_recv_frame(mbus_handle *handle, mbus_frame *frame);
 
 /**
  * Used for handling collisions. Blocks as long as receiving frames or corrupted data.
@@ -241,7 +254,7 @@ int mbus_recv_frame(mbus_handle * handle, mbus_frame *frame);
  *
  * @return Zero when nothing received, one otherwise.
  */
-int mbus_purge_frames(mbus_handle * handle);
+int mbus_purge_frames(mbus_handle *handle);
 
 /**
  * Sends frame using "unified" handle
@@ -251,7 +264,7 @@ int mbus_purge_frames(mbus_handle * handle);
  *
  * @return Zero when successful.
  */
-int mbus_send_frame(mbus_handle * handle, mbus_frame *frame);
+int mbus_send_frame(mbus_handle *handle, mbus_frame *frame);
 
 /**
  * Sends secondary address selection frame using "unified" handle
@@ -261,7 +274,7 @@ int mbus_send_frame(mbus_handle * handle, mbus_frame *frame);
  *
  * @return Zero when successful.
  */
-int mbus_send_select_frame(mbus_handle * handle, const char *secondary_addr_str);
+int mbus_send_select_frame(mbus_handle *handle, const char *secondary_addr_str);
 
 /**
  * Sends application reset to given slave using "unified" handle
@@ -272,7 +285,7 @@ int mbus_send_select_frame(mbus_handle * handle, const char *secondary_addr_str)
  *
  * @return Zero when successful.
  */
-int mbus_send_application_reset_frame(mbus_handle * handle, int address, int subcode);
+int mbus_send_application_reset_frame(mbus_handle *handle, int address, int subcode);
 
 /**
  * Sends switch baudrate frame using "unified" handle
@@ -283,7 +296,7 @@ int mbus_send_application_reset_frame(mbus_handle * handle, int address, int sub
  *
  * @return Zero when successful.
  */
-int mbus_send_switch_baudrate_frame(mbus_handle * handle, int address, long baudrate);
+int mbus_send_switch_baudrate_frame(mbus_handle *handle, int address, long baudrate);
 
 /**
  * Sends request frame (REQ_UD2) to given slave using "unified" handle
@@ -293,7 +306,7 @@ int mbus_send_switch_baudrate_frame(mbus_handle * handle, int address, long baud
  *
  * @return Zero when successful.
  */
-int mbus_send_request_frame(mbus_handle * handle, int address);
+int mbus_send_request_frame(mbus_handle *handle, int address);
 
 /**
  * Sends user data frame (SND_UD) to given slave using "unified" handle
@@ -305,7 +318,7 @@ int mbus_send_request_frame(mbus_handle * handle, int address);
  *
  * @return Zero when successful.
  */
-int mbus_send_user_data_frame(mbus_handle * handle, int address, const unsigned char *data, size_t data_size);
+int mbus_send_user_data_frame(mbus_handle *handle, int address, const unsigned char *data, size_t data_size);
 
 /**
  * Sends frame to change primary address of given slave using "unified" handle
@@ -316,7 +329,7 @@ int mbus_send_user_data_frame(mbus_handle * handle, int address, const unsigned 
  *
  * @return Zero when successful.
  */
-int mbus_set_primary_address(mbus_handle * handle, int old_address, int new_address);
+int mbus_set_primary_address(mbus_handle *handle, int old_address, int new_address);
 
 /**
  * Sends a request and read replies until no more records available
@@ -350,7 +363,7 @@ int mbus_send_ping_frame(mbus_handle *handle, int address, char purge_response);
  *
  * @return See MBUS_PROBE_* constants
  */
-int mbus_select_secondary_address(mbus_handle * handle, const char *mask);
+int mbus_select_secondary_address(mbus_handle *handle, const char *mask);
 
 /**
  * Probe/address slave by secondary address using "unified" handle
@@ -361,7 +374,7 @@ int mbus_select_secondary_address(mbus_handle * handle, const char *mask);
  *
  * @return See MBUS_PROBE_* constants
  */
-int mbus_probe_secondary_address(mbus_handle * handle, const char *mask, char *matching_addr);
+int mbus_probe_secondary_address(mbus_handle *handle, const char *mask, char *matching_addr);
 
 /**
  * Read data from given slave using "unified" handle and address types
@@ -380,7 +393,7 @@ int mbus_read_slave(mbus_handle *handle, mbus_address *address, mbus_frame *repl
  *
  * @return pointer to the new record, NULL when failed
  */
-mbus_record * mbus_record_new();
+mbus_record *mbus_record_new();
 
 /**
  * Destructor for mbus_record
@@ -409,8 +422,7 @@ mbus_record *mbus_parse_fixed_record(char statusByte, char medium_unit_byte, uns
  *
  * @return Newly allocated record if succesful, NULL otherwise. Later on need to use #mbus_record_free
  */
-mbus_record * mbus_parse_variable_record(mbus_data_record *record);
-
+mbus_record *mbus_parse_variable_record(mbus_data_record *record);
 
 
 /**
@@ -426,8 +438,8 @@ mbus_record * mbus_parse_variable_record(mbus_data_record *record);
  *
  * @return zero when OK
  */
-int mbus_data_fixed_normalize(int medium_unit_byte, long medium_value, char **unit_out, double *value_out, char **quantity_out);
-
+int mbus_data_fixed_normalize(int medium_unit_byte, long medium_value, char **unit_out, double *value_out,
+                              char **quantity_out);
 
 
 /**
@@ -440,7 +452,8 @@ int mbus_data_fixed_normalize(int medium_unit_byte, long medium_value, char **un
  *
  * @return zero when OK
  */
-int mbus_variable_value_decode(mbus_data_record *record, double *value_out_real, char **value_out_str, int *value_out_str_size);
+int mbus_variable_value_decode(mbus_data_record *record, double *value_out_real, char **value_out_str,
+                               int *value_out_str_size);
 
 /**
  * Decode units and normalize value using VIF/VIFE (used internally by mbus_vib_unit_normalize)
@@ -466,7 +479,8 @@ int mbus_vif_unit_normalize(int vif, double value, char **unit_out, double *valu
  *
  * @return zero when OK
  */
-int mbus_vib_unit_normalize(mbus_value_information_block *vib, double value, char **unit_out, double *value_out, char ** quantity_out);
+int mbus_vib_unit_normalize(mbus_value_information_block *vib, double value, char **unit_out, double *value_out,
+                            char **quantity_out);
 
 /**
  * Generate XML for normalized variable-length data
@@ -475,7 +489,7 @@ int mbus_vib_unit_normalize(mbus_value_information_block *vib, double value, cha
  *
  * @return string with XML
  */
-char * mbus_data_variable_xml_normalized(mbus_data_variable *data);
+char *mbus_data_variable_xml_normalized(mbus_data_variable *data);
 
 /**
  * Return a string containing an XML representation of the normalized M-BUS frame data.
@@ -484,7 +498,7 @@ char * mbus_data_variable_xml_normalized(mbus_data_variable *data);
  *
  * @return string with XML
  */
-char * mbus_frame_data_xml_normalized(mbus_frame_data *data);
+char *mbus_frame_data_xml_normalized(mbus_frame_data *data);
 
 /**
  * Iterate over secondary addresses, send a probe package to all addresses matching
@@ -496,7 +510,7 @@ char * mbus_frame_data_xml_normalized(mbus_frame_data *data);
  *
  * @return zero when OK
  */
-int mbus_scan_2nd_address_range(mbus_handle * handle, int pos, char *addr_mask);
+int mbus_scan_2nd_address_range(mbus_handle *handle, int pos, char *addr_mask);
 
 /**
  * Convert a buffer with hex values into a buffer with binary values.
@@ -508,7 +522,7 @@ int mbus_scan_2nd_address_range(mbus_handle * handle, int pos, char *addr_mask);
  *
  * @return byte count of successful converted values
  */
-size_t mbus_hex2bin(unsigned char * dst, size_t dst_len, const unsigned char * src, size_t src_len);
+size_t mbus_hex2bin(unsigned char *dst, size_t dst_len, const unsigned char *src, size_t src_len);
 
 #ifdef __cplusplus
 }

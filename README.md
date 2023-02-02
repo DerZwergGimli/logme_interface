@@ -68,6 +68,17 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
     2. `idf.py flash`
     3. `idf.py monitor`
 
+## Credits
+
+Many thanks to the following repos:
+
+- [libmbus](https://github.com/rscada/libmbus)
+- [esp8266-software-uart](https://github.com/plieningerweb/esp8266-software-uart)
+
+## Useful Links
+
+[M-Bus datafram decoder](https://dev-lab.github.io/tmbus/tmbus.htm)
+
 GET-GIT-Vserion
 
 git tag --sort=-v:refname --list "v[0-9]*" | head -n 1 | cut -c 2-
