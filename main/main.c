@@ -66,7 +66,7 @@ static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in 
 
 
 void app_main(void) {
-    printf("APPVERSION= %s", CONFIG_LOGME_VERSION);
+    printf("APPVERSION= %s\n", CONFIG_LOGME_VERSION);
 
     // Initialize NVS
 //    esp_err_t ret = nvs_flash_init();
@@ -80,7 +80,10 @@ void app_main(void) {
 
     //ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
 
-    mbus_scan();
+    while (true) {
+        mbus_scan();
+        vTaskDelay(pdMS_TO_TICKS(5000));
+    }
 
     if (false) {
 

@@ -73,7 +73,7 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
 Many thanks to the following repos:
 
 - [libmbus](https://github.com/rscada/libmbus)
-- [esp8266-software-uart](https://github.com/plieningerweb/esp8266-software-uart)
+- [SoftwarSerial](https://github.com/plerup/espsoftwareserial)
 
 ## Useful Links
 
