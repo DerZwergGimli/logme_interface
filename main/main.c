@@ -34,6 +34,7 @@
 #include "timer/timer_manager.h"
 
 #include "timer/timer_manager.h"
+#include "sensors/sensor_helper.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "main";
@@ -81,7 +82,13 @@ void app_main(void) {
     //ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
 
     while (true) {
-        mbus_scan();
+        //ESP_LOGI("MBUS", "Found: %i Salves", mbus_scan_full(2400));
+        char *json_result;
+        mbus_request_short(&json_result, 1, "test_sensor", 2400);
+        if (json_result != NULL)
+            printf("%s", json_result);
+        free(json_result);
+
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 

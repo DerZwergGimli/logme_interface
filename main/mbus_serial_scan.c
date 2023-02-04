@@ -10,7 +10,7 @@
 
 static int
 init_slaves(mbus_handle *handle, int address) {
-    if (debug)
+    if (CONFIG_LOGME_MBUS_DEBUG)
         printf("%s: debug: sending init frame #1\n", __PRETTY_FUNCTION__);
 
     if (mbus_send_ping_frame(handle, address, 1) == -1) {
@@ -21,7 +21,7 @@ init_slaves(mbus_handle *handle, int address) {
     // resend SND_NKE, maybe the first get lost
     //
 
-    if (debug)
+    if (CONFIG_LOGME_MBUS_DEBUG)
         printf("%s: debug: sending init frame #2\n", __PRETTY_FUNCTION__);
 
     if (mbus_send_ping_frame(handle, address, 1) == -1) {
@@ -37,7 +37,7 @@ int ping_address(mbus_handle *handle, mbus_frame *reply, int address) {
     memset((void *) reply, 0, sizeof(mbus_frame));
 
     for (i = 0; i <= handle->max_search_retry; i++) {
-        if (debug) {
+        if (CONFIG_LOGME_MBUS_DEBUG) {
             printf("%d ", address);
             fflush(stdout);
         }
@@ -61,7 +61,7 @@ int ping_address(mbus_handle *handle, mbus_frame *reply, int address) {
 // Primary addressing scanning of mbus devices.
 //------------------------------------------------------------------------------
 int
-mbus_scan() {
+mbus_scan_old() {
     mbus_frame reply;
     mbus_frame_data reply_data;
     memset((void *) &reply_data, 0, sizeof(mbus_frame_data));
@@ -72,7 +72,7 @@ mbus_scan() {
     int address = 1, retries = 0;
     long baudrate = 2400;
     int ret;
-    debug = 1;
+
 
     memset((void *) &reply, 0, sizeof(mbus_frame));
 
@@ -84,7 +84,7 @@ mbus_scan() {
         return 1;
     }
 
-    if (debug) {
+    if (CONFIG_LOGME_MBUS_DEBUG) {
         mbus_register_send_event(handle, &mbus_dump_send_event);
         mbus_register_recv_event(handle, &mbus_dump_recv_event);
     }
@@ -148,7 +148,7 @@ mbus_scan() {
     //
     // dump hex data if debug is true
     //
-    if (debug) {
+    if (CONFIG_LOGME_MBUS_DEBUG) {
         mbus_frame_print(&reply);
     }
 
@@ -173,13 +173,13 @@ mbus_scan() {
 //    // generate XML and print to standard output
 //    //
 //
-//    if ((xml_result = mbus_frame_xml(&reply)) == NULL) {
-//        fprintf(stderr, "Failed to generate XML representation of MBUS frames: %s\n", mbus_error_str());
-//        mbus_disconnect(handle);
-//        mbus_context_free(handle);
-//        mbus_frame_free(reply.next);
-//        return 1;
-//    }
+    if ((xml_result = mbus_frame_xml(&reply)) == NULL) {
+        fprintf(stderr, "Failed to generate XML representation of MBUS frames: %s\n", mbus_error_str());
+        mbus_disconnect(handle);
+        mbus_context_free(handle);
+        mbus_frame_free(reply.next);
+        return 1;
+    }
 //
 //
 //    printf("%s", xml_result);
