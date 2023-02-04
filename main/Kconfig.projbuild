@@ -65,7 +65,7 @@ menu "LogME"
     menu "MBUS"
         config LOGME_MBUS_DEVICES
             int "Set LOGME_MBUS_DEVICES count"
-                default 16
+                default 4
                 help
                     Sets how many devices should be initialized used for storing/managing data/devices.
         config LOGME_MBUS_MAXFRAMES

@@ -10,6 +10,7 @@
 #include <esp_flash.h>
 #include "cJSON.h"
 #include "esp_vfs.h"
+#include "sensor_helper.h"
 #include <fcntl.h>
 #include <esp_heap_trace.h>
 
@@ -30,6 +31,8 @@ char *sensor_manager_json = NULL;
 sml_smart_meter_sensor_t sensors[SENSORS_LENGTH];
 
 //new sensors
+
+char *sensor_manager_mbus_devices = NULL;
 mbus_device_t mbus_devices[CONFIG_LOGME_MBUS_DEVICES];
 
 
@@ -86,8 +89,21 @@ void sensor_manager(void *pvParameters) {
                     /* Close file after sending complete */
                     close(fd);
 
-                    
+                    for (int i = 0; i < NELEMS(mbus_devices); i++) {
+                        strcat(mbus_devices[i].name, "NONE");
+                        mbus_devices[i].status = MBUS_IDLE;
+                        mbus_devices[i].pin_rx = 4;
+                        mbus_devices[i].pin_tx = 5;
+                    }
+
+                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                        ESP_ERROR_CHECK(sensor_manager_generate_json());
+                        sensor_manager_unlock_json_buffer();
+                    }
+
+
                     ESP_LOGI(SENSOR_MANAGER_TAG, "%s", sensors[0].name);
+                    sensor_manager_send_message(SM_MBUS_PULL, NULL);
                 }
                     break;
                 case SM_SAVE_CONFIG: {
@@ -145,6 +161,17 @@ void sensor_manager(void *pvParameters) {
 
                 }
                     break;
+                case SM_MBUS_PULL: {
+                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_MBUS_PULL");
+                    mbus_request_short(&mbus_devices[0].data, 1, "test_sensor", 2400);
+                    printf("%s", mbus_devices[0].data);
+
+                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                        ESP_ERROR_CHECK(sensor_manager_generate_json());
+                        sensor_manager_unlock_json_buffer();
+                    }
+
+                }
                 default: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SI_DEFAULT");
                     ESP_LOGE(SENSOR_MANAGER_TAG, "Destroy");
@@ -182,57 +209,83 @@ void sensor_manager_start(bool log_enable) {
 
 esp_err_t sensor_manager_generate_json() {
     //ESP_ERROR_CHECK(heap_trace_start(HEAP_TRACE_LEAKS));
-
     strcpy(sensor_manager_json, "[");
-    for (int i = 0; i < NELEMS(sensors); i++) {
-        char buffer[500];
-        sprintf(buffer, "{\n\"id\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %li,\n",
-                sensors[i].id,
-                sensors[i].name,
-                sensors[i].count,
-                sensors[i].power);
+    for (int i = 0; i < NELEMS(mbus_devices); i++) {
+        char buffer[10240];
+        if (mbus_devices[i].status != MBUS_DEFAULT) {
+            sprintf(buffer, "{ \"name\": \"%s\","
+                            "\"status\": %u,"
+                            "\"pin_rx\": %u,"
+                            "\"pin_tx\": %u",
+                    mbus_devices[i].name,
+                    mbus_devices[i].status,
+                    mbus_devices[i].pin_rx,
+                    mbus_devices[i].pin_tx
+            );
+
+            if (mbus_devices[i].data != NULL) {
+                strcat(sensor_manager_json, buffer);
+                sprintf(buffer, ",\"data\": %s", mbus_devices[i].data);
+            }
+            strcat(buffer, "}");
+        }
+        if (i < NELEMS(mbus_devices) - 1)
+            strcat(buffer, ",");
         strcat(sensor_manager_json, buffer);
-
-        strcat(sensor_manager_json, "\"history\": {");
-        strcat(sensor_manager_json, "\"day_24_kw\": [");
-
-        for (int j = 0; j < NELEMS(sensors[i].history.day_24_kw); j++) {
-            sprintf(buffer, "%li", sensors[i].history.day_24_kw[j]);
-            strcat(sensor_manager_json, buffer);
-            if (j + 1 < NELEMS(sensors[i].history.day_24_kw))
-                strcat(sensor_manager_json, ",");
-        }
-        strcat(sensor_manager_json, "]");
-
-        strcat(sensor_manager_json, ",");
-        strcat(sensor_manager_json, "\"week_7_kw\": [");
-
-        for (int j = 0; j < NELEMS(sensors[i].history.week_7_kw); j++) {
-            sprintf(buffer, "%li", sensors[i].history.week_7_kw[j]);
-            strcat(sensor_manager_json, buffer);
-            if (j + 1 < NELEMS(sensors[i].history.week_7_kw))
-                strcat(sensor_manager_json, ",");
-        }
-        strcat(sensor_manager_json, "]");
-
-        strcat(sensor_manager_json, ",");
-        strcat(sensor_manager_json, "\"month_30_kw\": [");
-
-        for (int j = 0; j < NELEMS(sensors[i].history.month_30_kw); j++) {
-            sprintf(buffer, "%li", sensors[i].history.month_30_kw[j]);
-            strcat(sensor_manager_json, buffer);
-            if (j + 1 < NELEMS(sensors[i].history.month_30_kw))
-                strcat(sensor_manager_json, ",");
-        }
-        strcat(sensor_manager_json, "]");
-
-        strcat(sensor_manager_json, "}}");
-        if (i + 1 < NELEMS(sensors))
-            strcat(sensor_manager_json, ",");
-
     }
-
     strcat(sensor_manager_json, "]");
+
+
+//    strcpy(sensor_manager_json, "[");
+//    for (int i = 0; i < NELEMS(sensors); i++) {
+//        char buffer[500];
+//        sprintf(buffer, "{\n\"id\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %li,\n",
+//                sensors[i].id,
+//                sensors[i].name,
+//                sensors[i].count,
+//                sensors[i].power);
+//        strcat(sensor_manager_json, buffer);
+//
+//        strcat(sensor_manager_json, "\"history\": {");
+//        strcat(sensor_manager_json, "\"day_24_kw\": [");
+//
+//        for (int j = 0; j < NELEMS(sensors[i].history.day_24_kw); j++) {
+//            sprintf(buffer, "%li", sensors[i].history.day_24_kw[j]);
+//            strcat(sensor_manager_json, buffer);
+//            if (j + 1 < NELEMS(sensors[i].history.day_24_kw))
+//                strcat(sensor_manager_json, ",");
+//        }
+//        strcat(sensor_manager_json, "]");
+//
+//        strcat(sensor_manager_json, ",");
+//        strcat(sensor_manager_json, "\"week_7_kw\": [");
+//
+//        for (int j = 0; j < NELEMS(sensors[i].history.week_7_kw); j++) {
+//            sprintf(buffer, "%li", sensors[i].history.week_7_kw[j]);
+//            strcat(sensor_manager_json, buffer);
+//            if (j + 1 < NELEMS(sensors[i].history.week_7_kw))
+//                strcat(sensor_manager_json, ",");
+//        }
+//        strcat(sensor_manager_json, "]");
+//
+//        strcat(sensor_manager_json, ",");
+//        strcat(sensor_manager_json, "\"month_30_kw\": [");
+//
+//        for (int j = 0; j < NELEMS(sensors[i].history.month_30_kw); j++) {
+//            sprintf(buffer, "%li", sensors[i].history.month_30_kw[j]);
+//            strcat(sensor_manager_json, buffer);
+//            if (j + 1 < NELEMS(sensors[i].history.month_30_kw))
+//                strcat(sensor_manager_json, ",");
+//        }
+//        strcat(sensor_manager_json, "]");
+//
+//        strcat(sensor_manager_json, "}}");
+//        if (i + 1 < NELEMS(sensors))
+//            strcat(sensor_manager_json, ",");
+//
+//    }
+//
+//    strcat(sensor_manager_json, "]");
 
 
     // ESP_ERROR_CHECK(heap_trace_stop());
