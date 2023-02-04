@@ -5,6 +5,7 @@
 #include "sensor_helper.h"
 #include "mbus-json.h"
 
+
 int mbus_scan_full(long baudrate) {
 
     mbus_frame reply;

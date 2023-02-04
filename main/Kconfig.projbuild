@@ -70,8 +70,8 @@ menu "LogME"
                 help
                     Sets MAXFRAMES for fetching full data from MBUS connected sensors.
         config LOGME_MBUS_DEBUG
-            bool "Toggle MBUS-Debug"
-                default y
+            int "Toggle MBUS-Debug"
+                default 0
                 help
                     Toggles MBUS-Debug flag useful for debugging sensors.
     endmenu
