@@ -30,8 +30,8 @@ jobs:
           esp_idf_version: v5.0
           target: esp32
           path: './'
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: LogME
-          path: ./build
+#      - name: Upload artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: LogME
+#          path: ./build
