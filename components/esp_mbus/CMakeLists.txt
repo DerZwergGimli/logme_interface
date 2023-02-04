@@ -5,8 +5,9 @@ idf_component_register(SRCS
         "mbus-protocol-aux.c"
         "mbus-tcp.c"
         "mbus-serial.c"
+        "mbus-json.c"
         INCLUDE_DIRS "include"
-        PRIV_REQUIRES driver)
+        PRIV_REQUIRES driver freertos)
 
 
 set(ESP_MBUS_FLAGS

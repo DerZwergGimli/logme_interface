@@ -15,6 +15,7 @@
 
 #include "mbus-protocol.h"
 
+
 static int parse_debug = 0, debug = 0;
 static char error_str[512];
 
@@ -4386,7 +4387,6 @@ char *
 mbus_frame_xml(mbus_frame *frame) {
     mbus_frame_data frame_data;
     mbus_frame *iter;
-
     mbus_data_record *record;
     char *buff = NULL, *new_buff;
 
@@ -4444,6 +4444,7 @@ mbus_frame_xml(mbus_frame *frame) {
             // loop through all records in the current frame, using a global
             // record count as record ID in the XML output
             for (record = frame_data.data_var.record; record; record = record->next, record_cnt++) {
+
                 if ((buff_size - len) < 1024) {
                     buff_size *= 2;
                     new_buff = (char *) realloc(buff, buff_size);

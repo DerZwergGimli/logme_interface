@@ -34,6 +34,25 @@ static const int RX_BUF_SIZE = 1024;
 int mbus_serial_wakeup(mbus_handle *handle) {
     ESP_LOGI("SERIAL_WAKEUP", "Sending serial wakeup!");
 
+    uart_config_t uart_config = {
+            .baud_rate = 2400,
+            .data_bits = UART_DATA_8_BITS,
+            .parity    = UART_PARITY_DISABLE,
+            .stop_bits = UART_STOP_BITS_1,
+            .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+            .source_clk = UART_SCLK_DEFAULT,
+    };
+    int intr_alloc_flags = 0;
+
+#if CONFIG_UART_ISR_IN_IRAM
+    intr_alloc_flags = ESP_INTR_FLAG_IRAM;
+#endif
+
+    ESP_ERROR_CHECK(uart_driver_install(UART_NUM_1, RX_BUF_SIZE * 2, 0, 0, NULL, intr_alloc_flags));
+    ESP_ERROR_CHECK(uart_param_config(UART_NUM_1, &uart_config));
+    ESP_ERROR_CHECK(uart_set_pin(UART_NUM_1, TXD_PIN, RXD_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
+
+
     for (int i = 0; i < 132; i++) {
 
         const char wakeup[] = {0x55};
@@ -43,6 +62,9 @@ int mbus_serial_wakeup(mbus_handle *handle) {
     vTaskDelay(pdMS_TO_TICKS(1300));
     if (handle == NULL)
         return -1;
+
+    ESP_ERROR_CHECK(uart_driver_delete(UART_NUM_1));
+
     return 0;
 }
 
@@ -252,8 +274,6 @@ void mbus_serial_data_free(mbus_handle *handle) {
         if (serial_data == NULL) {
             return;
         }
-
-        //uart_flush(UART_NUM_1);
 
         free(serial_data->device);
         free(serial_data);

@@ -1,17 +1,19 @@
 #include "mbus_serial_scan.h"
 
 #include "driver/uart.h"
+#include "mbus-json.h"
 
 #define ECHO_TEST_TXD  (4)
 #define ECHO_TEST_RXD  (5)
 #define BUF_SIZE (1024)
+#define MAXFRAMES 16
 
 static int
-init_slaves(mbus_handle *handle) {
+init_slaves(mbus_handle *handle, int address) {
     if (debug)
         printf("%s: debug: sending init frame #1\n", __PRETTY_FUNCTION__);
 
-    if (mbus_send_ping_frame(handle, MBUS_ADDRESS_NETWORK_LAYER, 1) == -1) {
+    if (mbus_send_ping_frame(handle, address, 1) == -1) {
         return 0;
     }
 
@@ -22,7 +24,7 @@ init_slaves(mbus_handle *handle) {
     if (debug)
         printf("%s: debug: sending init frame #2\n", __PRETTY_FUNCTION__);
 
-    if (mbus_send_ping_frame(handle, MBUS_ADDRESS_NETWORK_LAYER, 1) == -1) {
+    if (mbus_send_ping_frame(handle, address, 1) == -1) {
         return 0;
     }
 
@@ -74,6 +76,9 @@ mbus_scan() {
 
     memset((void *) &reply, 0, sizeof(mbus_frame));
 
+    mbus_handle *mbus_init = (mbus_handle *) malloc(sizeof(mbus_handle));
+    mbus_serial_wakeup(mbus_init);
+
     if ((handle = mbus_context_serial(device)) == NULL) {
         fprintf(stderr, "Scan failed: Could not initialize M-Bus context: %s\n", mbus_error_str());
         return 1;
@@ -100,22 +105,43 @@ mbus_scan() {
         return 1;
     }
 
-    mbus_serial_wakeup(handle);
 
-    //ESP_LOGI("SERIAL_WAKEUP", "Sending serial wakeup!");
-    //const char wakeup[] = {0x10, 0x40, 0x01, 0x41, 0x16};
-    //const size_t wakeup_len = sizeof(wakeup);
-    //uart_write_bytes(UART_NUM_1, wakeup, wakeup_len);
-
-    if (mbus_send_request_frame(handle, address) == -1) {
-        fprintf(stderr, "Failed to send M-Bus request frame.\n");
+    if (init_slaves(handle, address) == 0) {
         mbus_disconnect(handle);
         mbus_context_free(handle);
         return 1;
     }
 
-    if (mbus_recv_frame(handle, &reply) != MBUS_RECV_RESULT_OK) {
-        fprintf(stderr, "Failed to receive M-Bus response frame.\n");
+
+    //ESP_LOGI("SERIAL_WAKEUP", "Sending serial wakeup!");
+    //const char wakeup[] = {0x10, 0x40, 0x01, 0x41, 0x16};
+    //const size_t wakeup_len = sizeof(wakeup);
+    //uart_write_bytes(UART_NUM_1, wakeup, wakeup_len);
+//
+//    if (mbus_send_request_frame(handle, address) == -1) {
+//        fprintf(stderr, "Failed to send M-Bus request frame.\n");
+//        mbus_disconnect(handle);
+//        mbus_context_free(handle);
+//        return 1;
+//    }
+
+//    if (mbus_send_request_frame(handle, address) == -1) {
+//        fprintf(stderr, "Failed to send M-Bus request frame.\n");
+//        mbus_disconnect(handle);
+//        mbus_context_free(handle);
+//        return 1;
+//    }
+//
+//    if (mbus_recv_frame(handle, &reply) != MBUS_RECV_RESULT_OK) {
+//        fprintf(stderr, "Failed to receive M-Bus response frame.\n");
+//        return 1;
+//    }
+    int maxframes = MAXFRAMES;
+    if (mbus_sendrecv_request(handle, address, &reply, maxframes) != 0) {
+        fprintf(stderr, "Failed to send/receive M-Bus request.\n");
+        mbus_disconnect(handle);
+        mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
@@ -127,65 +153,41 @@ mbus_scan() {
     }
 
     //
-    // parse data
+    // generate JSON and print to standard output
     //
-    if (mbus_frame_data_parse(&reply, &reply_data) == -1) {
-        fprintf(stderr, "M-bus data parse error: %s\n", mbus_error_str());
+
+    if ((xml_result = mbus_frame_json(&reply)) == NULL) {
+        fprintf(stderr, "Failed to generate JSON representation of MBUS frames: %s\n", mbus_error_str());
         mbus_disconnect(handle);
         mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
-    //
-    // generate XML and print to standard output
-    //
-    if ((xml_result = mbus_frame_data_xml(&reply_data)) == NULL) {
-        fprintf(stderr, "Failed to generate XML representation of MBUS frame: %s\n", mbus_error_str());
-        mbus_disconnect(handle);
-        mbus_context_free(handle);
-        return 1;
-    }
 
     printf("%s", xml_result);
     free(xml_result);
 
-    // manual free
-    if (reply_data.data_var.record) {
-        mbus_data_record_free(reply_data.data_var.record); // free's up the whole list
-    }
+//
+//    //
+//    // generate XML and print to standard output
+//    //
+//
+//    if ((xml_result = mbus_frame_xml(&reply)) == NULL) {
+//        fprintf(stderr, "Failed to generate XML representation of MBUS frames: %s\n", mbus_error_str());
+//        mbus_disconnect(handle);
+//        mbus_context_free(handle);
+//        mbus_frame_free(reply.next);
+//        return 1;
+//    }
+//
+//
+//    printf("%s", xml_result);
+//    free(xml_result);
 
-
-    if (debug)
-        printf("Scanning primary addresses:\n");
-
-    for (address = 1; address <= 1; address++) {
-        mbus_frame reply;
-
-        ret = ping_address(handle, &reply, address);
-
-        if (ret == MBUS_RECV_RESULT_TIMEOUT) {
-            continue;
-        }
-
-        if (ret == MBUS_RECV_RESULT_INVALID) {
-            /* check for more data (collision) */
-            mbus_purge_frames(handle);
-            printf("Collision at address %d\n", address);
-            continue;
-        }
-
-        if (mbus_frame_type(&reply) == MBUS_FRAME_TYPE_ACK) {
-            /* check for more data (collision) */
-            if (mbus_purge_frames(handle)) {
-                printf("Collision at address %d\n", address);
-                continue;
-            }
-
-            printf("Found a M-Bus device at address %d\n", address);
-        }
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
     mbus_disconnect(handle);
     mbus_context_free(handle);
+    mbus_frame_free(reply.next);
+
     return 0;
 }

@@ -85,7 +85,7 @@ typedef struct _mbus_frame {
     unsigned char checksum;
     unsigned char stop;
 
-    unsigned char   data[MBUS_FRAME_DATA_LENGTH];
+    unsigned char data[MBUS_FRAME_DATA_LENGTH];
     size_t data_size;
 
     int type;
@@ -141,25 +141,25 @@ typedef struct _mbus_slave_data {
 
 typedef struct _mbus_data_information_block {
 
-        unsigned char dif;
-        unsigned char dife[MBUS_DATA_INFO_BLOCK_DIFE_SIZE];
-        size_t  ndife;
+    unsigned char dif;
+    unsigned char dife[MBUS_DATA_INFO_BLOCK_DIFE_SIZE];
+    size_t ndife;
 
 } mbus_data_information_block;
 
 typedef struct _mbus_value_information_block {
 
-        unsigned char vif;
-        unsigned char vife[MBUS_VALUE_INFO_BLOCK_VIFE_SIZE];
-        size_t  nvife;
+    unsigned char vif;
+    unsigned char vife[MBUS_VALUE_INFO_BLOCK_VIFE_SIZE];
+    size_t nvife;
 
-        unsigned char custom_vif[MBUS_VALUE_INFO_BLOCK_CUSTOM_VIF_SIZE];
+    unsigned char custom_vif[MBUS_VALUE_INFO_BLOCK_CUSTOM_VIF_SIZE];
 
 } mbus_value_information_block;
 
 typedef struct _mbus_data_record_header {
 
-    mbus_data_information_block  dib;
+    mbus_data_information_block dib;
     mbus_value_information_block vib;
 
 } mbus_data_record_header;
@@ -211,14 +211,14 @@ typedef struct _mbus_data_variable {
     size_t nrecords;
 
     unsigned char *data;
-    size_t  data_len;
+    size_t data_len;
 
     unsigned char more_records_follow;
 
     // are these needed/used?
-    unsigned char  mdh;
+    unsigned char mdh;
     unsigned char *mfg_data;
-    size_t  mfg_data_len;
+    size_t mfg_data_len;
 
 } mbus_data_variable;
 
@@ -261,7 +261,7 @@ typedef struct _mbus_data_fixed {
 typedef struct _mbus_frame_data {
 
     mbus_data_variable data_var;
-    mbus_data_fixed    data_fix;
+    mbus_data_fixed data_fix;
 
     int type;
     int error;
@@ -527,39 +527,46 @@ unsigned int mbus_manufacturer_id(char *manufacturer);
 // Event callback functions
 //
 void mbus_dump_recv_event(unsigned char src_type, const char *buff, size_t len);
+
 void mbus_dump_send_event(unsigned char src_type, const char *buff, size_t len);
 
 //
 // variable length records
 //
 mbus_data_record *mbus_data_record_new();
-void              mbus_data_record_free(mbus_data_record *record);
-void              mbus_data_record_append(mbus_data_variable *data, mbus_data_record *record);
+
+void mbus_data_record_free(mbus_data_record *record);
+
+void mbus_data_record_append(mbus_data_variable *data, mbus_data_record *record);
 
 
 // XXX: Add application reset subcodes
 
 mbus_frame *mbus_frame_new(int frame_type);
-int         mbus_frame_free(mbus_frame *frame);
+
+int mbus_frame_free(mbus_frame *frame);
 
 mbus_frame_data *mbus_frame_data_new();
-void             mbus_frame_data_free(mbus_frame_data *data);
+
+void mbus_frame_data_free(mbus_frame_data *data);
 
 //
 //
 //
 int mbus_frame_calc_checksum(mbus_frame *frame);
-int mbus_frame_calc_length  (mbus_frame *frame);
+
+int mbus_frame_calc_length(mbus_frame *frame);
 
 //
 // Parse/Pack to bin
 //
 int mbus_parse(mbus_frame *frame, unsigned char *data, size_t data_size);
 
-int mbus_data_fixed_parse   (mbus_frame *frame, mbus_data_fixed    *data);
+int mbus_data_fixed_parse(mbus_frame *frame, mbus_data_fixed *data);
+
 int mbus_data_variable_parse(mbus_frame *frame, mbus_data_variable *data);
 
-int mbus_frame_data_parse   (mbus_frame *frame, mbus_frame_data *data);
+int mbus_frame_data_parse(mbus_frame *frame, mbus_frame_data *data);
 
 int mbus_frame_pack(mbus_frame *frame, unsigned char *data, size_t data_size);
 
@@ -571,17 +578,24 @@ int mbus_frame_internal_pack(mbus_frame *frame, mbus_frame_data *frame_data);
 // data parsing
 //
 const char *mbus_data_record_function(mbus_data_record *record);
+
 const char *mbus_data_fixed_function(int status);
-long        mbus_data_record_storage_number(mbus_data_record *record);
-long        mbus_data_record_tariff(mbus_data_record *record);
-int         mbus_data_record_device(mbus_data_record *record);
+
+long mbus_data_record_storage_number(mbus_data_record *record);
+
+long mbus_data_record_tariff(mbus_data_record *record);
+
+int mbus_data_record_device(mbus_data_record *record);
+
 const char *mbus_data_record_unit(mbus_data_record *record);
+
 const char *mbus_data_record_value(mbus_data_record *record);
 
 //
 // M-Bus frame data struct access/write functions
 //
 int mbus_frame_type(mbus_frame *frame);
+
 int mbus_frame_direction(mbus_frame *frame);
 
 //
@@ -592,48 +606,69 @@ mbus_slave_data *mbus_slave_data_get(size_t i);
 //
 // XML generating functions
 //
-int   mbus_str_xml_encode(unsigned char *dst, const unsigned char *src, size_t max_len);
+int mbus_str_xml_encode(unsigned char *dst, const unsigned char *src, size_t max_len);
+
 char *mbus_data_xml(mbus_frame_data *data);
+
 char *mbus_data_variable_xml(mbus_data_variable *data);
+
 char *mbus_data_fixed_xml(mbus_data_fixed *data);
+
 char *mbus_data_error_xml(int error);
+
 char *mbus_frame_data_xml(mbus_frame_data *data);
 
 char *mbus_data_variable_header_xml(mbus_data_variable_header *header);
 
 char *mbus_frame_xml(mbus_frame *frame);
 
+
 //
 // Debug/dump
 //
 int mbus_frame_print(mbus_frame *frame);
+
 int mbus_frame_data_print(mbus_frame_data *data);
+
 int mbus_data_fixed_print(mbus_data_fixed *data);
+
 int mbus_data_error_print(int error);
+
 int mbus_data_variable_header_print(mbus_data_variable_header *header);
+
 int mbus_data_variable_print(mbus_data_variable *data);
 
 char *mbus_error_str();
-void  mbus_error_str_set(char *message);
-void  mbus_error_reset();
 
-void  mbus_parse_set_debug(int debug);
-void  mbus_hex_dump(const char *label, const char *buff, size_t len);
+void mbus_error_str_set(char *message);
+
+void mbus_error_reset();
+
+void mbus_parse_set_debug(int debug);
+
+void mbus_hex_dump(const char *label, const char *buff, size_t len);
 
 //
 // data encode/decode functions
 //
 int mbus_data_manufacturer_encode(unsigned char *m_data, unsigned char *m_code);
+
 const char *mbus_decode_manufacturer(unsigned char byte1, unsigned char byte2);
+
 const char *mbus_data_product_name(mbus_data_variable_header *header);
 
 int mbus_data_bcd_encode(unsigned char *bcd_data, size_t bcd_data_size, int value);
+
 int mbus_data_int_encode(unsigned char *int_data, size_t int_data_size, int value);
 
 long long mbus_data_bcd_decode(unsigned char *bcd_data, size_t bcd_data_size);
+
 long long mbus_data_bcd_decode_hex(unsigned char *bcd_data, size_t bcd_data_size);
+
 int mbus_data_int_decode(unsigned char *int_data, size_t int_data_size, int *value);
+
 int mbus_data_long_decode(unsigned char *int_data, size_t int_data_size, long *value);
+
 int mbus_data_long_long_decode(unsigned char *int_data, size_t int_data_size, long long *value);
 
 float mbus_data_float_decode(unsigned char *float_data);
@@ -645,22 +680,28 @@ void mbus_data_str_decode(unsigned char *dst, const unsigned char *src, size_t l
 void mbus_data_bin_decode(unsigned char *dst, const unsigned char *src, size_t len, size_t max_len);
 
 const char *mbus_data_fixed_medium(mbus_data_fixed *data);
+
 const char *mbus_data_fixed_unit(int medium_unit_byte);
+
 const char *mbus_data_variable_medium_lookup(unsigned char medium);
+
 const char *mbus_unit_prefix(int exp);
 
 const char *mbus_data_error_lookup(int error);
 
 const char *mbus_vib_unit_lookup(mbus_value_information_block *vib);
+
 const char *mbus_vif_unit_lookup(unsigned char vif);
 
 unsigned char mbus_dif_datalength_lookup(unsigned char dif);
 
 char *mbus_frame_get_secondary_address(mbus_frame *frame);
-int   mbus_frame_select_secondary_pack(mbus_frame *frame, char *address);
+
+int mbus_frame_select_secondary_pack(mbus_frame *frame, char *address);
 
 int mbus_is_primary_address(int value);
-int mbus_is_secondary_address(const char * value);
+
+int mbus_is_secondary_address(const char *value);
 
 #ifdef __cplusplus
 }
