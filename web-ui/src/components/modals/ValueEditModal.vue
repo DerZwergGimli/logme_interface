@@ -28,10 +28,7 @@ function send_wifi_config() {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      ssid: network_ssid_user.value,
-      password: network_password_user.value,
-    }),
+    body: JSON.stringify({}),
   })
     .then(response => response.text())
     .then(response => {
