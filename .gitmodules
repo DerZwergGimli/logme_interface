@@ -1,3 +1,6 @@
 [submodule "components/esp_libmbus"]
 	path = components/esp_libmbus
 	url = https://github.com/DerZwergGimli/esp_libmbus
+[submodule "components/esp_cron"]
+	path = components/esp_cron
+	url = https://github.com/DerZwergGimli/esp_cron
