@@ -127,4 +127,35 @@ static esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+/**
+ * GET-Request
+ * -> '/sensors/id'
+ */
+static esp_err_t rest_get_sensor_handler(httpd_req_t *req, int index) {
+    ESP_LOGI(HTTP_SERVER_TAG, "GET %s with index=%i", req->uri, index);
+
+
+    if (sensor_manager_lock_json_buffer(portMAX_DELAY)) {
+        const char *json_buff = sensor_manager_get_json();
+        if (json_buff) {
+            httpd_resp_set_status(req, http_200_hdr);
+            httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+            httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+            httpd_resp_set_type(req, http_content_type_json);
+            httpd_resp_sendstr(req, json_buff);
+
+        } else {
+            httpd_resp_set_status(req, http_503_hdr);
+            httpd_resp_send(req, NULL, 0);
+        }
+        sensor_manager_unlock_json_buffer();
+
+    } else {
+        httpd_resp_set_status(req, http_503_hdr);
+        httpd_resp_send(req, NULL, 0);
+        ESP_LOGE("REST_GET-System", "failed to obtain mutex");
+    }
+    return ESP_OK;
+}
+
 #endif

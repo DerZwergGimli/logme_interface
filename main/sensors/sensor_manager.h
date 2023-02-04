@@ -27,7 +27,7 @@ typedef enum message_sensor_manager_t {
     SM_SAVE_CONFIG = 4,
     SM_CLEAR_HISTORY = 5,
     SM_KILL = 6,
-    SM_UPDATE_HISTORY,
+    SM_UPDATE_HISTORY = 7,
 
 } message_sensor_manager_t;
 

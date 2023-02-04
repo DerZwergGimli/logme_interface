@@ -67,21 +67,21 @@ static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in 
 
 
 void app_main(void) {
-    printf("APPVERSION= %s\n", CONFIG_LOGME_VERSION);
+    printf("VERSION= %s\n", CONFIG_LOGME_VERSION);
 
     // Initialize NVS
-//    esp_err_t ret = nvs_flash_init();
-//    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-//        ESP_ERROR_CHECK(nvs_flash_erase());
-//        ret = nvs_flash_init();
-//    }
-//    ESP_ERROR_CHECK(ret);
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        ret = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(ret);
 
 
 
     //ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
 
-    while (true) {
+    while (false) {
         //ESP_LOGI("MBUS", "Found: %i Salves", mbus_scan_full(2400));
         char *json_result;
         mbus_request_short(&json_result, 1, "test_sensor", 2400);
@@ -92,29 +92,27 @@ void app_main(void) {
         vTaskDelay(pdMS_TO_TICKS(5000));
     }
 
-    if (false) {
 
-        ESP_ERROR_CHECK(init_fs());
-        ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
+    ESP_ERROR_CHECK(init_fs());
+    ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
 
-        // Initialize WIFI
-        wifi_manager_start();
+    // Initialize WIFI
+    wifi_manager_start();
 
-        //Initialize WebServer
-        ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
-        wifi_manager_set_callback(WM_ORDER_START_AP, &cb_restart_rest_server);
-        wifi_manager_set_callback(WM_ORDER_STOP_AP, &cb_restart_rest_server);
+    //Initialize WebServer
+    ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
+    wifi_manager_set_callback(WM_ORDER_START_AP, &cb_restart_rest_server);
+    wifi_manager_set_callback(WM_ORDER_STOP_AP, &cb_restart_rest_server);
 
 
-        // Initialize SystemInfo
-        system_info_start(true);
+    // Initialize SystemInfo
+    system_info_start(true);
 
-        // Initialize Sensor Manager
-        sensor_manager_start(true);
+    // Initialize Sensor Manager
+    sensor_manager_start(true);
 
-        //Time Manger for updating history
-        time_manager_start(false);
-    }
+    //Time Manger for updating history
+    //time_manager_start(false);
 
     ESP_LOGI("main", "--- DEVICE BOOTED ---");
 

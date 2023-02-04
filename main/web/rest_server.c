@@ -120,7 +120,6 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
 
         } else {
 
-
             char filepath[FILE_PATH_MAX];
 
             rest_server_context_t *rest_context = (rest_server_context_t *) req->user_ctx;
@@ -168,6 +167,40 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
             return ESP_OK;
         }
     }
+}
+
+static esp_err_t base_post_handler(httpd_req_t *req) {
+    if (strcmp(req->uri, "/restart") == 0) {
+        ESP_ERROR_CHECK(rest_post_restart_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/wifireset") == 0) {
+        ESP_ERROR_CHECK(rest_post_wifi_reset_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/wificonfig") == 0) {
+        ESP_ERROR_CHECK(rest_post_wifiConfig_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/sensorhistoryclear") == 0) {
+        ESP_ERROR_CHECK(rest_post_sensor_history_clear_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/sensorsave") == 0) {
+        ESP_ERROR_CHECK(rest_post_sensor_save_handler(req));
+        return ESP_OK;
+    } else {
+        httpd_resp_set_status(req, http_400_hdr);
+        httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+        httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+
+        cJSON *response_json = cJSON_CreateObject();
+        json_status_response_create(response_json, STATUS_ERROR, "No route found!");
+        httpd_resp_set_type(req, http_content_type_json);
+        const char *json_buff = cJSON_Print(response_json);
+        httpd_resp_sendstr(req, json_buff);
+        free((void *) json_buff);
+        cJSON_Delete(response_json);
+
+        return 1;
+    }
+
 }
 
 static esp_err_t rest_common_get_handler(httpd_req_t *req) {
@@ -291,48 +324,6 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         /* URI handler for fetching SYSTEM-info */
 
         /* URI handler for Restart  */
-        httpd_uri_t rest_post_restart_uri = {
-                .uri = "/restart",
-                .method = HTTP_POST,
-                .handler = rest_post_restart_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_post_restart_uri);
-
-
-
-        /* URI handler for Restart  */
-        httpd_uri_t rest_post_wifi_reset_uri = {
-                .uri = "/wifireset",
-                .method = HTTP_POST,
-                .handler = rest_post_wifi_reset_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_post_wifi_reset_uri);
-
-
-        /* URI handler for WiFi-Config  */
-        httpd_uri_t rest_post_wifiConfig_uri = {
-                .uri = "/wificonfig",
-                .method = HTTP_POST,
-                .handler = rest_post_wifiConfig_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_post_wifiConfig_uri);
-
-        /* URI handler for clearing  */
-        httpd_uri_t rest_post_sensor_history_clear_uri = {
-                .uri = "/sensorhistoryclear",
-                .method = HTTP_POST,
-                .handler = rest_post_sensor_history_clear_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_post_sensor_history_clear_uri);
-
-
-        /* URI handler for clearing  */
-        httpd_uri_t rest_post_sensor_save_uri = {
-                .uri = "/sensorsave",
-                .method = HTTP_POST,
-                .handler = rest_post_sensor_save_handler,
-                .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &rest_post_sensor_save_uri);
 
         // httpd_uri_t wss_sensor_uri = {
         //     .uri = "/websocket",
@@ -350,13 +341,20 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         //     .is_websocket = true};
         // httpd_register_uri_handler(server, &wss_subscribe_uri);
 
-        httpd_uri_t common_base_get_uri = {
+        httpd_uri_t base_get_uri = {
                 .uri = "*",
                 .method = HTTP_GET,
                 .handler = base_get_handler,
                 .user_ctx = rest_context};
-        httpd_register_uri_handler(server_handle, &common_base_get_uri);
+        httpd_register_uri_handler(server_handle, &base_get_uri);
 
+
+        httpd_uri_t base_post_uri = {
+                .uri = "*",
+                .method = HTTP_POST,
+                .handler = base_post_handler,
+                .user_ctx = rest_context};
+        httpd_register_uri_handler(server_handle, &base_post_uri);
         /* URI handler for getting web server files */
         // httpd_uri_t common_get_uri = {
         //     .uri = "/*",

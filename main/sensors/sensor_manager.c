@@ -24,8 +24,14 @@ SemaphoreHandle_t sensor_manager_json_mutex = NULL;
 static EventGroupHandle_t sensor_manager_event_group;
 static TaskHandle_t sensor_manager_task = NULL;
 
+
+//old
 char *sensor_manager_json = NULL;
 sml_smart_meter_sensor_t sensors[SENSORS_LENGTH];
+
+//new sensors
+mbus_device_t mbus_devices[CONFIG_LOGME_MBUS_DEVICES];
+
 
 char *base_path = NULL;
 
@@ -42,10 +48,6 @@ void sensor_manager(void *pvParameters) {
 
         if (xStatus == pdPASS) {
             switch (msg.code) {
-                case SM_IDLE: {
-                    ESP_LOGI(SENSOR_MANAGER_TAG, "SM_IDLE");
-                }
-                    break;
                 case SM_INIT: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SM_INIT");
 
@@ -84,10 +86,8 @@ void sensor_manager(void *pvParameters) {
                     /* Close file after sending complete */
                     close(fd);
 
-
+                    
                     ESP_LOGI(SENSOR_MANAGER_TAG, "%s", sensors[0].name);
-                    sensor_manager_send_message(SM_IDLE, NULL);
-
                 }
                     break;
                 case SM_SAVE_CONFIG: {

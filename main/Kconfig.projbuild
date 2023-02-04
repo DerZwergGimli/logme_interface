@@ -60,10 +60,14 @@ endmenu
 menu "LogME"
     config LOGME_VERSION
         string "Set APP Version"
-        default "0.0.0"
         help
             Sets the APP_Version for LogME.
     menu "MBUS"
+        config LOGME_MBUS_DEVICES
+            int "Set LOGME_MBUS_DEVICES count"
+                default 16
+                help
+                    Sets how many devices should be initialized used for storing/managing data/devices.
         config LOGME_MBUS_MAXFRAMES
             int "Set MAXFRAMES for MBUS-FRAMES"
                 default 16
