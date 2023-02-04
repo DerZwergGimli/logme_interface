@@ -1,4 +1,8 @@
 ![logme-header](images/logme_header.png)
+[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+[![test](https://github.com/DerZwergGimli/logme_interface/actions/workflows/buildtest.yml/badge.svg)](https://github.com/DerZwergGimli/logme_interface/actions/workflows/buildtest.yml)
+[![deploy](https://github.com/DerZwergGimli/logme_interface/actions/workflows/createrelease.yml/badge.svg)](https://github.com/DerZwergGimli/logme_interface/actions/workflows/createrelease.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # LogME (LogMeter)
 
