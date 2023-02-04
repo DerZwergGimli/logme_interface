@@ -346,6 +346,7 @@ int mbus_serial_recv_frame(mbus_handle *handle, mbus_frame *frame) {
         fprintf(stderr, "%s: Invalid parameter.\n", __PRETTY_FUNCTION__);
         return MBUS_RECV_RESULT_ERROR;
     }
+    uart_wait_tx_done(UART_NUM_1, pdMS_TO_TICKS(100));
 
     // Make sure serial connection is open
     //if (isatty(handle->fd) == 0) {
@@ -369,17 +370,17 @@ int mbus_serial_recv_frame(mbus_handle *handle, mbus_frame *frame) {
             return MBUS_RECV_RESULT_ERROR;
         }
 
-        //printf("%s: Attempt to read %d bytes [len = %d]\n", __PRETTY_FUNCTION__, remaining, len);
+        printf("%s: Attempt to read %d bytes [len = %d]\n", __PRETTY_FUNCTION__, remaining, len);
 
         //if ((nread = read(handle->fd, &buff[len], remaining)) == -1) {
-        if ((nread = uart_read_bytes(UART_NUM_1, &buff[len], (RX_BUF_SIZE - 1), 20 / portTICK_PERIOD_MS)) == -1) {
+        if ((nread = uart_read_bytes(UART_NUM_1, &buff[len], (RX_BUF_SIZE - 1), pdMS_TO_TICKS(1000))) == -1) {
 
             fprintf(stderr, "%s: aborting recv frame (remaining = %d, len = %d, nread = %d)\n",
                     __PRETTY_FUNCTION__, remaining, len, nread);
             return MBUS_RECV_RESULT_ERROR;
         }
 
-//   printf("%s: Got %d byte [remaining %d, len %d]\n", __PRETTY_FUNCTION__, nread, remaining, len);
+        printf("%s: Got %d byte [remaining %d, len %d]\n", __PRETTY_FUNCTION__, nread, remaining, len);
 
         if (nread == 0) {
             timeouts++;
