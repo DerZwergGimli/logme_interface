@@ -45,6 +45,6 @@ set(EXTRA_COMPONENT_DIRS
         ${INSIGHTS_PATH}/components
         ${INSIGHTS_PATH}/examples/common
         $ENV{IDF_PATH}/components/esp_cron
-        $ENV{IDF_PATH}/components/esp_mbus
+        $ENV{IDF_PATH}/components/esp_libmbus
         )
 
