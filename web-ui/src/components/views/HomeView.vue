@@ -21,12 +21,12 @@
             </p>
             <p class="flex w-full text-md">
               {{
-                sensor.data?.salve_info['manufacturer:'].length > 0
+                sensor.data?.salve_info !== undefined
                   ? sensor.data?.salve_info['manufacturer:']
                   : '---'
               }}
               {{
-                sensor.data?.salve_info['id:'] > 0
+                sensor.data?.salve_info !== undefined
                   ? sensor.data?.salve_info['id:']
                   : '---'
               }}
