@@ -17,10 +17,10 @@
         </div>
       </div>
 
-      <div class="w-full grid grid-cols-2 gap-2">
+      <div class="w-full grid grid-cols-2 gap-2 items-center">
         <div
-          v-for="sensor_element_id in sensor.web_config_ids
-            ? sensor.web_config_ids[1]
+          v-for="sensor_element_id in sensor.dashboard_config_ids
+            ? sensor.dashboard_config_ids[1].filter(id => id !== -1)
             : []"
           :key="sensor_element_id"
         >

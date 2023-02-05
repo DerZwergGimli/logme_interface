@@ -35,8 +35,8 @@
         </div>
         <div class="flex flex-col basis-1/2 justify-center space-y-2">
           <div
-            v-for="sensor_element_id in sensor.web_config_ids
-              ? sensor.web_config_ids[0]
+            v-for="sensor_element_id in sensor.dashboard_config_ids
+              ? sensor.dashboard_config_ids[0].filter(id => id !== -1)
               : []"
             :key="sensor_element_id"
           >

@@ -19,7 +19,7 @@ export interface I_Sensor {
   primary_address: number;
   secondary_address: number;
   data?: Data;
-  web_config_ids?: Array<number[]>;
+  dashboard_config_ids: Array<number[]> | undefined;
   history?: {
     day_24_kw: Array<number>;
     week_7_kw: Array<number>;

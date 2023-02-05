@@ -11,6 +11,7 @@ export const useSensorStore = defineStore('sensors', {
         .then(json => {
           console.log(json);
           this.sensors = json;
+
           // this.sensors = json as Array<Sensor>;
         });
       console.info('sensorStore fetch');
