@@ -227,6 +227,8 @@ int mbus_request_short(char **json_result, int address, char *device_name, long 
 
     if (mbus_recv_frame(handle, &reply) != MBUS_RECV_RESULT_OK) {
         fprintf(stderr, "Failed to receive M-Bus response frame.\n");
+        mbus_disconnect(handle);
+        mbus_context_free(handle);
         return 1;
     }
 

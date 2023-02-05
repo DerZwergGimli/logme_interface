@@ -163,8 +163,9 @@ void sensor_manager(void *pvParameters) {
                     break;
                 case SM_MBUS_PULL: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SM_MBUS_PULL");
-                    mbus_request_short(&mbus_devices[0].data, 1, "test_sensor", 2400);
-                    printf("%s", mbus_devices[0].data);
+                    if (mbus_request_short(&mbus_devices[0].data, 1, "test_sensor", 2400) > 0) {
+                        ESP_LOGE(SENSOR_MANAGER_TAG, "Error while pulling data from MBus.");
+                    }
 
                     if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
                         ESP_ERROR_CHECK(sensor_manager_generate_json());
