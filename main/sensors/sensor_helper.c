@@ -6,15 +6,13 @@
 #include "mbus-json.h"
 
 
-int mbus_scan_full(long baudrate) {
+int mbus_scan_full(int rx_pin, int tx_pin, long baudrate) {
 
     mbus_frame reply;
     mbus_frame_data reply_data;
     memset((void *) &reply_data, 0, sizeof(mbus_frame_data));
 
     mbus_handle *handle;
-    char *addr_str, *xml_result;
-    char *device = "/dev/none";
     int address, retries = 0;
 
     int ret;
@@ -22,7 +20,7 @@ int mbus_scan_full(long baudrate) {
     memset((void *) &reply, 0, sizeof(mbus_frame));
 
 
-    if ((handle = mbus_context_serial(device)) == NULL) {
+    if ((handle = mbus_context_serial(rx_pin, tx_pin)) == NULL) {
         fprintf(stderr, "Scan failed: Could not initialize M-Bus context: %s\n", mbus_error_str());
         return 1;
     }
@@ -87,16 +85,13 @@ int mbus_scan_full(long baudrate) {
 
 }
 
-int mbus_request_full(char **json_result, int address, char *device_name, long baudrate) {
+int mbus_request_full(char **json_result, int rx_pin, int tx_pin, long baudrate, int address) {
     mbus_frame reply;
     mbus_frame_data reply_data;
     memset((void *) &reply_data, 0, sizeof(mbus_frame_data));
 
     mbus_handle *handle;
-    //char *device = "/dev/usb1";
     int retries = 0;
-    //long baudrate = 2400;
-    int ret;
 
 
     memset((void *) &reply, 0, sizeof(mbus_frame));
@@ -104,7 +99,7 @@ int mbus_request_full(char **json_result, int address, char *device_name, long b
     mbus_handle *mbus_init = (mbus_handle *) malloc(sizeof(mbus_handle));
     mbus_serial_wakeup(mbus_init);
 
-    if ((handle = mbus_context_serial(device_name)) == NULL) {
+    if ((handle = mbus_context_serial(rx_pin, tx_pin)) == NULL) {
         fprintf(stderr, "Scan failed: Could not initialize M-Bus context: %s\n", mbus_error_str());
         return 1;
     }
@@ -169,7 +164,7 @@ int mbus_request_full(char **json_result, int address, char *device_name, long b
     return 0;
 }
 
-int mbus_request_short(char **json_result, int address, char *device_name, long baudrate) {
+int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate, int address) {
     mbus_frame reply;
     mbus_frame_data reply_data;
 
@@ -185,7 +180,7 @@ int mbus_request_short(char **json_result, int address, char *device_name, long 
     mbus_handle *mbus_init = (mbus_handle *) malloc(sizeof(mbus_handle));
     mbus_serial_wakeup(mbus_init);
 
-    if ((handle = mbus_context_serial(device_name)) == NULL) {
+    if ((handle = mbus_context_serial(rx_pin, tx_pin)) == NULL) {
         fprintf(stderr, "Scan failed: Could not initialize M-Bus context: %s\n", mbus_error_str());
         return 1;
     }
@@ -208,7 +203,6 @@ int mbus_request_short(char **json_result, int address, char *device_name, long 
 
     if (mbus_serial_set_baudrate(handle, baudrate) == -1) {
         fprintf(stderr, "Failed to set baud rate.\n");
-        return 1;
     }
 
 

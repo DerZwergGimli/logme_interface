@@ -79,7 +79,7 @@ mbus_scan_old() {
     mbus_handle *mbus_init = (mbus_handle *) malloc(sizeof(mbus_handle));
     mbus_serial_wakeup(mbus_init);
 
-    if ((handle = mbus_context_serial(device)) == NULL) {
+    if ((handle = mbus_context_serial(4, 5)) == NULL) {
         fprintf(stderr, "Scan failed: Could not initialize M-Bus context: %s\n", mbus_error_str());
         return 1;
     }

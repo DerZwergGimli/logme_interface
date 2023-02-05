@@ -76,22 +76,7 @@ void app_main(void) {
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-
-
-
     //ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
-
-    while (false) {
-        //ESP_LOGI("MBUS", "Found: %i Salves", mbus_scan_full(2400));
-        char *json_result;
-        mbus_request_short(&json_result, 1, "test_sensor", 2400);
-        if (json_result != NULL)
-            printf("%s", json_result);
-        free(json_result);
-
-        vTaskDelay(pdMS_TO_TICKS(5000));
-    }
-
 
     ESP_ERROR_CHECK(init_fs());
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */

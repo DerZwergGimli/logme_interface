@@ -11,6 +11,7 @@
 #include "cJSON.h"
 #include "esp_vfs.h"
 #include "sensor_helper.h"
+#include "mbus_sensor_t.h"
 #include <fcntl.h>
 #include <esp_heap_trace.h>
 
@@ -57,9 +58,43 @@ void sensor_manager(void *pvParameters) {
                     // Open renamed file for reading
                     ESP_LOGI(SENSOR_MANAGER_TAG, "Reading file");
 
+//                    char filepath[ESP_VFS_PATH_MAX + 128];
+//                    strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
+//                    strlcat(filepath, "/sensorstore.json", sizeof(filepath));
+//                    int fd = open(filepath, O_RDONLY, 0);
+//                    if (fd == -1) {
+//                        ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for reading: %s", filepath);
+//                    } else {
+//                        ESP_LOGI(SENSOR_MANAGER_TAG, "Opened storage file");
+//                    }
+//
+//                    char *chunk = scratch;
+//                    ssize_t read_bytes;
+//                    do {
+//                        /* Read file in chunks into the scratch buffer */
+//                        read_bytes = read(fd, chunk, SCRATCH_BUFSIZE);
+//                        if (read_bytes == -1) {
+//                            ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to read file : %s", filepath);
+//                        } else if (read_bytes > 0) {
+//                            ESP_LOGI(SENSOR_MANAGER_TAG, "Loading json data...");
+//                            if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+//                                sensor_manager_json_parse(chunk);
+//                                ESP_ERROR_CHECK(sensor_manager_generate_json());
+//                                sensor_manager_unlock_json_buffer();
+//                            } else {
+//                                ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
+//                            }
+//
+//                        }
+//                    } while (read_bytes > 0);
+//                    /* Close file after sending complete */
+//                    close(fd);
+
+
+
                     char filepath[ESP_VFS_PATH_MAX + 128];
                     strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
-                    strlcat(filepath, "/sensorstore.json", sizeof(filepath));
+                    strlcat(filepath, "/default_sensor_config.json", sizeof(filepath));
                     int fd = open(filepath, O_RDONLY, 0);
                     if (fd == -1) {
                         ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for reading: %s", filepath);
@@ -77,7 +112,7 @@ void sensor_manager(void *pvParameters) {
                         } else if (read_bytes > 0) {
                             ESP_LOGI(SENSOR_MANAGER_TAG, "Loading json data...");
                             if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
-                                sensor_manager_json_parse(chunk);
+                                sensor_manager_json_parse_mbus(chunk);
                                 ESP_ERROR_CHECK(sensor_manager_generate_json());
                                 sensor_manager_unlock_json_buffer();
                             } else {
@@ -89,20 +124,6 @@ void sensor_manager(void *pvParameters) {
                     /* Close file after sending complete */
                     close(fd);
 
-                    for (int i = 0; i < NELEMS(mbus_devices); i++) {
-                        strcat(mbus_devices[i].name, "NONE");
-                        mbus_devices[i].status = MBUS_IDLE;
-                        mbus_devices[i].pin_rx = 4;
-                        mbus_devices[i].pin_tx = 5;
-                    }
-
-                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
-                        ESP_ERROR_CHECK(sensor_manager_generate_json());
-                        sensor_manager_unlock_json_buffer();
-                    }
-
-
-                    ESP_LOGI(SENSOR_MANAGER_TAG, "%s", sensors[0].name);
                     sensor_manager_send_message(SM_MBUS_PULL, NULL);
                 }
                     break;
@@ -163,13 +184,25 @@ void sensor_manager(void *pvParameters) {
                     break;
                 case SM_MBUS_PULL: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SM_MBUS_PULL");
-                    if (mbus_request_short(&mbus_devices[0].data, 1, "test_sensor", 2400) > 0) {
-                        ESP_LOGE(SENSOR_MANAGER_TAG, "Error while pulling data from MBus.");
-                    }
 
-                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
-                        ESP_ERROR_CHECK(sensor_manager_generate_json());
-                        sensor_manager_unlock_json_buffer();
+                    for (int i = 0; i < NELEMS(mbus_devices); i++) {
+                        mbus_devices[i].status = MBUS_READING;
+                        if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                            ESP_ERROR_CHECK(sensor_manager_generate_json());
+                            sensor_manager_unlock_json_buffer();
+                        }
+
+                        if (mbus_request_short(&mbus_devices[i].data, mbus_devices[i].pin_rx, mbus_devices[i].pin_tx,
+                                               mbus_devices[i].baudrate, mbus_devices[i].primary_address) > 0) {
+                            ESP_LOGE(SENSOR_MANAGER_TAG, "Error while pulling data from MBus.");
+                        }
+
+
+                        mbus_devices[i].status = MBUS_IDLE;
+                        if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                            ESP_ERROR_CHECK(sensor_manager_generate_json());
+                            sensor_manager_unlock_json_buffer();
+                        }
                     }
 
                 }
@@ -197,6 +230,7 @@ void sensor_manager_start(bool log_enable) {
     sensor_manager_queue = xQueueCreate(3, sizeof(queue_sensor_manager));
 
     sensor_manager_json = (char *) malloc(sizeof(char) * JSON_SENSOR_MANGER_SIZE);
+    sensor_manager_mbus_devices = (char *) malloc(sizeof(char) * JSON_SENSOR_MANGER_SIZE);
     sensor_manager_clear_info_json();
 
     sensor_manager_json_mutex = xSemaphoreCreateMutex();
@@ -215,13 +249,23 @@ esp_err_t sensor_manager_generate_json() {
         char buffer[10240];
 
         sprintf(buffer, "{ \"name\": \"%s\","
+                        "\"id\": %u,"
+                        "\"description\": \"%s\","
                         "\"status\": %u,"
                         "\"pin_rx\": %u,"
-                        "\"pin_tx\": %u",
+                        "\"pin_tx\": %u,"
+                        "\"baudrate\": %u,"
+                        "\"primary_address\": %u,"
+                        "\"secondary_address\": %u",
                 mbus_devices[i].name,
+                mbus_devices[i].id,
+                mbus_devices[i].description,
                 mbus_devices[i].status,
                 mbus_devices[i].pin_rx,
-                mbus_devices[i].pin_tx
+                mbus_devices[i].pin_tx,
+                mbus_devices[i].baudrate,
+                mbus_devices[i].primary_address,
+                mbus_devices[i].secondary_address
         );
 
         if (mbus_devices[i].data != NULL) {
@@ -235,62 +279,6 @@ esp_err_t sensor_manager_generate_json() {
         strcat(sensor_manager_json, buffer);
     }
     strcat(sensor_manager_json, "]");
-
-
-//    strcpy(sensor_manager_json, "[");
-//    for (int i = 0; i < NELEMS(sensors); i++) {
-//        char buffer[500];
-//        sprintf(buffer, "{\n\"id\": %i,\n\"name\": \"%s\",\n\"count\": %li,\n\"power\": %li,\n",
-//                sensors[i].id,
-//                sensors[i].name,
-//                sensors[i].count,
-//                sensors[i].power);
-//        strcat(sensor_manager_json, buffer);
-//
-//        strcat(sensor_manager_json, "\"history\": {");
-//        strcat(sensor_manager_json, "\"day_24_kw\": [");
-//
-//        for (int j = 0; j < NELEMS(sensors[i].history.day_24_kw); j++) {
-//            sprintf(buffer, "%li", sensors[i].history.day_24_kw[j]);
-//            strcat(sensor_manager_json, buffer);
-//            if (j + 1 < NELEMS(sensors[i].history.day_24_kw))
-//                strcat(sensor_manager_json, ",");
-//        }
-//        strcat(sensor_manager_json, "]");
-//
-//        strcat(sensor_manager_json, ",");
-//        strcat(sensor_manager_json, "\"week_7_kw\": [");
-//
-//        for (int j = 0; j < NELEMS(sensors[i].history.week_7_kw); j++) {
-//            sprintf(buffer, "%li", sensors[i].history.week_7_kw[j]);
-//            strcat(sensor_manager_json, buffer);
-//            if (j + 1 < NELEMS(sensors[i].history.week_7_kw))
-//                strcat(sensor_manager_json, ",");
-//        }
-//        strcat(sensor_manager_json, "]");
-//
-//        strcat(sensor_manager_json, ",");
-//        strcat(sensor_manager_json, "\"month_30_kw\": [");
-//
-//        for (int j = 0; j < NELEMS(sensors[i].history.month_30_kw); j++) {
-//            sprintf(buffer, "%li", sensors[i].history.month_30_kw[j]);
-//            strcat(sensor_manager_json, buffer);
-//            if (j + 1 < NELEMS(sensors[i].history.month_30_kw))
-//                strcat(sensor_manager_json, ",");
-//        }
-//        strcat(sensor_manager_json, "]");
-//
-//        strcat(sensor_manager_json, "}}");
-//        if (i + 1 < NELEMS(sensors))
-//            strcat(sensor_manager_json, ",");
-//
-//    }
-//
-//    strcat(sensor_manager_json, "]");
-
-
-    // ESP_ERROR_CHECK(heap_trace_stop());
-    // heap_trace_dump();
 
     return ESP_OK;
 }
@@ -404,6 +392,79 @@ esp_err_t sensor_manager_json_parse(const char *json_data) {
     cJSON_Delete(sensors_json);
     return ESP_OK;
 }
+
+esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
+    const cJSON *sensor = NULL;
+    cJSON *sensors_json = cJSON_Parse(json_data);
+    int status = 0;
+    if (sensors_json == NULL) {
+        const char *error_ptr = cJSON_GetErrorPtr();
+        if (error_ptr != NULL) {
+            ESP_LOGE("SML-Parser", "Error before: %s\n", error_ptr);
+        }
+        cJSON_Delete(sensors_json);
+        return ESP_OK;
+    }
+
+    int index = 0;
+    cJSON_ArrayForEach(sensor, sensors_json) {
+        //cJSON *id = cJSON_GetObjectItem(sensors, "id");
+
+        //Mapping JSON
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "id")))
+            mbus_devices[index].id = (uint16_t) cJSON_GetObjectItem(sensor, "id")->valueint;
+        if (cJSON_IsString(cJSON_GetObjectItem(sensor, "name")))
+            strcpy(mbus_devices[index].name, cJSON_GetObjectItem(sensor, "name")->valuestring);
+        if (cJSON_IsString(cJSON_GetObjectItem(sensor, "description")))
+            strcpy(mbus_devices[index].description, cJSON_GetObjectItem(sensor, "description")->valuestring);
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "pin_rx")))
+            mbus_devices[index].pin_rx = cJSON_GetObjectItem(sensor, "pin_rx")->valueint;
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "pin_tx")))
+            mbus_devices[index].pin_tx = cJSON_GetObjectItem(sensor, "pin_tx")->valueint;
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "baudrate")))
+            mbus_devices[index].baudrate = cJSON_GetObjectItem(sensor, "baudrate")->valueint;
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "primary_address")))
+            mbus_devices[index].primary_address = cJSON_GetObjectItem(sensor, "primary_address")->valueint;
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "secondary_address")))
+            mbus_devices[index].secondary_address = cJSON_GetObjectItem(sensor, "secondary_address")->valueint;
+
+
+
+//        if (cJSON_IsObject(cJSON_GetObjectItem(sensor, "history"))) {
+//            cJSON *history = cJSON_GetObjectItem(sensor, "history");
+//
+//            if (cJSON_IsArray(cJSON_GetObjectItem(history, "day_24_kw"))) {
+//                cJSON *element = NULL;
+//                int i = 0;
+//                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "day_24_kw")) {
+//                    mbus_devices[index].history.day_24_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
+//                    i++;
+//                }
+//            }
+//            if (cJSON_IsArray(cJSON_GetObjectItem(history, "week_7_kw"))) {
+//                cJSON *element = NULL;
+//                int i = 0;
+//                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "week_7_kw")) {
+//                    mbus_devices[index].history.week_7_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
+//                    i++;
+//                }
+//            }
+//            if (cJSON_IsArray(cJSON_GetObjectItem(history, "month_30_kw"))) {
+//                cJSON *element = NULL;
+//                int i = 0;
+//                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "month_30_kw")) {
+//                    mbus_devices[index].history.month_30_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
+//                    i++;
+//                }
+//            }
+//        }
+        index++;
+    }
+
+    cJSON_Delete(sensors_json);
+    return ESP_OK;
+}
+
 
 esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe) {
     ESP_LOGI(SENSOR_MANAGER_TAG, "Updating history: %i", timeframe);

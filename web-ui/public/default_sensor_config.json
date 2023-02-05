@@ -1,0 +1,12 @@
+[
+  {
+    "id": "001",
+    "name": "Sensor_1",
+    "description": "best sensor ever",
+    "pin_rx": 4,
+    "pin_tx": 5,
+    "baudrate": 2400,
+    "primary_address": 1,
+    "secondary_address": 0
+  }
+]

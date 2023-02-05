@@ -57,12 +57,12 @@ static esp_err_t mbus_ping_address(mbus_handle *handle, mbus_frame *reply, int a
     return ret;
 }
 
-int mbus_scan_full(long baudrate);
+int mbus_scan_full(int rx_pin, int tx_pin, long baudrate);
 
 
-int mbus_request_short(char **json_result, int address, char *device_name, long baudrate);
+int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate, int address);
 
-int mbus_request_full(char **json_result, int address, char *device_name, long baudrate);
+int mbus_request_full(char **json_result, int rx_pin, int tx_pin, long baudrate, int address);
 
 
 #endif //LOGME_INTERFACE_SENSOR_HELPER_C_H

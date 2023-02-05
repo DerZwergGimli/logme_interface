@@ -57,6 +57,8 @@ esp_err_t sensor_manager_generate_json();
 
 esp_err_t sensor_manager_json_parse(const char *json_data);
 
+esp_err_t sensor_manager_json_parse_mbus(const char *json_data);
+
 void sensor_manager_clear_info_json();
 
 bool sensor_manager_lock_json_buffer(TickType_t xTicksToWait);
