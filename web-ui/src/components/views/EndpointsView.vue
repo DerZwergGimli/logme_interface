@@ -22,8 +22,7 @@
           ['/wificonfig', 'Writes a given wifi-config'],
           ['/sensorsave', 'Force save sensor-config'],
           ['/sensorhistoryclear', 'Force delete all sensor-history'],
-          ['/sensor_edit_name/#', 'Edit Sensor name by ID'],
-          ['/sensor_edit_description/#', 'Edit Sensor description by ID'],
+          ['/sensoredit/#', 'Edit Sensor by Index'],
         ]"
         :button_text="'POST'"
       />
