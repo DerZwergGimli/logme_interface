@@ -64,11 +64,6 @@
       :is_dark="!useAppStore().themeIsDark"
     />
   </div>
-  <value-edit-modal
-    :is-shown="isShowModal"
-    @closeModal="isShowModal = false"
-    :value_to_edit="value_to_edit"
-  ></value-edit-modal>
 </template>
 
 <script setup lang="ts">
@@ -80,9 +75,6 @@ import { useSensorStore } from '../../../stores/SensorStore.js';
 import BarChart from '../../charts/BarChart.vue';
 import SmartMeterIcon from '../../icons/SmartMeterIcon.vue';
 import ValueEditModal from '../../modals/ValueEditModal.vue';
-
-const isShowModal = ref(false);
-const value_to_edit = ref();
 
 const time_values_hourly = ref([]);
 for (let i = 24; i > 0; i--) {
@@ -109,11 +101,6 @@ const props = defineProps({
     default: -1,
   },
 });
-
-function action_edit(value: string) {
-  isShowModal.value = true;
-  value_to_edit.value = value;
-}
 
 const sensor = ref(useSensorStore().sensors[props.selected_sensor_index]);
 </script>
