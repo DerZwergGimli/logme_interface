@@ -20,5 +20,71 @@
         3
       ]
     ]
+  },
+  {
+    "id": "002",
+    "name": "default_1",
+    "description": "best sensor ever",
+    "pin_rx": 4,
+    "pin_tx": 5,
+    "baudrate": 2400,
+    "primary_address": 1,
+    "secondary_address": 0,
+    "dashboard_config_ids": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ]
+  },
+  {
+    "id": "003",
+    "name": "default_2",
+    "description": "best sensor ever",
+    "pin_rx": 4,
+    "pin_tx": 5,
+    "baudrate": 2400,
+    "primary_address": 1,
+    "secondary_address": 0,
+    "dashboard_config_ids": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ]
+  },
+  {
+    "id": "004",
+    "name": "default_3",
+    "description": "best sensor ever",
+    "pin_rx": 4,
+    "pin_tx": 5,
+    "baudrate": 2400,
+    "primary_address": 1,
+    "secondary_address": 0,
+    "dashboard_config_ids": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        2,
+        3
+      ]
+    ]
   }
 ]

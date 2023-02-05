@@ -34,7 +34,9 @@
           </div>
         </div>
         <div class="flex flex-col basis-1/2 justify-center space-y-2">
+          <no-data-element v-if="sensor.data?.salve_info === undefined" />
           <div
+            v-else
             v-for="sensor_element_id in sensor.dashboard_config_ids
               ? sensor.dashboard_config_ids[0].filter(id => id !== -1)
               : []"
@@ -60,7 +62,6 @@
               :editable="false"
             />
           </div>
-          <no-data-element v-if="sensor.data?.salve_info === undefined" />
         </div>
       </div>
       <div></div>

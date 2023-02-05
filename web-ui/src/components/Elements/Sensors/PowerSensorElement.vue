@@ -18,7 +18,12 @@
       </div>
 
       <div class="w-full grid grid-cols-2 gap-2 items-center">
+        <no-data-element
+          class="col-span-2"
+          v-if="sensor.data?.slave_data === undefined"
+        />
         <div
+          v-else
           v-for="sensor_element_id in sensor.dashboard_config_ids
             ? sensor.dashboard_config_ids[1].filter(id => id !== -1)
             : []"
@@ -44,10 +49,6 @@
             :editable="false"
           />
         </div>
-        <no-data-element
-          class="col-span-2"
-          v-if="sensor.data?.slave_data === undefined"
-        />
       </div>
     </div>
 
