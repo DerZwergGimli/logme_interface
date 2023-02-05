@@ -91,7 +91,7 @@ function send_sensor_config() {
           type="text"
           class="col-span-2"
           placeholder="enter new value here"
-          v-model="useSensorStore().sensors[props.index_to_edit].description"
+          :value="useSensorStore().sensors[props.index_to_edit].description"
           @input="
             (event: any) =>
               (useSensorStore().sensors[props.index_to_edit].description =

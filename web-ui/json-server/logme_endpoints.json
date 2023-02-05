@@ -31,7 +31,7 @@
     {
       "name": "Sensor_1",
       "id": 0,
-      "description": "",
+      "description": "test textxt xtxtxtxtx",
       "status": 2,
       "pin_rx": 4,
       "pin_tx": 5,
