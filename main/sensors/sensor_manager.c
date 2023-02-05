@@ -123,7 +123,6 @@ void sensor_manager(void *pvParameters) {
                     } while (read_bytes > 0);
                     /* Close file after sending complete */
                     close(fd);
-
                     sensor_manager_send_message(SM_MBUS_PULL, NULL);
                 }
                     break;
@@ -196,7 +195,7 @@ void sensor_manager(void *pvParameters) {
                                                mbus_devices[i].baudrate, mbus_devices[i].primary_address) > 0) {
                             ESP_LOGE(SENSOR_MANAGER_TAG, "Error while pulling data from MBus.");
                         }
-
+                        vTaskDelay(100);
 
                         mbus_devices[i].status = MBUS_IDLE;
                         if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
@@ -236,7 +235,7 @@ void sensor_manager_start(bool log_enable) {
     sensor_manager_json_mutex = xSemaphoreCreateMutex();
     sensor_manager_event_group = xEventGroupCreate();
 
-    xTaskCreate(&sensor_manager, "sensor_manager", 4096, NULL, 5, &sensor_manager_task);
+    xTaskCreate(&sensor_manager, "sensor_manager", 4096 * 4, NULL, 3, &sensor_manager_task);
 
 
 };
@@ -524,5 +523,30 @@ esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe)
     } else {
         ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in sensor_manager");
     }
+    return ESP_OK;
+}
+
+
+esp_err_t
+sensor_manager_edit_params_save(int device_index_to_edit, char *name, int id, char *description, int pin_rx, int pin_tx,
+                                int baudrate,
+                                int primary_address, int secondary_address) {
+    strcpy(mbus_devices[device_index_to_edit].name, name);
+    mbus_devices[device_index_to_edit].id = id;
+    strcpy(mbus_devices[device_index_to_edit].description, description);
+    mbus_devices[device_index_to_edit].pin_rx = pin_rx;
+    mbus_devices[device_index_to_edit].pin_tx = pin_tx;
+    mbus_devices[device_index_to_edit].baudrate = baudrate;
+    mbus_devices[device_index_to_edit].primary_address = primary_address;
+    mbus_devices[device_index_to_edit].secondary_address = secondary_address;
+
+    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+
+        ESP_ERROR_CHECK(sensor_manager_generate_json());
+        sensor_manager_unlock_json_buffer();
+    } else {
+        ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
+    }
+
     return ESP_OK;
 }

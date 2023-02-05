@@ -8,6 +8,7 @@
 #include "wifi/wifi_manager.h"
 #include "rest_server.h"
 #include "status_reponse.h"
+#include "rest_helper.h"
 
 static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
 
@@ -110,6 +111,95 @@ static esp_err_t rest_post_sensor_save_handler(httpd_req_t *req) {
     cJSON_Delete(response_json);
 
     sensor_manager_send_message(SM_SAVE_CONFIG, NULL);
+
+    return ESP_OK;
+}
+
+
+/**
+ * POST-Request
+ * -> '/sesnoredit/$index'
+ */
+static esp_err_t rest_post_sensor_edit_handler(httpd_req_t *req, int index) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+    httpd_resp_set_type(req, http_content_type_json);
+
+    cJSON *response_json = cJSON_CreateObject();
+
+    if (index >= CONFIG_LOGME_MBUS_DEVICES || index < 0) {
+        json_status_response_create(response_json, STATUS_ERROR, "Sensor editing failed wrong index!");
+
+    } else {
+        cJSON *root = cJSON_CreateObject();
+        ESP_ERROR_CHECK(rest_helper_get_json_from_request(req, &root));
+        if (root != NULL) {
+
+            char *sensor_name = "none";
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "name"))) {
+                sensor_name = cJSON_GetObjectItemCaseSensitive(root, "name")->valuestring;
+            }
+
+            char *sensor_description = "none";
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "description"))) {
+                sensor_description = cJSON_GetObjectItemCaseSensitive(root, "description")->valuestring;
+            }
+
+            int sensor_id = 0;
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "id"))) {
+                sensor_id = cJSON_GetObjectItemCaseSensitive(root, "id")->valueint;
+            }
+
+            int sensor_pin_rx = 0;
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "pin_rx"))) {
+                sensor_pin_rx = cJSON_GetObjectItemCaseSensitive(root, "pin_rx")->valueint;
+            }
+
+            int sensor_pin_tx = 0;
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "pin_tx"))) {
+                sensor_pin_rx = cJSON_GetObjectItemCaseSensitive(root, "pin_tx")->valueint;
+            }
+
+            int sensor_baudrate = 0;
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "baudrate"))) {
+                sensor_baudrate = cJSON_GetObjectItemCaseSensitive(root, "baudrate")->valueint;
+            }
+
+            int sensor_primary_address = 0;
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "primary_address"))) {
+                sensor_primary_address = cJSON_GetObjectItemCaseSensitive(root, "primary_address")->valueint;
+            }
+
+            int sensor_secondary_address = 0;
+            if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "secondary_address"))) {
+                sensor_secondary_address = cJSON_GetObjectItemCaseSensitive(root, "secondary_address")->valueint;
+            }
+
+            ESP_ERROR_CHECK(sensor_manager_edit_params_save(index,
+                                                            sensor_name,
+                                                            sensor_id,
+                                                            sensor_description,
+                                                            sensor_pin_rx,
+                                                            sensor_pin_tx,
+                                                            sensor_baudrate,
+                                                            sensor_primary_address,
+                                                            sensor_secondary_address
+            ));
+
+            json_status_response_create(response_json, STATUS_OK, "Sensor edited!");
+        } else { json_status_response_create(response_json, STATUS_ERROR, "Error parsing sensor data!"); }
+
+        cJSON_Delete(root);
+    }
+
+    const char *json_buff = cJSON_Print(response_json);
+    httpd_resp_sendstr(req, json_buff);
+    free((void *) json_buff);
+    cJSON_Delete(response_json);
+
 
     return ESP_OK;
 }

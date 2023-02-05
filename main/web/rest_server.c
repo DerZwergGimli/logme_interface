@@ -185,6 +185,13 @@ static esp_err_t base_post_handler(httpd_req_t *req) {
     } else if (strcmp(req->uri, "/sensorsave") == 0) {
         ESP_ERROR_CHECK(rest_post_sensor_save_handler(req));
         return ESP_OK;
+    } else if (strcmp(req->uri, "/sensoredit") > 0) {
+        char *pEnd;
+        const char *number_string = req->uri + sizeof("/sensoredit/") - 1;
+        int number = strtol(number_string, &pEnd, 10);
+        ESP_ERROR_CHECK(rest_post_sensor_edit_handler(req, number));
+        return ESP_OK;
+
     } else {
         httpd_resp_set_status(req, http_400_hdr);
         httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);

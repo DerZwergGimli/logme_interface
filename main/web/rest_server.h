@@ -15,7 +15,7 @@
 #include "web/rest_post_handler.h"
 #include "rest_post_handler.h"
 
-static const char *REST_TAG = "RESTSERVER_GET";
+static const char *REST_TAG = "REST-SERVER";
 
 #include "esp_netif.h"
 #include "esp_vfs.h"
@@ -25,5 +25,6 @@ httpd_handle_t *get_rest_server();
 esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable);
 
 esp_err_t stop_rest_server();
+
 
 #endif

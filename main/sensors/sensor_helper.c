@@ -182,6 +182,10 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
 
     if ((handle = mbus_context_serial(rx_pin, tx_pin)) == NULL) {
         fprintf(stderr, "Scan failed: Could not initialize M-Bus context: %s\n", mbus_error_str());
+
+        mbus_disconnect(handle);
+        mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
@@ -192,12 +196,20 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
 
     if (mbus_connect(handle) == -1) {
         fprintf(stderr, "Could not setup connection to M-bus gateway: %s\n", mbus_error_str());
+
+        mbus_disconnect(handle);
+        mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
 
     if (mbus_context_set_option(handle, MBUS_OPTION_MAX_SEARCH_RETRY, retries) == -1) {
         fprintf(stderr, "Failed to set retry count\n");
+
+        mbus_disconnect(handle);
+        mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
@@ -209,6 +221,7 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
     if (mbus_init_slaves(handle, address) == 0) {
         mbus_disconnect(handle);
         mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
@@ -216,6 +229,7 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
         fprintf(stderr, "Failed to send M-Bus request frame.\n");
         mbus_disconnect(handle);
         mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
@@ -223,6 +237,7 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
         fprintf(stderr, "Failed to receive M-Bus response frame.\n");
         mbus_disconnect(handle);
         mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 
@@ -236,6 +251,7 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
         fprintf(stderr, "M-bus data parse error: %s\n", mbus_error_str());
         mbus_disconnect(handle);
         mbus_context_free(handle);
+        mbus_frame_free(reply.next);
         return 1;
     }
 

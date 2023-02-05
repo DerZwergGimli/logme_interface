@@ -71,5 +71,9 @@ BaseType_t sensor_manager_send_message(message_sensor_manager_t code, void *para
 
 esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe);
 
+esp_err_t
+sensor_manager_edit_params_save(int device_index_to_edit, char *name, int id, char *description, int pin_rx, int pin_tx,
+                                int baudrate,
+                                int primary_address, int secondary_address);
 
 #endif //LOGME_INTERFACE_SENSOR_MANAGER_H

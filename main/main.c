@@ -76,10 +76,11 @@ void app_main(void) {
         ret = nvs_flash_init();
     }
     ESP_ERROR_CHECK(ret);
-    //ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
 
     ESP_ERROR_CHECK(init_fs());
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
+
+
 
     // Initialize WIFI
     wifi_manager_start();
