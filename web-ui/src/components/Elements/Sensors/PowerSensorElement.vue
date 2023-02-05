@@ -19,12 +19,12 @@
             :description="
               sensor.data?.slave_data
                 .find(data => data.id === sensor_element_id)
-                ?.unit.split('(')[0]
+                ?.unit?.split('(')[0]
             "
             :unit="
               sensor.data?.slave_data
                 .find(data => data.id === sensor_element_id)
-                ?.unit.split('(')[1]
+                ?.unit?.split('(')[1]
             "
             :editable="false"
           />
