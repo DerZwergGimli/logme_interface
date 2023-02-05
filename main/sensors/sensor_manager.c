@@ -213,23 +213,23 @@ esp_err_t sensor_manager_generate_json() {
     strcpy(sensor_manager_json, "[");
     for (int i = 0; i < NELEMS(mbus_devices); i++) {
         char buffer[10240];
-        if (mbus_devices[i].status != MBUS_DEFAULT) {
-            sprintf(buffer, "{ \"name\": \"%s\","
-                            "\"status\": %u,"
-                            "\"pin_rx\": %u,"
-                            "\"pin_tx\": %u",
-                    mbus_devices[i].name,
-                    mbus_devices[i].status,
-                    mbus_devices[i].pin_rx,
-                    mbus_devices[i].pin_tx
-            );
 
-            if (mbus_devices[i].data != NULL) {
-                strcat(sensor_manager_json, buffer);
-                sprintf(buffer, ",\"data\": %s", mbus_devices[i].data);
-            }
-            strcat(buffer, "}");
+        sprintf(buffer, "{ \"name\": \"%s\","
+                        "\"status\": %u,"
+                        "\"pin_rx\": %u,"
+                        "\"pin_tx\": %u",
+                mbus_devices[i].name,
+                mbus_devices[i].status,
+                mbus_devices[i].pin_rx,
+                mbus_devices[i].pin_tx
+        );
+
+        if (mbus_devices[i].data != NULL) {
+            strcat(sensor_manager_json, buffer);
+            sprintf(buffer, ",\"data\": %s", mbus_devices[i].data);
         }
+        strcat(buffer, "}");
+
         if (i < NELEMS(mbus_devices) - 1)
             strcat(buffer, ",");
         strcat(sensor_manager_json, buffer);
