@@ -468,6 +468,10 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
 
 esp_err_t sensor_manager_update_history_save(sensor_manager_history_t timeframe) {
     ESP_LOGI(SENSOR_MANAGER_TAG, "Updating history: %i", timeframe);
+
+    //TODO: FIND id  and value in data.salveDATA and add this as history
+
+
     if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
         switch (timeframe) {
             case SM_HISTORY_SECOUND: {

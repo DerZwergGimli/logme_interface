@@ -2,7 +2,7 @@
   <div class="flex flex-col" id="glowElement">
     <Accordion>
       <accordion-panel
-        v-for="(sensor, idx) in sensorStore.sensors_power"
+        v-for="(sensor, idx) in useSensorStore().sensors"
         :key="idx"
       >
         <accordion-header>{{
@@ -27,6 +27,4 @@ import {
 } from 'flowbite-vue';
 import { useSensorStore } from '../../stores/SensorStore';
 import SensorElement from '../Elements/Sensors/PowerSensorElement.vue';
-
-const sensorStore = useSensorStore();
 </script>

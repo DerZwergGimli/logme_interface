@@ -27,13 +27,21 @@
       "auth": 3
     }
   ],
-  "sensors_power": [
+  "sensors": [
     {
+      "name": "Sensor_1",
       "id": 0,
-      "name": "Sensor1",
-      "description": "Some stupid text here!",
-      "count": 1999999,
-      "power": 200,
+      "description": "",
+      "status": 2,
+      "pin_rx": 4,
+      "pin_tx": 5,
+      "baudrate": 2400,
+      "primary_address": 1,
+      "secondary_address": 0,
+      "web_config_ids": [
+        [0, 1],
+        [0, 1, 2, 3, 4, 5, 6, 7]
+      ],
       "history": {
         "day_24_kw": [
           1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
@@ -46,135 +54,255 @@
           95, 45, 98, 58, 74, 23, 32, 41, 19, 71, 35, 83, 55, 14, 64, 13, 81,
           65, 47, 91, 53, 97, 30, 17, 33, 66, 70, 12, 59, 96
         ]
-      }
-    },
-    {
-      "id": 1,
-      "name": "Sensor2",
-      "count": 2222222,
-      "power": 222,
-      "history": {
-        "day_24_kw": [
-          2222222, 2222222, 2222222, 2222222, 2222222, 2222222, 2222222,
-          2222222, 2222222, 2222222, 2222222, 2222222, 2222222, 2222222,
-          2222222, 2222222, 2222222, 2222222, 2222222, 2222222, 2222222,
-          2222222, 2222222, 2222222
-        ],
-        "week_7_kw": [200, 201, 202, 203, 204, 205, 206],
-        "month_30_kw": [
-          200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-          214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-          228, 229
+      },
+      "data": {
+        "salve_info": {
+          "id:": 22975096,
+          "manufacturer:": "SEN",
+          "version:": 29,
+          "product_name:": "",
+          "medium:": "Heat: Inlet",
+          "access_number:": 121,
+          "status:": "00",
+          "signature:": "0000"
+        },
+        "slave_data": [
+          {
+            "id": 0,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Energy (kWh)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 1,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Volume (m m^3)",
+            "value": "13",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 2,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Volume flow (m m^3/h)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 3,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Power (W)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 4,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Flow temperature (1e-1 deg C)",
+            "value": "216",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 5,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Return temperature (1e-1 deg C)",
+            "value": "219",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 6,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Temperature Difference (m deg C)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 7,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Fabrication number",
+            "value": "22975096",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 8,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Customer location",
+            "value": "22975096",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 9,
+            "function": "More records follow",
+            "value": "",
+            "timestamp": "1970-01-01T00:00:08Z"
+          }
         ]
       }
     },
     {
+      "name": "Sensor_2",
       "id": 0,
-      "name": "",
-      "count": 0,
-      "power": 0,
+      "description": "",
+      "status": 2,
+      "pin_rx": 4,
+      "pin_tx": 5,
+      "baudrate": 2400,
+      "primary_address": 1,
+      "secondary_address": 0,
+      "web_config_ids": [
+        [0, 1],
+        [1, 2, 3, 4, 5, 6, 7]
+      ],
       "history": {
         "day_24_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
+          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
+          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
+          1999999, 1999999, 1999999
         ],
-        "week_7_kw": [0, 0, 0, 0, 0, 0, 0],
+        "week_7_kw": [141, 0, 0, 0, 0, 0, 0],
         "month_30_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0
+          95, 45, 98, 58, 74, 23, 32, 41, 19, 71, 35, 83, 55, 14, 64, 13, 81,
+          65, 47, 91, 53, 97, 30, 17, 33, 66, 70, 12, 59, 96
+        ]
+      },
+      "data": {
+        "salve_info": {
+          "id:": 22975096,
+          "manufacturer:": "SEN",
+          "version:": 29,
+          "product_name:": "",
+          "medium:": "Heat: Inlet",
+          "access_number:": 121,
+          "status:": "00",
+          "signature:": "0000"
+        },
+        "slave_data": [
+          {
+            "id": 0,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Energy (kWh)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 1,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Volume (m m^3)",
+            "value": "13",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 2,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Volume flow (m m^3/h)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 3,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Power (W)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 4,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Flow temperature (1e-1 deg C)",
+            "value": "216",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 5,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Return temperature (1e-1 deg C)",
+            "value": "219",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 6,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Temperature Difference (m deg C)",
+            "value": "0",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 7,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Fabrication number",
+            "value": "22975096",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 8,
+            "function": "Instantaneous value",
+            "storage_number": 0,
+            "unit": "Customer location",
+            "value": "22975096",
+            "timestamp": "1970-01-01T00:00:08Z"
+          },
+          {
+            "id": 9,
+            "function": "More records follow",
+            "value": "",
+            "timestamp": "1970-01-01T00:00:08Z"
+          }
         ]
       }
     },
     {
-      "id": 0,
       "name": "",
-      "count": 0,
-      "power": 0,
-      "history": {
-        "day_24_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ],
-        "week_7_kw": [0, 0, 0, 0, 0, 0, 0],
-        "month_30_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0
-        ]
-      }
+      "id": 0,
+      "description": "",
+      "status": 3,
+      "pin_rx": 0,
+      "pin_tx": 0,
+      "baudrate": 0,
+      "primary_address": 0,
+      "secondary_address": 0
+    },
+    {
+      "name": "",
+      "id": 0,
+      "description": "",
+      "status": 0,
+      "pin_rx": 0,
+      "pin_tx": 0,
+      "baudrate": 0,
+      "primary_address": 0,
+      "secondary_address": 0
+    },
+    {
+      "name": "",
+      "id": 0,
+      "description": "",
+      "status": 0,
+      "pin_rx": 0,
+      "pin_tx": 0,
+      "baudrate": 0,
+      "primary_address": 0,
+      "secondary_address": 0
     }
   ],
 
-  "sensors_water": [
-    {
-      "id": 0,
-      "name": "Sensor1",
-      "count": 1999999,
-      "power": 200,
-      "history": {
-        "day_24_kw": [
-          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
-          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
-          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
-          1999999, 1999999, 1999999
-        ],
-        "week_7_kw": [141, 0, 0, 0, 0, 0, 0],
-        "month_30_kw": [
-          95, 45, 98, 58, 74, 23, 32, 41, 19, 71, 35, 83, 55, 14, 64, 13, 81,
-          65, 47, 91, 53, 97, 30, 17, 33, 66, 70, 12, 59, 96
-        ]
-      }
-    },
-    {
-      "id": 1,
-      "name": "Sensor2",
-      "count": 2222222,
-      "power": 222,
-      "history": {
-        "day_24_kw": [
-          2222222, 2222222, 2222222, 2222222, 2222222, 2222222, 2222222,
-          2222222, 2222222, 2222222, 2222222, 2222222, 2222222, 2222222,
-          2222222, 2222222, 2222222, 2222222, 2222222, 2222222, 2222222,
-          2222222, 2222222, 2222222
-        ],
-        "week_7_kw": [200, 201, 202, 203, 204, 205, 206],
-        "month_30_kw": [
-          200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212, 213,
-          214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-          228, 229
-        ]
-      }
-    },
-    {
-      "id": 0,
-      "name": "",
-      "count": 0,
-      "power": 0,
-      "history": {
-        "day_24_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ],
-        "week_7_kw": [0, 0, 0, 0, 0, 0, 0],
-        "month_30_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0
-        ]
-      }
-    },
-    {
-      "id": 0,
-      "name": "",
-      "count": 0,
-      "power": 0,
-      "history": {
-        "day_24_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        ],
-        "week_7_kw": [0, 0, 0, 0, 0, 0, 0],
-        "month_30_kw": [
-          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-          0, 0, 0, 0, 0, 0, 0
-        ]
-      }
-    }
-  ],
   "ws": [
     {
       "id": 0,

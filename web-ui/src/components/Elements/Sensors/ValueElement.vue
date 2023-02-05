@@ -20,7 +20,7 @@
       <div class="flex flex-row space-x-1">
         <div>{{ props.value }}</div>
 
-        <div>{{ props.unit }}</div>
+        <div>{{ props.unit.replace(')', '') }}</div>
       </div>
       <div>{{ props.description }}</div>
     </div>
@@ -60,7 +60,7 @@ const props = defineProps({
   },
   unit: {
     type: String,
-    default: 'kWh',
+    default: '',
   },
   description: {
     type: String,

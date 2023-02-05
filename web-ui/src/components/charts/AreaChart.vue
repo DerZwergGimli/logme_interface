@@ -93,7 +93,7 @@ const timeFrame = ref(5);
       :options="chartOptions"
       :series="series"
     ></apexchart>
-    <div class="flex flex-row">
+    <div class="flex flex-row px-3 pb-1">
       <div class="flex text-right w-full items-center dark:text-white">
         Timeframe:
       </div>

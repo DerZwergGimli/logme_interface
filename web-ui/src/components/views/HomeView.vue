@@ -2,7 +2,7 @@
   <div class="mx-3 flex flex-col space-y-3">
     <div
       id="glowElement"
-      v-for="(sensor, idx) in sensorStore.sensors_power"
+      v-for="(sensor, idx) in useSensorStore().sensors"
       :key="idx"
       class=""
     >
@@ -15,23 +15,39 @@
           <div class="flex flex-col w-full">
             <p class="flex w-full text-2xl">{{ sensor.name }}</p>
             <p class="flex w-full text-md">{{ sensor.description }}</p>
+            <p class="flex w-full text-md">
+              {{ sensor.data?.salve_info['manufacturer:'] }}
+              {{ sensor.data?.salve_info['id:'] }}
+            </p>
           </div>
         </div>
         <div class="flex flex-col basis-1/2 justify-center space-y-2">
-          <value-element
-            :value="sensor.count.toString()"
-            icon="numbers"
-            description="SensorCount"
-            unit="kWh"
-            :editable="false"
-          />
-          <value-element
-            :value="sensor.power.toString()"
-            icon="power-plug"
-            description="SenorPower"
-            unit="W"
-            :editable="false"
-          />
+          <div
+            v-for="sensor_element_id in sensor.web_config_ids
+              ? sensor.web_config_ids[0]
+              : []"
+            :key="sensor_element_id"
+          >
+            <value-element
+              :value="
+                sensor.data?.slave_data.find(
+                  data => data.id === sensor_element_id
+                )?.value
+              "
+              icon="numbers"
+              :description="
+                sensor.data?.slave_data
+                  .find(data => data.id === sensor_element_id)
+                  ?.unit.split('(')[0]
+              "
+              :unit="
+                sensor.data?.slave_data
+                  .find(data => data.id === sensor_element_id)
+                  ?.unit.split('(')[1]
+              "
+              :editable="false"
+            />
+          </div>
         </div>
       </div>
       <div></div>
