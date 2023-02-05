@@ -137,7 +137,6 @@ static esp_err_t rest_post_sensor_edit_handler(httpd_req_t *req, int index) {
         cJSON *root = cJSON_CreateObject();
         ESP_ERROR_CHECK(rest_helper_get_json_from_request(req, &root));
         if (root != NULL) {
-
             char *sensor_name = "none";
             if (cJSON_IsString(cJSON_GetObjectItemCaseSensitive(root, "name"))) {
                 sensor_name = cJSON_GetObjectItemCaseSensitive(root, "name")->valuestring;

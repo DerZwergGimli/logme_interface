@@ -23,6 +23,7 @@ typedef struct mbus_device_t {
     char name[20];
     char *data;
     mbus_status_e status;
+    int dashboard_config_ids[2][10];
 } mbus_device_t;
 
 #endif //LOGME_INTERFACE_MBUS_SENSOR_T_H

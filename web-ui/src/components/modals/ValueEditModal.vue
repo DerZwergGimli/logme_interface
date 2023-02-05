@@ -5,6 +5,7 @@ import { onBeforeMount, onMounted, ref } from 'vue';
 import { createToast } from 'mosha-vue-toastify';
 import { TOAST_ERROR, TOAST_INFO } from '../../scripts/toast_config';
 import { useSensorStore } from '../../stores/SensorStore.js';
+import EditIcon from '../icons/EditIcon.vue';
 
 const props = defineProps([
   'index_to_edit',
@@ -34,10 +35,10 @@ function send_sensor_config() {
         useSensorStore().sensors[props.index_to_edit].secondary_address,
     }),
   })
-    .then(response => response.text())
+    .then(response => response.json())
     .then(response => {
       console.log(response);
-      createToast('Sensor config send!', TOAST_INFO);
+      createToast(response.message, TOAST_INFO);
     })
     .catch(err => {
       console.error(err);
@@ -52,9 +53,12 @@ function send_sensor_config() {
 <template>
   <Modal :size="props.size" v-if="props.isShown" @close="$emit('closeModal')">
     <template #header>
-      <h2 class="flex items-center text-lg">
-        Edit Sensor[{{ props.index_to_edit }}] Config
-      </h2>
+      <div class="flex flex-row items-center space-x-2">
+        <edit-icon class="w-9" />
+        <h2 class="text-lg">
+          Editing Sensor[{{ props.index_to_edit }}] Config
+        </h2>
+      </div>
     </template>
     <template #body>
       <div class="grid grid-cols-3 gap-3">
@@ -64,6 +68,11 @@ function send_sensor_config() {
           class="col-span-2"
           placeholder="enter new value here"
           :value="useSensorStore().sensors[props.index_to_edit].id"
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].id =
+                event.target.value)
+          "
         />
         <p>Name:</p>
         <Input
@@ -71,13 +80,23 @@ function send_sensor_config() {
           class="col-span-2"
           placeholder="enter new value here"
           :value="useSensorStore().sensors[props.index_to_edit].name"
+          @input="
+             (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].name =
+                event.target.value)
+          "
         />
         <p>Description:</p>
         <Input
           type="text"
           class="col-span-2"
           placeholder="enter new value here"
-          :value="useSensorStore().sensors[props.index_to_edit].description"
+          v-model="useSensorStore().sensors[props.index_to_edit].description"
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].description =
+                event.target.value)
+          "
         />
         <p>Pin [RX]:</p>
         <Input
@@ -85,6 +104,11 @@ function send_sensor_config() {
           class="col-span-2"
           placeholder="enter new value here"
           :value="useSensorStore().sensors[props.index_to_edit].pin_rx"
+          @input="
+             (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].pin_rx =
+                event.target.value)
+          "
         />
         <p>Pin [TX]:</p>
         <Input
@@ -92,6 +116,11 @@ function send_sensor_config() {
           class="col-span-2"
           placeholder="enter new value here"
           :value="useSensorStore().sensors[props.index_to_edit].pin_tx"
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].pin_tx =
+                event.target.value)
+          "
         />
         <p>Baudrate:</p>
         <Input
@@ -99,6 +128,11 @@ function send_sensor_config() {
           type="number"
           placeholder="enter new value here"
           :value="useSensorStore().sensors[props.index_to_edit].baudrate"
+          @input="
+             (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].baudrate =
+                event.target.value)
+          "
         />
         <p>Primary-Address:</p>
         <Input
@@ -106,6 +140,11 @@ function send_sensor_config() {
           type="number"
           placeholder="enter new value here"
           :value="useSensorStore().sensors[props.index_to_edit].primary_address"
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].primary_address =
+                event.target.value)
+          "
         />
         <p>Secondary-Address:</p>
         <Input
@@ -114,6 +153,11 @@ function send_sensor_config() {
           placeholder="enter new value here"
           :value="
             useSensorStore().sensors[props.index_to_edit].secondary_address
+          "
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].secondary_address =
+                event.target.value)
           "
         />
       </div>

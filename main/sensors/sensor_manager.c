@@ -266,16 +266,35 @@ esp_err_t sensor_manager_generate_json() {
                 mbus_devices[i].primary_address,
                 mbus_devices[i].secondary_address
         );
+        strcat(sensor_manager_json, buffer);
+
+
+        strcat(sensor_manager_json, ", \"dashboard_config_ids\": [");
+        for (int j = 0; j < NELEMS(mbus_devices[i].dashboard_config_ids); j++) {
+            strcat(sensor_manager_json, "[");
+            for (int k = 0; k < NELEMS(mbus_devices[i].dashboard_config_ids[j]); k++) {
+                sprintf(buffer, "%i", mbus_devices[i].dashboard_config_ids[j][k]);
+                strcat(sensor_manager_json, buffer);
+                if (k < NELEMS(mbus_devices[i].dashboard_config_ids[j]) - 1)
+                    strcat(sensor_manager_json, ",");
+            }
+            strcat(sensor_manager_json, "]");
+            if (j < NELEMS(mbus_devices[i].dashboard_config_ids) - 1)
+                strcat(sensor_manager_json, ",");
+        }
+        strcat(sensor_manager_json, "]");
+
 
         if (mbus_devices[i].data != NULL) {
-            strcat(sensor_manager_json, buffer);
             sprintf(buffer, ",\"data\": %s", mbus_devices[i].data);
+            strcat(sensor_manager_json, buffer);
         }
-        strcat(buffer, "}");
 
+
+        strcat(sensor_manager_json, "}");
         if (i < NELEMS(mbus_devices) - 1)
-            strcat(buffer, ",");
-        strcat(sensor_manager_json, buffer);
+            strcat(sensor_manager_json, ",");
+
     }
     strcat(sensor_manager_json, "]");
 
@@ -407,7 +426,6 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
 
     int index = 0;
     cJSON_ArrayForEach(sensor, sensors_json) {
-        //cJSON *id = cJSON_GetObjectItem(sensors, "id");
 
         //Mapping JSON
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "id")))
@@ -428,6 +446,24 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
             mbus_devices[index].secondary_address = cJSON_GetObjectItem(sensor, "secondary_address")->valueint;
 
 
+        //Set dashboard_config_ids to (-1)
+        for (int j = 0; j < NELEMS(mbus_devices[index].dashboard_config_ids); j++) {
+            for (int k = 0; k < NELEMS(mbus_devices[index].dashboard_config_ids[j]); k++) {
+                mbus_devices[index].dashboard_config_ids[j][k] = -1;
+            }
+        }
+
+        //Load dashboard_config_ids
+        if (cJSON_IsArray(cJSON_GetObjectItem(sensor, "dashboard_config_ids"))) {
+            cJSON *dashboard_config_ids = cJSON_GetObjectItem(sensor, "dashboard_config_ids");
+            for (int i = 0; i < cJSON_GetArraySize(dashboard_config_ids); i++) {
+                cJSON *subitem = cJSON_GetArrayItem(dashboard_config_ids, i);
+                for (int j = 0; j < cJSON_GetArraySize(subitem); j++) {
+                    if (cJSON_IsNumber(cJSON_GetArrayItem(subitem, j)))
+                        mbus_devices[index].dashboard_config_ids[i][j] = cJSON_GetArrayItem(subitem, j)->valueint;
+                }
+            }
+        }
 
 //        if (cJSON_IsObject(cJSON_GetObjectItem(sensor, "history"))) {
 //            cJSON *history = cJSON_GetObjectItem(sensor, "history");

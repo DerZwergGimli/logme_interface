@@ -29,6 +29,10 @@
             :editable="false"
           />
         </div>
+        <no-data-element
+          class="col-span-2"
+          v-if="sensor.data?.slave_data === undefined"
+        />
       </div>
     </div>
 
@@ -75,6 +79,7 @@ import { useSensorStore } from '../../../stores/SensorStore.js';
 import BarChart from '../../charts/BarChart.vue';
 import SmartMeterIcon from '../../icons/SmartMeterIcon.vue';
 import ValueEditModal from '../../modals/ValueEditModal.vue';
+import NoDataElement from './NoDataElement.vue';
 
 const time_values_hourly = ref([]);
 for (let i = 24; i > 0; i--) {

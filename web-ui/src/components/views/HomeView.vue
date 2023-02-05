@@ -13,11 +13,23 @@
           <smart-meter-icon class="w-24 dark:text-white" />
 
           <div class="flex flex-col w-full">
-            <p class="flex w-full text-2xl">{{ sensor.name }}</p>
-            <p class="flex w-full text-md">{{ sensor.description }}</p>
+            <p class="flex w-full text-2xl">
+              {{ sensor.name.length > 0 ? sensor.name : '---' }}
+            </p>
             <p class="flex w-full text-md">
-              {{ sensor.data?.salve_info['manufacturer:'] }}
-              {{ sensor.data?.salve_info['id:'] }}
+              {{ sensor.description.length > 0 ? sensor.description : '---' }}
+            </p>
+            <p class="flex w-full text-md">
+              {{
+                sensor.data?.salve_info['manufacturer:'].length > 0
+                  ? sensor.data?.salve_info['manufacturer:']
+                  : '---'
+              }}
+              {{
+                sensor.data?.salve_info['id:'] > 0
+                  ? sensor.data?.salve_info['id:']
+                  : '---'
+              }}
             </p>
           </div>
         </div>
@@ -48,6 +60,7 @@
               :editable="false"
             />
           </div>
+          <no-data-element v-if="sensor.data?.salve_info === undefined" />
         </div>
       </div>
       <div></div>
@@ -59,6 +72,7 @@
 import { useSensorStore } from '../../stores/SensorStore.js';
 import ValueElement from '../Elements/Sensors/ValueElement.vue';
 import SmartMeterIcon from '../icons/SmartMeterIcon.vue';
+import NoDataElement from '../Elements/Sensors/NoDataElement.vue';
 
 const sensorStore = useSensorStore();
 </script>
