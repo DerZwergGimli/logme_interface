@@ -5,9 +5,13 @@
         v-for="(sensor, idx) in useSensorStore().sensors"
         :key="idx"
       >
-        <accordion-header>{{
-          sensor.name.length === 0 ? 'none' : sensor.name
-        }}</accordion-header>
+        <accordion-header>
+          <div class="flex flex-row items-center pr-3">
+            <div class="w-full">
+              {{ sensor.name.length === 0 ? 'none' : sensor.name }}
+            </div>
+            <Button> <settings-icon class="w-6" /></Button></div
+        ></accordion-header>
         <accordion-content>
           <div>
             <SensorElement :selected_sensor_index="idx" />
@@ -24,7 +28,9 @@ import {
   AccordionPanel,
   AccordionHeader,
   AccordionContent,
+  Button,
 } from 'flowbite-vue';
 import { useSensorStore } from '../../stores/SensorStore';
 import SensorElement from '../Elements/Sensors/PowerSensorElement.vue';
+import SettingsIcon from '../icons/SettingsIcon.vue';
 </script>
