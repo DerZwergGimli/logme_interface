@@ -1,7 +1,22 @@
 <template>
   <div v-if="sensor" class="space-y-3">
-    <div class="flex flex-row space-x-3">
-      <smart-meter-icon class="w-24 dark:text-gray-100"></smart-meter-icon>
+    <div class="flex flex-row space-x-4">
+      <div
+        class="flex-col items-center space-y-3 bg-gray-100 dark:bg-gray-800 p-2 rounded-lg"
+      >
+        <div class="flex justify-center">
+          <smart-meter-icon class="w-24 dark:text-gray-100"></smart-meter-icon>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <h4>Name:</h4>
+          <h3>{{ sensor.name }}</h3>
+          <h4>Status:</h4>
+          <h3>{{ sensorstatus_toString(sensor.status) }}</h3>
+          <h4>Description:</h4>
+          <h4>{{ sensor.description }}</h4>
+        </div>
+      </div>
+
       <div class="w-full grid grid-cols-2 gap-2">
         <div
           v-for="sensor_element_id in sensor.web_config_ids
@@ -80,6 +95,8 @@ import BarChart from '../../charts/BarChart.vue';
 import SmartMeterIcon from '../../icons/SmartMeterIcon.vue';
 import ValueEditModal from '../../modals/ValueEditModal.vue';
 import NoDataElement from './NoDataElement.vue';
+import StatusElement from './StatusElement.vue';
+import { sensorstatus_toString } from '../../../stores/interfaces/I_Sensor';
 
 const time_values_hourly = ref([]);
 for (let i = 24; i > 0; i--) {

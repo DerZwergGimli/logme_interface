@@ -15,6 +15,10 @@ h3{
     @apply  text-xl dark:text-white
 }
 
+h4{
+    @apply  dark:text-white
+}
+
 p {
     @apply dark:text-white
 }
@@ -22,3 +26,4 @@ p {
 #glowElement {
     @apply border-2 dark:border-cyan-800 shadow-md dark:shadow-cyan-700  rounded-none sm:rounded-lg
 }
+

@@ -1,3 +1,7 @@
+export function sensorstatus_toString(dir: E_SensorStatus): string {
+  return E_SensorStatus[dir];
+}
+
 export interface I_LIVEDATA {
   chart_data: Array<number>;
   chart_timestamps: Array<number>;
@@ -8,7 +12,7 @@ export interface I_Sensor {
   name: string;
   id: number;
   description: string;
-  status: number;
+  status: E_SensorStatus;
   pin_rx: number;
   pin_tx: number;
   baudrate: number;
@@ -51,4 +55,11 @@ export interface SlaveDatum {
 export enum Function {
   InstantaneousValue = 'Instantaneous value',
   MoreRecordsFollow = 'More records follow',
+}
+
+export enum E_SensorStatus {
+  DEFAULT = 0,
+  ERROR = 1,
+  IDLE = 2,
+  READING = 3,
 }
