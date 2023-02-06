@@ -1,15 +1,11 @@
 /* HTTP Restful API Server
 
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
 */
 
 #include "web/rest_server.h"
 #include "web/rest_server_helper.h"
 #include "web/rest_types.h"
+#include "web/wss_manager/wss_manager.h"
 
 static httpd_handle_t server_handle = NULL;
 
@@ -332,21 +328,21 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
 
         /* URI handler for Restart  */
 
-        // httpd_uri_t wss_sensor_uri = {
-        //     .uri = "/websocket",
-        //     .method = HTTP_GET,
-        //     .handler = echo_handler,
-        //     .user_ctx = NULL,
-        //     .is_websocket = true};
-        // httpd_register_uri_handler(server, &wss_sensor_uri);
-
-        // httpd_uri_t wss_subscribe_uri = {
-        //     .uri = "/websocket",
-        //     .method = HTTP_SUBSCRIBE,
-        //     .handler = wss_subscribe_handler,
-        //     .user_ctx = NULL,
-        //     .is_websocket = true};
-        // httpd_register_uri_handler(server, &wss_subscribe_uri);
+//        httpd_uri_t wss_sensor_uri = {
+//                .uri = "/websocket",
+//                .method = HTTP_GET,
+//                .handler = wss_echo_handler,
+//                .user_ctx = NULL,
+//                .is_websocket = true};
+//        httpd_register_uri_handler(server_handle, &wss_sensor_uri);
+//
+        httpd_uri_t wss_subscribe_uri = {
+                .uri = "/websocket",
+                .method = HTTP_GET,
+                .handler = wss_subscribe_handler,
+                .user_ctx = NULL,
+                .is_websocket = true};
+        httpd_register_uri_handler(server_handle, &wss_subscribe_uri);
 
         httpd_uri_t base_get_uri = {
                 .uri = "*",
@@ -370,7 +366,7 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
         //     .user_ctx = rest_context};
         // httpd_register_uri_handler(server_handle, &common_get_uri);
 
-        // wss_server_send_messages(&server, sensors);
+        //wss_server_send_messages(&server_handle);
 
         return ESP_OK;
         err_start:
