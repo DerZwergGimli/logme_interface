@@ -14,12 +14,30 @@
 #include "esp_eth.h"
 #include <esp_http_server.h>
 
+//ACTIONS
+typedef enum wss_manager_message_t {
+    WSSM_SEND_HELLO = 0,
+    WSSM_SEND_SYSTEM_INFO = 1,
+    WSSM_SEND_SYSTEM_SENSORS = 2,
+} wss_manager_message_t;
+
+typedef struct {
+    wss_manager_message_t code;
+} queue_wss_manager;
+
+//init/start
 esp_err_t wss_subscribe_handler(httpd_req_t *req);
 
+//run
+void wss_manager(void *pvParamters);
 
-static void send_hello(void *arg);
 
-static void wss_manager(void *pvParamters);
+//destroy
+void wss_manager_destroy();
+
+
+void send_hello(void *arg);
+
 
 void wss_server_send_messages(httpd_handle_t *server);
 
