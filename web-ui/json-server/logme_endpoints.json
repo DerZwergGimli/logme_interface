@@ -10,6 +10,28 @@
       "free_heap": 174384,
       "uptime_ms": 1502,
       "time": "Fri Jan 27 14:33:57"
+    },
+    "web_ui": {
+      "request_interval_seconds": 3,
+      "web_history_storage_length_seconds": 60
+    },
+    "cron_jobs": [
+      {
+        "job_name": "Pull Sensors",
+        "job_description": "Requests data from all sensors connected to the MBus-serial-interface",
+        "job_schedule": "* * * * *"
+      },
+      {
+        "job_name": "Store History",
+        "job_description": "Stores the history to the SPIFFS storage to survive a restart",
+        "job_schedule": "* * * * *"
+      }
+    ],
+    "mqtt": {
+      "enable": true,
+      "host_url": "mqtt://192.168.1.124:1883",
+      "username": "someusername",
+      "password": "somepassword"
     }
   },
   "wifi": {

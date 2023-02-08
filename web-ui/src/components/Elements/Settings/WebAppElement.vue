@@ -1,24 +1,31 @@
-<template>
-  <div>
-    <div class="space-y-3">
-      <div>
-        <h3 class="text-center dark:text-white underline pb-2">WebUI-Info</h3>
-        <simple-table
-          :header="system_info_table_header"
-          :body="system_info_table_content"
-        />
-      </div>
-    </div>
-  </div>
-</template>
 <script setup lang="ts">
-import SimpleTable from '../../tables/SimpleTable.vue';
 import { ref } from 'vue';
 
-const system_info_table_header = ref(['APP', 'Value']);
-const system_info_table_content = ref([
-  ['Version', APP_VERSION],
-  ['Mode', import.meta.env.MODE],
-  ['API-URL', APP_API_URL == '' ? '/' : APP_API_URL],
-]);
+const app_version = ref(APP_VERSION);
+const app_mode = ref(import.meta.env.MODE);
+const app_url = ref(APP_API_URL === '' ? '/' : APP_API_URL);
 </script>
+<template>
+  <table id="tableTABLE">
+    <thead id="tableHEAD">
+      <tr>
+        <th>Element</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Version</td>
+        <td>{{ app_version }}</td>
+      </tr>
+      <tr>
+        <td>Mode</td>
+        <td>{{ app_mode }}</td>
+      </tr>
+      <tr>
+        <td>API-URL</td>
+        <td>{{ app_url }}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>

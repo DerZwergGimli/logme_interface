@@ -142,7 +142,7 @@ void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t even
     }
 }
 
-void mqtt5_app_start(void) {
+void start_mqtt5_app(void) {
     esp_mqtt5_connection_property_config_t connect_property = {
             .session_expiry_interval = 10,
             .maximum_packet_size = 1024,
@@ -189,3 +189,5 @@ void mqtt5_app_start(void) {
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt5_event_handler, NULL);
     esp_mqtt_client_start(client);
 }
+
+void stop_mqtt_app(void){}

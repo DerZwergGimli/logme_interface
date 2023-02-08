@@ -27,3 +27,21 @@ p {
     @apply border-0 md:border-2 dark:border-cyan-800 shadow-md dark:shadow-cyan-700  rounded-none sm:rounded-lg
 }
 
+
+table {
+
+    @apply w-full text-sm text-left text-gray-500 dark:text-gray-400;
+}
+
+thead {
+
+    @apply text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400;
+}
+
+tr {
+    @apply bg-white border-b dark:bg-gray-800 dark:border-gray-700
+}
+
+th, td {
+    @apply py-3 px-6
+}
