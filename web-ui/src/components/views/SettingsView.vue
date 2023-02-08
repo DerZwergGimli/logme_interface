@@ -9,9 +9,9 @@ import {
   AccordionHeader,
   AccordionContent,
 } from 'flowbite-vue';
-import SensorStoreSettingsTable from '../tables/SensorStoreSettingsTable.vue';
 import CronJobsElement from '../Elements/Settings/CronJobsElement.vue';
 import MqttElement from '../Elements/Settings/MqttElement.vue';
+import HistoryElement from '../Elements/Settings/HistoryElement.vue';
 </script>
 
 <template>
@@ -46,9 +46,9 @@ import MqttElement from '../Elements/Settings/MqttElement.vue';
         </accordion-content>
       </accordion-panel>
       <accordion-panel>
-        <accordion-header>Sensor-Store</accordion-header>
+        <accordion-header>History</accordion-header>
         <accordion-content>
-          <sensor-store-settings-table />
+          <history-element />
         </accordion-content>
       </accordion-panel>
       <accordion-panel>

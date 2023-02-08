@@ -19,7 +19,7 @@ import { Button } from 'flowbite-vue';
         <td>{{ useAppStore().system?.mqtt?.username }}</td>
         <td>{{ useAppStore().system?.mqtt?.password }}</td>
         <td>{{ useAppStore().system?.mqtt?.enable }}</td>
-        <td><Button>EDIT</Button></td>
+        <td class="float-right"><Button>EDIT</Button></td>
       </tr>
     </tbody>
   </table>

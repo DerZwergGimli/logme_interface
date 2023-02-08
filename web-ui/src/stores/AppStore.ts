@@ -1,22 +1,45 @@
 import { defineStore } from 'pinia';
-import { T_SensorTypes } from './interfaces/T_SensorTypes';
 import { I_System } from './interfaces/I_System';
+import { I_WiFi } from './interfaces/I_WiFi';
+import { useSensorStore } from './SensorStore';
+import { createToast } from 'mosha-vue-toastify';
+import { TOAST_ERROR } from '../scripts/toast_config';
 
 export const useAppStore = defineStore('appStore', {
   state: () => {
     return {
       themeIsDark: false,
-      sensor_type: undefined as T_SensorTypes | undefined,
       system: {} as I_System | undefined,
+      wifi: {} as I_WiFi | undefined,
     };
   },
 
   actions: {
     init() {
       this.themeIsDark = localStorage.theme === 'dark';
-      this.sensor_type = T_SensorTypes.POWER;
       this.theme_set(this.themeIsDark);
       console.info('appStore setup');
+    },
+    async fetch_wifi() {
+      let wifi_json;
+      let wifi_aps;
+
+      await fetch(APP_API_URL + '/wifi')
+        .then(resp => resp.json())
+        .then(json => {
+          wifi_json = json;
+        });
+
+      await fetch(APP_API_URL + '/ap')
+        .then(resp => resp.json())
+        .then(json => {
+          wifi_aps = json;
+        });
+
+      this.wifi = {
+        config: wifi_json,
+        aps: wifi_aps,
+      };
     },
     theme_toggle() {
       this.themeIsDark = !this.themeIsDark;

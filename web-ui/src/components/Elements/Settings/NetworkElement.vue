@@ -7,7 +7,7 @@ import ReloadIcon from '../../icons/ReloadIcon.vue';
 import WifiCredentialsModal from '../../modals/WifiCredentialsModal.vue';
 import { createToast } from 'mosha-vue-toastify';
 import { TOAST_INFO } from '../../../scripts/toast_config';
-
+import { useAppStore } from '../../../stores/AppStore';
 const modalShown = ref(false);
 const selected_network_ssid = ref('network_ssid');
 
@@ -60,31 +60,49 @@ function fetch_endpoint_ap() {
     .catch(err => console.error(err));
 }
 
-function action_wifi_modal(network_ssid: any) {
-  selected_network_ssid.value = network_ssid[0];
+function action_wifi_modal(network_ssid: String) {
+  selected_network_ssid.value = network_ssid.toString();
   modalShown.value = true;
 }
 </script>
 
 <template>
-  <div>
-    <div class="space-y-10">
-      <div>
-        <h3 class="text-center dark:text-white underline pb-2">WiFi Config</h3>
-        <simple-table
-          :header="wifi_config_table_header"
-          :body="wifi_config_table_content"
-        />
-      </div>
+  <div class="flex flex-col space-y-5">
+    <table id="tableTABLE">
+      <thead id="tableHEAD">
+        <tr>
+          <th>WiFi-Config</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SSID</td>
+          <td>{{ useAppStore().wifi?.config?.ssid }}</td>
+        </tr>
+        <tr>
+          <td>IP</td>
+          <td>{{ useAppStore().wifi?.config?.ip }}</td>
+        </tr>
+        <tr>
+          <td>Netmask</td>
+          <td>{{ useAppStore().wifi?.config?.netmask }}</td>
+        </tr>
+        <tr>
+          <td>Gateway</td>
+          <td>{{ useAppStore().wifi?.config?.gateway }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-      <div>
-        <div class="relative">
-          <h3
-            class="w-full justify-center text-center dark:text-white underline pb-2"
-          >
-            Available Networks
-          </h3>
-          <div class="absolute bottom-1 right-1">
+    <table id="tableTABLE">
+      <thead id="tableHEAD">
+        <tr>
+          <th>WiFi-AccessPoints</th>
+          <th>RSSI</th>
+          <th>AUTH</th>
+          <th>Channel</th>
+          <th class="float-right">
             <Button
               @click="
                 () => {
@@ -95,28 +113,23 @@ function action_wifi_modal(network_ssid: any) {
               color="default"
               ><reload-icon
             /></Button>
-          </div>
-        </div>
-        <div
-          v-if="networks_table_content.length === 0"
-          class="flex text-center"
-        >
-          <p>--- Please refresh networks ---</p>
-        </div>
-        <simple-table
-          v-else
-          :header="networks_table_header"
-          :body="networks_table_content"
-          :button_text="'Connect'"
-          @button_clicked="
-            value => {
-              action_wifi_modal(value);
-            }
-          "
-        />
-      </div>
-    </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="ap in useAppStore().wifi?.aps" :key="ap">
+          <td>{{ ap.ssid }}</td>
+          <td>{{ ap.rssi }}</td>
+          <td>{{ ap.auth }}</td>
+          <td>{{ ap.chan }}</td>
+          <td class="float-right">
+            <Button @click="() => action_wifi_modal(ap.ssid)">Connect</Button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+
   <div v-if="modalShown">
     <wifi-credentials-modal
       :is-shown="modalShown"

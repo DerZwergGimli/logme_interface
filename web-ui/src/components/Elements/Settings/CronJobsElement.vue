@@ -17,7 +17,7 @@ import { Button } from 'flowbite-vue';
         <td>{{ cron_job.job_name }}</td>
         <td>{{ cron_job.job_description }}</td>
         <td>{{ cron_job.job_schedule }}</td>
-        <td><Button>EDIT</Button></td>
+        <td class="float-right"><Button>EDIT</Button></td>
       </tr>
     </tbody>
   </table>

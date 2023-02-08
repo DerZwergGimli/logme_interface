@@ -6,7 +6,11 @@ import { createToast } from 'mosha-vue-toastify';
 import { TOAST_ERROR } from './scripts/toast_config';
 import { useAppStore } from './stores/AppStore';
 
+const appStore = useAppStore();
 const sensorStore = useSensorStore();
+
+appStore.init();
+appStore.fetch_wifi();
 
 setInterval(() => {
   fetch_endpoints_async();
@@ -18,16 +22,20 @@ async function fetch_endpoints_async() {
     .then(json => {
       useSensorStore().sensors = json;
     })
-    .catch(() => createToast('Error fetching /sensors', TOAST_ERROR));
+    .catch(() => {
+      createToast('Error fetching /sensors', TOAST_ERROR);
+      return;
+    });
 
   await fetch(APP_API_URL + '/system')
     .then(resp => resp.json())
     .then(json => {
       useAppStore().system = json;
     })
-    .catch(() => createToast('Error fetching /system', TOAST_ERROR));
-
-  console.info('sensorStore fetch');
+    .catch(() => {
+      createToast('Error fetching /system', TOAST_ERROR);
+      return;
+    });
 }
 </script>
 
