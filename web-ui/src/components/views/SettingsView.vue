@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="animate-fade-in flex flex-col">
     <Accordion
       flush
       class="border-2 rounded-xl dark:border-gray-700"
@@ -48,8 +48,4 @@ import {
 } from 'flowbite-vue';
 import SensorStoreSettingsTable from '../tables/SensorStoreSettingsTable.vue';
 import SensorTypeToggle from '../buttons/SensorTypeToggle.vue';
-
-onMounted(async () => {
-  createToast('Loading data...', TOAST_INFO);
-});
 </script>

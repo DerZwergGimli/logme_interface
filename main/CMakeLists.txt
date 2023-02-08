@@ -6,13 +6,11 @@ idf_component_register(SRCS "main.c"
         "wifi/json.c"
         "wifi/nvs_sync.c"
         "web/rest_server.c"
-        "web/wss_manager/wss_manager.c"
         "system/system_info.c"
         "sensors/sensor_manager.c"
         "sensors/sensor_helper.c"
         "timer/timer_manager.c"
         "mbus_serial_scan.c"
-
         INCLUDE_DIRS "."
         )
 

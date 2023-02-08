@@ -1,13 +1,13 @@
 <template>
   <div v-if="sensor" class="space-y-3">
-    <div class="flex flex-row space-x-4">
+    <div class="flex flex-col md:flex-row space-y-3 md:space-y-1 md:space-x-4">
       <div
-        class="flex-col items-center space-y-3 bg-gray-100 dark:bg-gray-800 p-2 rounded-lg"
+        class="flex flex-col items-center space-y-3 bg-gray-100 dark:bg-gray-800 p-2 rounded-lg"
       >
         <div class="flex justify-center">
           <smart-meter-icon class="w-24 dark:text-gray-100"></smart-meter-icon>
         </div>
-        <div class="grid grid-cols-2 gap-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <h4>Name:</h4>
           <h3>{{ sensor.name }}</h3>
           <h4>Status:</h4>
@@ -17,7 +17,7 @@
         </div>
       </div>
 
-      <div class="w-full grid grid-cols-2 gap-2 items-center">
+      <div class="w-full grid sm:grid-cols-2 gap-2 items-center">
         <no-data-element
           class="col-span-2"
           v-if="sensor.data?.slave_data === undefined"

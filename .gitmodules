@@ -4,3 +4,6 @@
 [submodule "components/esp_cron"]
 	path = components/esp_cron
 	url = https://github.com/DerZwergGimli/esp_cron
+[submodule "components/esp32-websocket"]
+	path = components/esp32-websocket
+	url = https://github.com/Molorius/esp32-websocket.git

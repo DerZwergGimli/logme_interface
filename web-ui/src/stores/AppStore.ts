@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia';
 import { T_SensorTypes } from './interfaces/T_SensorTypes';
+import { I_System } from './interfaces/I_System';
 
 export const useAppStore = defineStore('appStore', {
   state: () => {
     return {
       themeIsDark: false,
       sensor_type: undefined as T_SensorTypes | undefined,
+      system: {} as I_System | undefined,
     };
   },
 
@@ -25,6 +27,19 @@ export const useAppStore = defineStore('appStore', {
       this.themeIsDark = theme;
       write_DarkMode_to_storage(this.themeIsDark);
       write_DarkMode_to_DOM(this.themeIsDark);
+    },
+  },
+  getters: {
+    heapPercentage: state => {
+      if (state.system?.info) {
+        return (
+          ((state.system?.info.free_heap ?? 0) /
+            (state.system?.info.total_heap ?? 0)) *
+          100
+        );
+      } else {
+        return 0;
+      }
     },
   },
 });

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-col space-y-5 pb-5">
+    <div class="animate-fade-in flex flex-col space-y-5 pb-5">
       <SimpleTable
         id="glowElement"
         :header="['REST GET-Requests', 'Description']"

@@ -9,6 +9,7 @@ import VueApexCharts from 'vue3-apexcharts';
 import moshaToast from 'mosha-vue-toastify';
 import 'mosha-vue-toastify/dist/style.css';
 import 'flowbite';
+import 'uno.css';
 
 import HomeView from './components/views/HomeView.vue';
 import SensorView from './components/views/SensorView.vue';

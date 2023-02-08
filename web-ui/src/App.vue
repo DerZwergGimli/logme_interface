@@ -2,15 +2,39 @@
 import HeaderComponent from './components/header_footer/HeaderComponent.vue';
 import FooterComponent from './components/header_footer/FooterComponent.vue';
 import { useSensorStore } from './stores/SensorStore';
+import { createToast } from 'mosha-vue-toastify';
+import { TOAST_ERROR } from './scripts/toast_config';
+import { useAppStore } from './stores/AppStore';
 
 const sensorStore = useSensorStore();
-sensorStore.fetch();
+
+setInterval(() => {
+  fetch_endpoints_async();
+}, 3000);
+
+async function fetch_endpoints_async() {
+  await fetch(APP_API_URL + '/sensors')
+    .then(resp => resp.json())
+    .then(json => {
+      useSensorStore().sensors = json;
+    })
+    .catch(() => createToast('Error fetching /sensors', TOAST_ERROR));
+
+  await fetch(APP_API_URL + '/system')
+    .then(resp => resp.json())
+    .then(json => {
+      useAppStore().system = json;
+    })
+    .catch(() => createToast('Error fetching /system', TOAST_ERROR));
+
+  console.info('sensorStore fetch');
+}
 </script>
 
 <template>
   <div class="flex flex-col justify-between min-h-screen">
     <header-component class="border-b mb-3 sticky top-0 z-50" />
-    <router-view class="mb-auto pb-3 my-3 mx-1 sm:mx-2"></router-view>
+    <router-view class="mb-auto pb-3 my-3 sm:mx-2"></router-view>
     <footer-component class="w-full bottom-0" />
   </div>
 </template>

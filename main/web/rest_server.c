@@ -5,7 +5,6 @@
 #include "web/rest_server.h"
 #include "web/rest_server_helper.h"
 #include "web/rest_types.h"
-#include "web/wss_manager/wss_manager.h"
 
 static httpd_handle_t server_handle = NULL;
 
@@ -336,13 +335,13 @@ esp_err_t start_rest_server(const char *base_path, bool lru_purge_enable) {
 //                .is_websocket = true};
 //        httpd_register_uri_handler(server_handle, &wss_sensor_uri);
 //
-        httpd_uri_t wss_subscribe_uri = {
-                .uri = "/websocket",
-                .method = HTTP_GET,
-                .handler = wss_subscribe_handler,
-                .user_ctx = NULL,
-                .is_websocket = true};
-        httpd_register_uri_handler(server_handle, &wss_subscribe_uri);
+//        httpd_uri_t wss_subscribe_uri = {
+//                .uri = "/websocket",
+//                .method = HTTP_GET,
+//                .handler = wss_subscribe_handler,
+//                .user_ctx = NULL,
+//                .is_websocket = true};
+//        httpd_register_uri_handler(server_handle, &wss_subscribe_uri);
 
         httpd_uri_t base_get_uri = {
                 .uri = "*",

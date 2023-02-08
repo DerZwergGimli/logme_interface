@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col" id="glowElement">
+  <div class="animate-fade-in flex flex-col" id="glowElement">
     <Accordion>
       <accordion-panel
         v-for="(sensor, idx) in useSensorStore().sensors"
@@ -10,7 +10,10 @@
             <div class="w-full">
               {{ sensor.name.length === 0 ? 'none' : sensor.name }}
             </div>
-            <status-element :status="sensor.status" />
+            <status-element
+              class="animate-pulse animate-duration-2s"
+              :status="sensor.status"
+            />
             <Button @click="action_edit(idx)">
               <settings-icon class="w-6"
             /></Button></div

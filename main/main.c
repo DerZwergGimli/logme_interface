@@ -28,9 +28,6 @@ void cb_restart_rest_server(void *pvParameter) {
 }
 
 
-
-
-
 void app_main(void) {
     printf("VERSION= %s\n", CONFIG_LOGME_VERSION);
 
@@ -56,11 +53,12 @@ void app_main(void) {
     wifi_manager_set_callback(WM_ORDER_STOP_AP, &cb_restart_rest_server);
 
 
+
     // Initialize SystemInfo
     system_info_start(true);
 
     // Initialize Sensor Manager
-    //sensor_manager_start(true);
+    sensor_manager_start(true);
 
     //Time Manger for updating history
     //time_manager_start(false);
