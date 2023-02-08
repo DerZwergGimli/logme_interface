@@ -46,16 +46,10 @@ function fetch_endpoint_ap() {
   fetch(APP_API_URL + '/ap')
     .then(resp => resp.json())
     .then(json => {
-      let ap_list = json as Array<I_AccessPoint>;
-      networks_table_content.value = [];
-      ap_list.forEach(ap => {
-        networks_table_content.value.push([
-          ap.ssid,
-          ap.rssi,
-          ap.auth,
-          ap.chan,
-        ] as never);
-      });
+      useAppStore().wifi = {
+        aps: json,
+        config: useAppStore().wifi?.confiwe,
+      };
     })
     .catch(err => console.error(err));
 }
@@ -102,8 +96,9 @@ function action_wifi_modal(network_ssid: String) {
           <th>RSSI</th>
           <th>AUTH</th>
           <th>Channel</th>
-          <th class="float-right">
+          <th class="">
             <Button
+              class="float-right"
               @click="
                 () => {
                   createToast('Updating Networks', TOAST_INFO);

@@ -17,18 +17,20 @@
     },
     "cron_jobs": [
       {
+        "enabled": true,
         "job_name": "Pull Sensors",
         "job_description": "Requests data from all sensors connected to the MBus-serial-interface",
         "job_schedule": "* * * * *"
       },
       {
+        "enabled": true,
         "job_name": "Store History",
         "job_description": "Stores the history to the SPIFFS storage to survive a restart",
         "job_schedule": "* * * * *"
       }
     ],
     "mqtt": {
-      "enable": true,
+      "enabled": true,
       "host_url": "mqtt://192.168.1.124:1883",
       "username": "someusername",
       "password": "somepassword"

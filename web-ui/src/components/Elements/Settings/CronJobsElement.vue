@@ -9,6 +9,7 @@ import { Button } from 'flowbite-vue';
         <th>Name</th>
         <th>Description</th>
         <th>Schedule</th>
+        <th>Enabled</th>
         <th></th>
       </tr>
     </thead>
@@ -17,6 +18,7 @@ import { Button } from 'flowbite-vue';
         <td>{{ cron_job.job_name }}</td>
         <td>{{ cron_job.job_description }}</td>
         <td>{{ cron_job.job_schedule }}</td>
+        <td>{{ cron_job.enabled }}</td>
         <td class="float-right"><Button>EDIT</Button></td>
       </tr>
     </tbody>

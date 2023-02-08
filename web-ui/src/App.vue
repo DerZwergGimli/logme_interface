@@ -41,8 +41,12 @@ async function fetch_endpoints_async() {
 
 <template>
   <div class="flex flex-col justify-between min-h-screen">
-    <header-component class="border-b mb-3 sticky top-0 z-50" />
+    <header-component
+      class="border-b border-black dark:border-white mb-3 sticky top-0 z-50"
+    />
     <router-view class="mb-auto pb-3 my-3 sm:mx-2"></router-view>
-    <footer-component class="w-full bottom-0" />
+    <footer-component
+      class="w-full bottom-0 border-t border-black dark:border-white"
+    />
   </div>
 </template>

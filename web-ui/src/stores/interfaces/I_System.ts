@@ -18,13 +18,14 @@ export interface I_Info {
   bin_version: string;
 }
 export interface I_CronJob {
+  enabled: true;
   job_name: string;
   job_description: string;
   job_schedule: string;
 }
 
 export interface I_Mqtt {
-  enable: boolean;
+  enabled: boolean;
   host_url: string;
   username: string;
   password: string;
