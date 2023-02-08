@@ -1,0 +1,13 @@
+version: "3"
+services:
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./mosquitto/conf:/mosquitto/config:ro
+      - ./mosquitto/log:/mosquitto/log:rw
+      - ./mosquitto/data:/mosquitto/data:rw

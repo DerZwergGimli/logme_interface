@@ -29,7 +29,7 @@ export interface I_Sensor {
 
 export interface Data {
   salve_info: SalveInfo;
-  slave_data: SlaveDatum[];
+  slave_data: SlaveData[];
 }
 
 export interface SalveInfo {
@@ -43,18 +43,23 @@ export interface SalveInfo {
   'signature:': string;
 }
 
-export interface SlaveDatum {
+export interface SlaveData {
   id: number;
+  frame: number;
   function: Function;
   storage_number?: number;
   unit?: string;
   value: string;
   timestamp: Date;
+  tariff?: number;
+  device?: number;
 }
 
 export enum Function {
   InstantaneousValue = 'Instantaneous value',
+  MaximumValue = 'Maximum value',
   MoreRecordsFollow = 'More records follow',
+  ValueDuringErrorState = 'Value during error state',
 }
 
 export enum E_SensorStatus {

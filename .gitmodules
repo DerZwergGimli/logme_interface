@@ -7,3 +7,6 @@
 [submodule "components/esp32-websocket"]
 	path = components/esp32-websocket
 	url = https://github.com/Molorius/esp32-websocket.git
+[submodule "components/mongoose-esp-idf"]
+	path = components/mongoose-esp-idf
+	url = https://github.com/cesanta/mongoose-esp-idf.git

@@ -13,6 +13,7 @@
 
 #include "timer/timer_manager.h"
 #include "sensors/sensor_helper.h"
+#include "mqtt/mqtt_manager.h"
 
 
 // GLOBALS
@@ -25,6 +26,12 @@ void cb_restart_rest_server(void *pvParameter) {
     ESP_LOGI(TAG_MAIN, "Restarting WebServer...");
     ESP_ERROR_CHECK(stop_rest_server());
     ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
+    mqtt5_app_start();
+}
+
+void cb_start_mqtt_client(void *pvParameter) {
+    ESP_LOGI(TAG_MAIN, "Staring MQTT...");
+    mqtt5_app_start();
 }
 
 
@@ -51,14 +58,14 @@ void app_main(void) {
     ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
     wifi_manager_set_callback(WM_ORDER_START_AP, &cb_restart_rest_server);
     wifi_manager_set_callback(WM_ORDER_STOP_AP, &cb_restart_rest_server);
-
+    wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_start_mqtt_client);
 
 
     // Initialize SystemInfo
     system_info_start(true);
 
     // Initialize Sensor Manager
-    sensor_manager_start(true);
+    //sensor_manager_start(true);
 
     //Time Manger for updating history
     //time_manager_start(false);

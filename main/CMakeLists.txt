@@ -11,6 +11,7 @@ idf_component_register(SRCS "main.c"
         "sensors/sensor_helper.c"
         "timer/timer_manager.c"
         "mbus_serial_scan.c"
+        "mqtt/mqtt_manager.c"
         INCLUDE_DIRS "."
         )
 
