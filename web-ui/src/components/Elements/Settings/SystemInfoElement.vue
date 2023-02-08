@@ -51,7 +51,7 @@ function convert_time(time_ms: number) {
 
       <tr>
         <td>Uptime</td>
-        <td>{{ convert_time(useAppStore().system?.info?.uptime_ms) }}</td>
+        <td>{{ convert_time(useAppStore().system?.info?.uptime_ms ?? 0) }}</td>
       </tr>
       <tr>
         <td>Time [UTC]</td>
@@ -66,11 +66,13 @@ function convert_time(time_ms: number) {
               labelPosition="outside"
               label="Free Heap"
               :progress="
-                (
-                  (useAppStore().system?.info?.free_heap /
-                    useAppStore().system?.info?.total_heap) *
-                  100
-                ).toFixed(0)
+                parseInt(
+                  (
+                    ((useAppStore().system?.info?.free_heap ?? 0) /
+                      (useAppStore().system?.info?.total_heap ?? 0)) *
+                    100
+                  ).toFixed(0)
+                )
               "
             ></Progress>
           </div>

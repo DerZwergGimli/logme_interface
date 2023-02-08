@@ -14,7 +14,7 @@ import { Button } from 'flowbite-vue';
       </tr>
     </thead>
     <tbody>
-      <tr v-for="cron_job in useAppStore().system?.cron_jobs" :key="cron_job">
+      <tr v-for="(cron_job, idx) in useAppStore().system?.cron_jobs" :key="idx">
         <td>{{ cron_job.job_name }}</td>
         <td>{{ cron_job.job_description }}</td>
         <td>{{ cron_job.job_schedule }}</td>

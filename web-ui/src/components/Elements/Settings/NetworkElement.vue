@@ -48,7 +48,7 @@ function fetch_endpoint_ap() {
     .then(json => {
       useAppStore().wifi = {
         aps: json,
-        config: useAppStore().wifi?.confiwe,
+        config: useAppStore().wifi?.config,
       };
     })
     .catch(err => console.error(err));
@@ -112,7 +112,7 @@ function action_wifi_modal(network_ssid: String) {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="ap in useAppStore().wifi?.aps" :key="ap">
+        <tr v-for="(ap, index) in useAppStore().wifi?.aps" :key="index">
           <td>{{ ap.ssid }}</td>
           <td>{{ ap.rssi }}</td>
           <td>{{ ap.auth }}</td>
