@@ -58,6 +58,11 @@ menu "Example Configuration"
 endmenu
 
 menu "LogME"
+    config LOGME_NAME
+        string "Device name"
+            default logme
+            help
+                Sets the LOGME_NAME for LogME.
     config LOGME_VERSION
         string "Set APP Version"
         help
