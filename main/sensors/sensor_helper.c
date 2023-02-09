@@ -4,6 +4,7 @@
 
 #include "sensor_helper.h"
 #include "mbus-json.h"
+#include "mqtt_manager.h"
 
 
 int mbus_scan_full(int rx_pin, int tx_pin, long baudrate) {
@@ -262,6 +263,9 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
         mbus_frame_free(reply.next);
         return 1;
     }
+
+    mbus_frame_data_mqtt(&reply_data);
+
     // Clean up
     mbus_disconnect(handle);
     mbus_context_free(handle);

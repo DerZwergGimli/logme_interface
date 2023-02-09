@@ -59,6 +59,13 @@ void print_user_property(mqtt5_user_property_handle_t user_property);
 
 void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 
-void mqtt5_app_start(void);
+void start_mqtt5_app(void);
+
+typedef struct mqtt_message_t {
+    char topic[50];
+    char message[100];
+} mqtt_message_t;
+
+void send_message_async(mqtt_message_t mqtt_message);
 
 #endif //LOGME_INTERFACE_MQTT_MANAGER_H

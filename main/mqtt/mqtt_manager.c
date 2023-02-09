@@ -5,6 +5,8 @@
 
 #include "mqtt_manager.h"
 
+esp_mqtt_client_handle_t client = NULL;
+
 
 void log_error_if_nonzero(const char *message, int error_code) {
     if (error_code != 0) {
@@ -142,6 +144,13 @@ void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t even
     }
 }
 
+
+void send_message_async(mqtt_message_t mqtt_message) {
+    ESP_LOGI("MAIN", "PUBLISH MQTTT MESSAGE %s", mqtt_message.topic);
+    esp_mqtt_client_publish(client, mqtt_message.topic, mqtt_message.message, 0, 0, 0);
+}
+
+
 void start_mqtt5_app(void) {
     esp_mqtt5_connection_property_config_t connect_property = {
             .session_expiry_interval = 10,
@@ -172,7 +181,7 @@ void start_mqtt5_app(void) {
             .session.last_will.retain = true,
     };
 
-    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt5_cfg);
+    client = esp_mqtt_client_init(&mqtt5_cfg);
 
     /* Set connection properties and user properties */
     esp_mqtt5_client_set_user_property(&connect_property.user_property, user_property_arr, USE_PROPERTY_ARR_SIZE);
@@ -190,4 +199,4 @@ void start_mqtt5_app(void) {
     esp_mqtt_client_start(client);
 }
 
-void stop_mqtt_app(void){}
+void stop_mqtt_app(void) {}

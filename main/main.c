@@ -26,12 +26,22 @@ void cb_restart_rest_server(void *pvParameter) {
     ESP_LOGI(TAG_MAIN, "Restarting WebServer...");
     ESP_ERROR_CHECK(stop_rest_server());
     ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
-    mqtt5_app_start();
+
 }
 
 void cb_start_mqtt_client(void *pvParameter) {
     ESP_LOGI(TAG_MAIN, "Staring MQTT...");
-    mqtt5_app_start();
+    start_mqtt5_app();
+    for (int i = 0; i < 10; ++i) {
+
+        mqtt_message_t message;
+        strcpy(message.topic, "/test");
+        strcpy(message.message, "Hello from LogME");
+        send_message_async(message);
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+
 }
 
 
@@ -65,7 +75,7 @@ void app_main(void) {
     system_info_start(true);
 
     // Initialize Sensor Manager
-    //sensor_manager_start(true);
+    sensor_manager_start(true);
 
     //Time Manger for updating history
     //time_manager_start(false);
