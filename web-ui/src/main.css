@@ -1,5 +1,9 @@
+
+
+
 body {
-    @apply bg-gray-200  dark:bg-gray-900
+    caret-color: transparent;
+    @apply  bg-gray-200  dark:bg-gray-900
 }
 
 h1{
