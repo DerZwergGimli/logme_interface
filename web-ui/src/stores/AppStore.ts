@@ -1,15 +1,17 @@
 import { defineStore } from 'pinia';
 import { I_System } from './interfaces/I_System';
+import { I_CronJob } from './interfaces/I_CronJob';
+import { I_Mqtt } from './interfaces/I_Mqtt';
 import { I_WiFi } from './interfaces/I_WiFi';
-import { useSensorStore } from './SensorStore';
-import { createToast } from 'mosha-vue-toastify';
-import { TOAST_ERROR } from '../scripts/toast_config';
 
 export const useAppStore = defineStore('appStore', {
   state: () => {
     return {
       themeIsDark: false,
+      showHeap: false,
       system: {} as I_System | undefined,
+      cron_jobs: [] as Array<I_CronJob>,
+      mqtt: {} as I_Mqtt,
       wifi: {} as I_WiFi | undefined,
     };
   },
@@ -41,10 +43,21 @@ export const useAppStore = defineStore('appStore', {
         aps: wifi_aps,
       };
     },
+    async fetch_default_system_config() {
+      await fetch(APP_API_URL + '/default_system_config.json')
+        .then(resp => resp.json())
+        .then(json => {
+          this.cron_jobs = json.cron_jobs;
+          this.mqtt = json.mqtt;
+        });
+    },
     theme_toggle() {
       this.themeIsDark = !this.themeIsDark;
       write_DarkMode_to_storage(this.themeIsDark);
       write_DarkMode_to_DOM(this.themeIsDark);
+    },
+    toggle_showHeap() {
+      this.showHeap = !this.showHeap;
     },
     theme_set(theme: boolean) {
       this.themeIsDark = theme;

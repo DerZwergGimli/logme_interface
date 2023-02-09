@@ -18,8 +18,8 @@
 #define JSON_SENSOR_MANGER_SIZE 10240
 static const char *SENSOR_MANAGER_TAG = "sensor-manager";
 #define SENSORS_LENGTH 4
-#define SCRATCH_BUFSIZE (10240)
-char scratch[SCRATCH_BUFSIZE];
+#define SCRATCH_BUFFER_SIZE (10240)
+char scratch[SCRATCH_BUFFER_SIZE];
 
 QueueHandle_t sensor_manager_queue;
 SemaphoreHandle_t sensor_manager_json_mutex = NULL;
@@ -106,7 +106,7 @@ void sensor_manager(void *pvParameters) {
                     ssize_t read_bytes;
                     do {
                         /* Read file in chunks into the scratch buffer */
-                        read_bytes = read(fd, chunk, SCRATCH_BUFSIZE);
+                        read_bytes = read(fd, chunk, SCRATCH_BUFFER_SIZE);
                         if (read_bytes == -1) {
                             ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to read file : %s", filepath);
                         } else if (read_bytes > 0) {

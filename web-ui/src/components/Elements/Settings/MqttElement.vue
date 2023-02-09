@@ -15,10 +15,10 @@ import { Button } from 'flowbite-vue';
     </thead>
     <tbody>
       <tr>
-        <td>{{ useAppStore().system?.mqtt?.host_url }}</td>
-        <td>{{ useAppStore().system?.mqtt?.username }}</td>
-        <td>{{ useAppStore().system?.mqtt?.password }}</td>
-        <td>{{ useAppStore().system?.mqtt?.enabled }}</td>
+        <td>{{ useAppStore().mqtt.url }}</td>
+        <td>{{ useAppStore().mqtt.username }}</td>
+        <td>{{ useAppStore().mqtt.password }}</td>
+        <td>{{ useAppStore().mqtt.enabled }}</td>
         <td class="float-right"><Button>EDIT</Button></td>
       </tr>
     </tbody>

@@ -14,7 +14,7 @@
 #include "timer/timer_manager.h"
 #include "sensors/sensor_helper.h"
 #include "mqtt/mqtt_manager.h"
-
+#include "fs/config.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "main";
@@ -31,17 +31,12 @@ void cb_restart_rest_server(void *pvParameter) {
 
 void cb_start_mqtt_client(void *pvParameter) {
     ESP_LOGI(TAG_MAIN, "Staring MQTT...");
-    start_mqtt5_app();
-    for (int i = 0; i < 10; ++i) {
+    start_mqtt5_app(config_get_mqtt()->url, NULL, NULL);
 
-        mqtt_message_t message;
-        strcpy(message.topic, "/test");
-        strcpy(message.message, "Hello from LogME");
-        send_message_async(message);
-
-        vTaskDelay(pdMS_TO_TICKS(1000));
-    }
-
+    mqtt_message_t message;
+    strcpy(message.topic, "/ping");
+    strcpy(message.message, "Hello from LogME");
+    send_message_async(message);
 }
 
 
@@ -60,6 +55,8 @@ void app_main(void) {
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
 
 
+    config_read_file("/default_system_config.json");
+
 
     // Initialize WIFI
     wifi_manager_start();
@@ -75,7 +72,7 @@ void app_main(void) {
     system_info_start(true);
 
     // Initialize Sensor Manager
-    sensor_manager_start(true);
+    //sensor_manager_start(true);
 
     //Time Manger for updating history
     //time_manager_start(false);

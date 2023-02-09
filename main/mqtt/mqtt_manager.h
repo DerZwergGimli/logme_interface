@@ -59,7 +59,7 @@ void print_user_property(mqtt5_user_property_handle_t user_property);
 
 void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data);
 
-void start_mqtt5_app(void);
+void start_mqtt5_app(const char *url, const char *username, const char *password);
 
 typedef struct mqtt_message_t {
     char topic[50];

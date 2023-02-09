@@ -13,7 +13,7 @@ static esp_err_t rest_helper_get_json_from_request(httpd_req_t *req, cJSON **jso
     int cur_len = 0;
     char *buf = ((rest_server_context_t *) (req->user_ctx))->scratch;
     int received = 0;
-    if (total_len >= SCRATCH_BUFSIZE) {
+    if (total_len >= SCRATCH_BUFFER_SIZE) {
         /* Respond with 500 Internal Server Error */
         httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "content too long");
         return ESP_FAIL;

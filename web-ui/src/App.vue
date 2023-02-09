@@ -11,6 +11,7 @@ const sensorStore = useSensorStore();
 
 appStore.init();
 appStore.fetch_wifi();
+appStore.fetch_default_system_config();
 
 setInterval(() => {
   fetch_endpoints_async();
@@ -23,8 +24,8 @@ async function fetch_endpoints_async() {
       useSensorStore().sensors = json;
     })
     .catch(() => {
-      createToast('Error fetching /sensors', TOAST_ERROR);
-      return;
+      // createToast('Error fetching /sensors', TOAST_ERROR);
+      // return;
     });
 
   await fetch(APP_API_URL + '/system')
@@ -33,8 +34,8 @@ async function fetch_endpoints_async() {
       useAppStore().system = json;
     })
     .catch(() => {
-      createToast('Error fetching /system', TOAST_ERROR);
-      return;
+      // createToast('Error fetching /system', TOAST_ERROR);
+      // return;
     });
 }
 </script>

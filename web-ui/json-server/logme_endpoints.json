@@ -14,28 +14,31 @@
     "web_ui": {
       "request_interval_seconds": 3,
       "web_history_storage_length_seconds": 60
-    },
+    }
+  },
+  "default_system_config.json": {
     "cron_jobs": [
       {
         "enabled": true,
-        "job_name": "Pull Sensors",
-        "job_description": "Requests data from all sensors connected to the MBus-serial-interface",
-        "job_schedule": "* * * * *"
+        "name": "Pull Sensors",
+        "description": "Requests data from all sensors connected to the MBus-serial-interface",
+        "schedule": "* * * * *"
       },
       {
         "enabled": true,
-        "job_name": "Store History",
-        "job_description": "Stores the history to the SPIFFS storage to survive a restart",
-        "job_schedule": "* * * * *"
+        "name": "Store History",
+        "description": "Stores the history to the SPIFFS storage to survive a restart",
+        "schedule": "* * * * *"
       }
     ],
     "mqtt": {
       "enabled": true,
-      "host_url": "mqtt://192.168.1.124:1883",
+      "url": "mqtt://192.168.1.124:1883",
       "username": "someusername",
       "password": "somepassword"
     }
   },
+  "default_sensor_config.json": {},
   "wifi": {
     "ip": "0.0.1.130",
     "netmask": "0.0.255.0",

@@ -153,7 +153,7 @@ void send_message_async(mqtt_message_t mqtt_message) {
 }
 
 
-void start_mqtt5_app(void) {
+void start_mqtt5_app(const char *url, const char *username, const char *password) {
     esp_mqtt5_connection_property_config_t connect_property = {
 
             .session_expiry_interval = 10,
@@ -171,7 +171,7 @@ void start_mqtt5_app(void) {
     };
 
     esp_mqtt_client_config_t mqtt5_cfg = {
-            .broker.address.uri = "mqtt://192.168.1.124:1883",
+            .broker.address.uri = url,
             .session.protocol_ver = MQTT_PROTOCOL_V_5,
             .network.disable_auto_reconnect = true,
 
@@ -183,6 +183,11 @@ void start_mqtt5_app(void) {
             .session.last_will.qos = 1,
             .session.last_will.retain = true,
     };
+
+    if (username != NULL && password != NULL) {
+        mqtt5_cfg.credentials.username = username;
+        mqtt5_cfg.credentials.authentication.password = password;
+    }
 
     client = esp_mqtt_client_init(&mqtt5_cfg);
 
