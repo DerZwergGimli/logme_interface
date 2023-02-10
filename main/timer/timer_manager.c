@@ -12,6 +12,7 @@
 #include <lwip/apps/sntp.h>
 #include "cJSON.h"
 #include "sensors/sensor_manager.h"
+#include "fs/config.h"
 
 static const char *TIME_MANAGER_TAG = "time-manager";
 
@@ -57,11 +58,23 @@ void time_manager(void *pvParameters) {
                 }
                     break;
                 case CREATE_TASKS: {
-
                     ESP_LOGI(TIME_MANAGER_TAG, "CREATE_TASKS");
-                    jobs[0] = cron_job_create("0 * * * * *", cron_job_history_callback, (void *) SM_HISTORY_MINUTE);
-                    jobs[1] = cron_job_create("0 0 * * * *", cron_job_history_callback, (void *) SM_HISTORY_HOUR);
-                    jobs[2] = cron_job_create("0 0 0 * * *", cron_job_history_callback, (void *) SM_HISTORY_DAY);
+                    jobs[0] = cron_job_create(
+                            "0 * * * * *",
+                            cron_job_history_callback,
+                            (void *) SM_HISTORY_MINUTE);
+                    jobs[1] = cron_job_create(
+                            "0 0 * * * *",
+                            cron_job_history_callback,
+                            (void *) SM_HISTORY_HOUR);
+                    jobs[2] = cron_job_create(
+                            "0 0 0 * * *",
+                            cron_job_history_callback,
+                            (void *) SM_HISTORY_DAY);
+//                    jobs[3] = cron_job_create(
+//                            config_get_cron_jobs()[0].name,
+//                            cron_job_pull_sensors,
+//                            NULL);
                     //jobs[3] = cron_job_create("* * * * * *", cron_job_history_callback, (void *) SM_HISTORY_SECOUND);
                     cron_start();
                 }
@@ -82,6 +95,11 @@ void cron_job_history_callback(cron_job *job) {
     sensor_manager_history_t timeFrame = (sensor_manager_history_t) job->data;
     sensor_manager_update_history_save(timeFrame);
     ESP_LOGI(TIME_MANAGER_TAG, "Callback on timeframe: %i", timeFrame);
+}
+
+void cron_job_pull_sensors() {
+    ESP_LOGI(TIME_MANAGER_TAG, "Callback on pull-sensors");
+    sensor_manager_send_message(SM_MBUS_PULL, NULL);
 }
 
 int check_time(int time_value) {

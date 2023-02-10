@@ -58,7 +58,7 @@ void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t even
             esp_mqtt5_client_set_user_property(&publish_property.user_property, user_property_arr,
                                                USE_PROPERTY_ARR_SIZE);
             esp_mqtt5_client_set_publish_property(client, &publish_property);
-            msg_id = esp_mqtt_client_publish(client, "/topic/qos1", "data_3", 0, 1, 1);
+//            msg_id = esp_mqtt_client_publish(client, "/topic/qos1", "data_3", 0, 1, 1);
 //            esp_mqtt5_client_delete_user_property(publish_property.user_property);
 //            publish_property.user_property = NULL;
 //            ESP_LOGI(MQTT_MANAGER, "sent publish successful, msg_id=%d", msg_id);
@@ -148,14 +148,14 @@ void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t even
 void send_message_async(mqtt_message_t mqtt_message) {
     ESP_LOGI("MAIN", "PUBLISH MQTTT MESSAGE %s", mqtt_message.topic);
     char mqtt_topic[60];
-    sprintf(mqtt_topic, "/%s/%s", CONFIG_LOGME_NAME, mqtt_message.topic);
+    sprintf(mqtt_topic, "%s%s", CONFIG_LOGME_NAME, mqtt_message.topic);
     esp_mqtt_client_publish(client, mqtt_topic, mqtt_message.message, 0, 0, 0);
 }
 
 
 void start_mqtt5_app(const char *url, const char *username, const char *password) {
+    printf("%s, %s, %s", url, username, password);
     esp_mqtt5_connection_property_config_t connect_property = {
-
             .session_expiry_interval = 10,
             .maximum_packet_size = 1024,
             .receive_maximum = 65535,
@@ -177,8 +177,8 @@ void start_mqtt5_app(const char *url, const char *username, const char *password
 
             //.credentials.username = "123",
             //.credentials.authentication.password = "456",
-            .session.last_will.topic = "/topic/will",
-            .session.last_will.msg = "i will leave",
+            .session.last_will.topic = "/logme/lastwill",
+            .session.last_will.msg = "bye",
             .session.last_will.msg_len = 12,
             .session.last_will.qos = 1,
             .session.last_will.retain = true,

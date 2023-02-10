@@ -32,6 +32,8 @@ typedef struct {
 
 void cron_job_history_callback(cron_job *job);
 
+void cron_job_pull_sensors();
+
 void time_manager(void *pvParameters);
 
 void time_manager_start(bool log_enable);

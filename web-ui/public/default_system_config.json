@@ -15,8 +15,10 @@
   ],
   "mqtt": {
     "enabled": true,
-    "url": "mqtt://192.168.1.124:1883",
-    "username": "someusername",
-    "password": "somepassword"
+    "protocol": "mqtt",
+    "ip": "192.168.1.130",
+    "port": "1883",
+    "username": "mqttuser",
+    "password": "12345678"
   }
 }

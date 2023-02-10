@@ -17,7 +17,7 @@
 #include "fs/config.h"
 
 // GLOBALS
-static const char TAG_MAIN[] = "main";
+static const char TAG_MAIN[] = "[APP] main";
 
 esp_netif_ip_info_t ip_info;
 
@@ -31,7 +31,11 @@ void cb_restart_rest_server(void *pvParameter) {
 
 void cb_start_mqtt_client(void *pvParameter) {
     ESP_LOGI(TAG_MAIN, "Staring MQTT...");
-    start_mqtt5_app(config_get_mqtt()->url, NULL, NULL);
+
+    config_mqtt_t *config = config_get_mqtt();
+    char url[50];
+    sprintf(url, "%s://%s:%s", config->protocol, config->ip, config->port);
+    start_mqtt5_app(url, config->username, config->password);
 
     mqtt_message_t message;
     strcpy(message.topic, "/ping");
@@ -41,7 +45,9 @@ void cb_start_mqtt_client(void *pvParameter) {
 
 
 void app_main(void) {
-    printf("VERSION= %s\n", CONFIG_LOGME_VERSION);
+    ESP_LOGI(TAG_MAIN, "--- DEVICE STARTED ---");
+    ESP_LOGI(TAG_MAIN, "--- VERSION= %s ---", CONFIG_LOGME_VERSION);
+
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -72,13 +78,13 @@ void app_main(void) {
     system_info_start(true);
 
     // Initialize Sensor Manager
-    //sensor_manager_start(true);
+    sensor_manager_start(true);
 
-    //Time Manger for updating history
+    //Time Manger for init periodic tasks
     //time_manager_start(false);
 
 
-    ESP_LOGI("main", "--- DEVICE BOOTED ---");
+    ESP_LOGI(TAG_MAIN, "--- DEVICE BOOTED ---");
 
 
 }
