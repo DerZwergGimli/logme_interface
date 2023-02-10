@@ -10,10 +10,6 @@
 #include "esp_vfs.h"
 #include "cJSON.h"
 
-#include "web/rest_server_helper.h"
-#include "web/rest_get_handler.h"
-#include "web/rest_post_handler.h"
-#include "rest_post_handler.h"
 
 static const char *REST_TAG = "REST-SERVER";
 

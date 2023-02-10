@@ -13,6 +13,9 @@ idf_component_register(SRCS "main.c"
         "mbus_serial_scan.c"
         "mqtt/mqtt_manager.c"
         "fs/config.c"
+        "web/rest_server_helper.c"
+        "web/handler_get/rest_get_handler.c"
+        "web/handler_post/rest_post_handler.c"
         INCLUDE_DIRS "."
         )
 

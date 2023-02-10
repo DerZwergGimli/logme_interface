@@ -11,10 +11,10 @@
 #include "system/system_info.h"
 #include "web/rest_server.h"
 
-#include "timer/timer_manager.h"
-#include "sensors/sensor_helper.h"
 #include "fs/config.h"
 #include "mqtt/mqtt_manager.h"
+#include "wifi/wifi_manager.h"
+#include "sensors/sensor_manager.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "[APP] main";

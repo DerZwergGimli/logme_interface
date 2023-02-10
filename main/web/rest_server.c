@@ -5,6 +5,9 @@
 #include "web/rest_server.h"
 #include "web/rest_server_helper.h"
 #include "web/rest_types.h"
+#include "web/handler_get/rest_get_handler.h"
+#include "web/handler_post/rest_post_handler.h"
+#include "status_reponse.h"
 
 static httpd_handle_t server_handle = NULL;
 

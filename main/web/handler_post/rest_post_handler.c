@@ -1,24 +1,13 @@
-#ifndef REST_POST_HANDLER_H
-#define REST_POST_HANDLER_H
+#include "web/handler_post/rest_post_handler.h"
 
-#include "esp_flash.h"
-#include "esp_wifi.h"
-#include "esp_log.h"
-#include "cJSON.h"
-#include "wifi/wifi_manager.h"
-#include "rest_server.h"
-#include "status_reponse.h"
-#include "rest_helper.h"
-#include "mqtt/mqtt_manager.h"
 
-static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
 
 /**
  * POST-Request
  * -> '/restart'
  */
-static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_restart_handler(httpd_req_t *req) {
+
 
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
@@ -46,8 +35,8 @@ static esp_err_t rest_post_restart_handler(httpd_req_t *req) {
  * POST-Request
  * -> '/restart'
  */
-static esp_err_t rest_post_mqtt_ping_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_mqtt_ping_handler(httpd_req_t *req) {
+
 
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
@@ -74,8 +63,8 @@ static esp_err_t rest_post_mqtt_ping_handler(httpd_req_t *req) {
  * POST-Request
  * -> '/wifireset'
  */
-static esp_err_t rest_post_wifi_reset_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_wifi_reset_handler(httpd_req_t *req) {
+
 
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
@@ -99,8 +88,8 @@ static esp_err_t rest_post_wifi_reset_handler(httpd_req_t *req) {
  * POST-Request
  * -> '/sensorhistoryclear'
  */
-static esp_err_t rest_post_sensor_history_clear_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_sensor_history_clear_handler(httpd_req_t *req) {
+
 
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
@@ -123,8 +112,8 @@ static esp_err_t rest_post_sensor_history_clear_handler(httpd_req_t *req) {
  * POST-Request
  * -> '/sensorsave'
  */
-static esp_err_t rest_post_sensor_save_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_sensor_save_handler(httpd_req_t *req) {
+
 
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
@@ -148,8 +137,7 @@ static esp_err_t rest_post_sensor_save_handler(httpd_req_t *req) {
  * POST-Request
  * -> '/sesnoredit/$index'
  */
-static esp_err_t rest_post_sensor_edit_handler(httpd_req_t *req, int index) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_sensor_edit_handler(httpd_req_t *req, int index) {
 
     httpd_resp_set_status(req, http_200_hdr);
     httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
@@ -236,8 +224,8 @@ static esp_err_t rest_post_sensor_edit_handler(httpd_req_t *req, int index) {
  * POST-Request
  * -> '/wifiConfig'
  */
-static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {
+
 
     int total_len = req->content_len;
     int cur_len = 0;
@@ -313,5 +301,3 @@ static esp_err_t rest_post_wifiConfig_handler(httpd_req_t *req) {
 
     return ESP_OK;
 }
-
-#endif

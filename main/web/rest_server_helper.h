@@ -1,8 +1,8 @@
 #ifndef REST_SERVER_HELPER_H
 #define REST_SERVER_HELPER_H
 
+#include <esp_http_server.h>
 #include "web/rest_types.h"
-
 #include "esp_http_server.h"
 #include "wifi/wifi_manager.h"
 
@@ -21,23 +21,7 @@ static const char *HTTP_SERVER_TAG = "REST-Server";
 #define FILE_PATH_MAX (ESP_VFS_PATH_MAX + 128)
 
 /* Set HTTP response content type according to file extension */
-static esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath) {
-    const char *type = "text/plain";
-    if (CHECK_FILE_EXTENSION(filepath, ".html")) {
-        type = "text/html";
-    } else if (CHECK_FILE_EXTENSION(filepath, ".js")) {
-        type = "application/javascript";
-    } else if (CHECK_FILE_EXTENSION(filepath, ".css")) {
-        type = "text/css";
-    } else if (CHECK_FILE_EXTENSION(filepath, ".png")) {
-        type = "image/png";
-    } else if (CHECK_FILE_EXTENSION(filepath, ".ico")) {
-        type = "image/x-icon";
-    } else if (CHECK_FILE_EXTENSION(filepath, ".svg")) {
-        type = "text/xml";
-    }
-    return httpd_resp_set_type(req, type);
-}
+esp_err_t set_content_type_from_file(httpd_req_t *req, const char *filepath);
 
 /* const httpd related values stored in ROM */
 const static char http_200_hdr[] = "200 OK";

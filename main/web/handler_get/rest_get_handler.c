@@ -1,20 +1,10 @@
-#ifndef REST_GET_HANDLER_H
-#define REST_GET_HANDLER_H
-
-#include "esp_flash.h"
-#include "esp_wifi.h"
-#include "rest_types.h"
-#include "cJSON.h"
-
-#include "system/system_info.h"
-#include "sensors/sensor_manager.h"
+#include "web/handler_get/rest_get_handler.h"
 
 /**
  * GET-Request
  * -> '/system'
  */
-static esp_err_t rest_get_system_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
+esp_err_t rest_get_system_handler(httpd_req_t *req) {
     system_info_send_message(SI_UPDATE, NULL);
 
     if (system_info_lock_info_json_buffer(pdMS_TO_TICKS(1000))) {
@@ -44,10 +34,7 @@ static esp_err_t rest_get_system_handler(httpd_req_t *req) {
  * GET-Request
  * -> '/wifi'
  */
-static esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
-
-
+esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
     if (wifi_manager_lock_json_buffer((TickType_t) 10)) {
         char *buff = wifi_manager_get_ip_info_json();
         if (buff) {
@@ -73,9 +60,7 @@ static esp_err_t rest_get_wifi_handler(httpd_req_t *req) {
  * GET-Request
  * -> '/ap'
  */
-static esp_err_t rest_get_ap_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
-
+esp_err_t rest_get_ap_handler(httpd_req_t *req) {
 
     if (wifi_manager_lock_json_buffer((TickType_t) 10)) {
         httpd_resp_set_status(req, http_200_hdr);
@@ -100,9 +85,7 @@ static esp_err_t rest_get_ap_handler(httpd_req_t *req) {
  * GET-Request
  * -> '/sensors'
  */
-static esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
-    ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
-
+esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
 
     if (sensor_manager_lock_json_buffer(portMAX_DELAY)) {
         const char *json_buff = sensor_manager_get_json();
@@ -131,8 +114,7 @@ static esp_err_t rest_get_sensors_handler(httpd_req_t *req) {
  * GET-Request
  * -> '/sensors/id'
  */
-static esp_err_t rest_get_sensor_handler(httpd_req_t *req, int index) {
-    ESP_LOGI(HTTP_SERVER_TAG, "GET %s with index=%i", req->uri, index);
+esp_err_t rest_get_sensor_handler(httpd_req_t *req, int index) {
 
 
     if (sensor_manager_lock_json_buffer(portMAX_DELAY)) {
@@ -157,5 +139,3 @@ static esp_err_t rest_get_sensor_handler(httpd_req_t *req, int index) {
     }
     return ESP_OK;
 }
-
-#endif
