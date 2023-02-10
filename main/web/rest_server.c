@@ -166,8 +166,16 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
 }
 
 static esp_err_t base_post_handler(httpd_req_t *req) {
+    ESP_LOGI(HTTP_SERVER_TAG, "POST %s", req->uri);
+
     if (strcmp(req->uri, "/restart") == 0) {
         ESP_ERROR_CHECK(rest_post_restart_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/cron/edit") == 0) {
+        ESP_ERROR_CHECK(rest_post_cron_jobs_config_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/mqtt/edit") == 0) {
+        ESP_ERROR_CHECK(rest_post_mqtt_config_handler(req));
         return ESP_OK;
     } else if (strcmp(req->uri, "/mqtt/ping") == 0) {
         ESP_ERROR_CHECK(rest_post_mqtt_ping_handler(req));

@@ -4,9 +4,11 @@
 
 #include "config.h"
 
-#define SCRATCH_BUFFER_SIZE_MAX (1024)
+#define SCRATCH_BUFFER_SIZE_MAX 1024
 #define CRON_JOBS_LENGTH 2
 static const char *FS_CONFIG_TAG = "fs-config";
+#define FILE_SYSTEM_CONFIG "/default_system_config.json"
+#define NUM_ALPHA  26
 
 config_mqtt_t *config_mqtt;
 config_cron_jobs_t config_cron_jobs[CRON_JOBS_LENGTH];
@@ -21,30 +23,100 @@ config_cron_jobs_t *config_get_cron_jobs() {
     return config_cron_jobs;
 }
 
+cJSON *config_get_mqtt_json() {
+    cJSON *json_mqtt = cJSON_CreateObject();
+    cJSON_AddBoolToObject(json_mqtt, "enabled", config_mqtt->enabled);
+    cJSON_AddStringToObject(json_mqtt, "protocol", config_mqtt->protocol);
+    cJSON_AddStringToObject(json_mqtt, "ip", config_mqtt->ip);
+    cJSON_AddStringToObject(json_mqtt, "port", config_mqtt->port);
+    cJSON_AddStringToObject(json_mqtt, "username", config_mqtt->username);
+    cJSON_AddStringToObject(json_mqtt, "password", config_mqtt->password);
+    return json_mqtt;
+}
+
+cJSON *config_get_cron_jobs_json() {
+    cJSON *json_cron_jobs = cJSON_CreateArray();
+    for (int i = 0; i < CRON_JOBS_LENGTH; ++i) {
+        cJSON *json_cron_job = cJSON_CreateObject();
+        cJSON_AddBoolToObject(json_cron_job, "enabled", config_cron_jobs[i].enabled);
+        cJSON_AddStringToObject(json_cron_job, "name", config_cron_jobs[i].name);
+        cJSON_AddStringToObject(json_cron_job, "name", config_cron_jobs[i].name);
+        cJSON_AddStringToObject(json_cron_job, "description", config_cron_jobs[i].description);
+        cJSON_AddStringToObject(json_cron_job, "schedule", config_cron_jobs[i].schedule);
+        cJSON_AddItemToArray(json_cron_jobs, json_cron_job);
+    }
+    return json_cron_jobs;
+}
+
+
+esp_err_t config_write_to_flash() {
+    ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", FILE_SYSTEM_CONFIG);
+
+    char filepath[ESP_VFS_PATH_MAX + 128];
+    strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
+    strlcat(filepath, FILE_SYSTEM_CONFIG, sizeof(filepath));
+    FILE *f = fopen(filepath, "w");
+    if (f == NULL) {
+        ESP_LOGE(FS_CONFIG_TAG, "Failed to open file for writing: %s", filepath);
+    } else {
+        ESP_LOGI(FS_CONFIG_TAG, "Opened storage file %s", filepath);
+
+        cJSON *json_config = cJSON_CreateObject();
+        cJSON *json_mqtt_config = config_get_mqtt_json();
+        cJSON *json_cron_jobs_config = config_get_cron_jobs_json();
+
+        cJSON_AddItemToObject(json_config, "mqtt", json_mqtt_config);
+        cJSON_AddItemToObject(json_config, "cron_jobs", json_cron_jobs_config);
+
+        fprintf(f, "%s", cJSON_Print(json_config));
+        fclose(f);
+
+        cJSON_Delete(json_config);
+    }
+    return ESP_OK;
+}
+
 esp_err_t config_parse_file(char *json_data) {
+    printf("%s", json_data);
     cJSON *root = cJSON_Parse(json_data);
 
-    const cJSON *json_cron_jobs;
-    const cJSON *json_cron_job;
     const cJSON *json_mqtt;
+    const cJSON *json_cron_jobs;
+
 
     if (root == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
         if (error_ptr != NULL) {
-            ESP_LOGE("SML-Parser", "Error before: %s\n", error_ptr);
+            ESP_LOGE(FS_CONFIG_TAG, "Error before: %s\n", error_ptr);
         }
         cJSON_Delete(root);
         return ESP_FAIL;
     }
 
-    json_cron_jobs = cJSON_GetObjectItemCaseSensitive(root, "cron_jobs");
     json_mqtt = cJSON_GetObjectItemCaseSensitive(root, "mqtt");
+    json_cron_jobs = cJSON_GetObjectItemCaseSensitive(root, "cron_jobs");
 
+    if (cJSON_IsArray(json_cron_jobs)) {
+        ESP_ERROR_CHECK(config_parse_cron_jobs(json_cron_jobs));
+    }
+
+    if (cJSON_IsObject(json_mqtt)) {
+        ESP_ERROR_CHECK(config_parse_mqtt(json_mqtt));
+    }
+
+    cJSON_Delete(root);
+    return ESP_OK;
+}
+
+esp_err_t config_parse_mqtt(const cJSON *json_mqtt) {
     // Parse MQTT
     if (json_mqtt != NULL) {
         config_mqtt = malloc(sizeof(config_mqtt_t));
 
-        config_mqtt->enabled = cJSON_GetObjectItem(json_mqtt, "enabled")->valueint;
+        if (cJSON_GetObjectItem(json_mqtt, "enabled")->valueint == 1) {
+            config_mqtt->enabled = true;
+        } else { config_mqtt->enabled = false; }
+
         strcpy(config_mqtt->protocol,
                cJSON_GetObjectItem(json_mqtt, "protocol")->valuestring);
         strcpy(config_mqtt->ip,
@@ -55,13 +127,24 @@ esp_err_t config_parse_file(char *json_data) {
                cJSON_GetObjectItem(json_mqtt, "username")->valuestring);
         strcpy(config_mqtt->password,
                cJSON_GetObjectItem(json_mqtt, "password")->valuestring);
-    }
 
+        return ESP_OK;
+    }
+    return ESP_FAIL;
+
+}
+
+esp_err_t config_parse_cron_jobs(const cJSON *json_cron_jobs) {
     // Parse CRON_JOBS
+    const cJSON *json_cron_job;
     if (json_cron_jobs != NULL) {
         int i = 0;
         cJSON_ArrayForEach(json_cron_job, json_cron_jobs) {
-            config_cron_jobs[i].enabled = cJSON_GetObjectItemCaseSensitive(json_cron_job, "enabled")->valueint;
+
+            if (cJSON_GetObjectItem(json_cron_job, "enabled")->valueint == 1) {
+                config_cron_jobs[i].enabled = true;
+            } else { config_cron_jobs[i].enabled = false; }
+
             strcpy(config_cron_jobs[i].name,
                    cJSON_GetObjectItem(json_cron_job, "name")->valuestring);
             strcpy(config_cron_jobs[i].description,
@@ -70,10 +153,11 @@ esp_err_t config_parse_file(char *json_data) {
                    cJSON_GetObjectItem(json_cron_job, "schedule")->valuestring);
             i++;
         }
-    }
-    cJSON_Delete(root);
-    return ESP_OK;
 
+        return ESP_OK;
+    }
+
+    return ESP_FAIL;
 
 }
 
@@ -98,36 +182,40 @@ void print_config_cron_jobs() {
     }
 }
 
-void config_read_file(const char *filename) {
-    ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", filename);
+void config_read_file() {
+    ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", FILE_SYSTEM_CONFIG);
     char filepath[ESP_VFS_PATH_MAX + 128];
     strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
-    strlcat(filepath, filename, sizeof(filepath));
-    int fd = open(filepath, O_RDONLY, 0);
-    if (fd == -1) {
+    strlcat(filepath, FILE_SYSTEM_CONFIG, sizeof(filepath));
+    FILE *f = fopen(filepath, "r");
+    if (f == NULL) {
         ESP_LOGE(FS_CONFIG_TAG, "Failed to open file for reading: %s", filepath);
     } else {
-        ESP_LOGI(FS_CONFIG_TAG, "Opened storage file");
+        ESP_LOGI(FS_CONFIG_TAG, "Opened storage file %s", filepath);
+
+
+        char buffer[SCRATCH_BUFFER_SIZE_MAX + 1];
+        buffer[SCRATCH_BUFFER_SIZE_MAX] = '\0';
+
+        size_t num = fread(buffer, sizeof(char), SCRATCH_BUFFER_SIZE_MAX, f);
+        if (num == NUM_ALPHA) {  /* fread success */
+            ESP_LOGI(FS_CONFIG_TAG, "Number of characters read = %i", num);
+            config_parse_file(buffer);
+            fclose(f);
+        } else {  /* fread failed */
+            if (ferror(f))         /* possibility 1 */
+                ESP_LOGE(FS_CONFIG_TAG, "Error reading %s", filepath);
+            else if (feof(f)) {     /* possibility 2 */
+                ESP_LOGI(FS_CONFIG_TAG, "EOF found");
+                ESP_LOGI(FS_CONFIG_TAG, "Number of characters read %d", num);
+                config_parse_file(buffer);
+            }
+        }
+
+        print_config_mqtt();
+        print_config_cron_jobs();
     }
 
-    char scratch[SCRATCH_BUFFER_SIZE_MAX];
 
-    char *chunk = scratch;
-    ssize_t read_bytes;
-    do {
-        /* Read file in chunks into the scratch buffer */
-        read_bytes = read(fd, chunk, SCRATCH_BUFFER_SIZE_MAX);
-        if (read_bytes == -1) {
-            ESP_LOGE(FS_CONFIG_TAG, "Failed to read file : %s", filepath);
-        } else if (read_bytes > 0) {
-            ESP_LOGI(FS_CONFIG_TAG, "Loading json data...");
-            config_parse_file(chunk);
-
-        }
-    } while (read_bytes > 0);
-    /* Close file after sending complete */
-
-    print_config_mqtt();
-    print_config_cron_jobs();
 }
 

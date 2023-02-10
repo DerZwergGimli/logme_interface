@@ -133,7 +133,7 @@ void sensor_manager(void *pvParameters) {
                     strlcat(filepath, "/sensorstore.json", sizeof(filepath));
                     FILE *f = fopen(filepath, "w");
                     if (f == NULL) {
-                        ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for reading: %s", filepath);
+                        ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for writing: %s", filepath);
                     } else {
                         ESP_LOGI(SENSOR_MANAGER_TAG, "Opened storage file");
                     }

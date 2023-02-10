@@ -60,6 +60,7 @@ esp_err_t init_fs(void)
         .base_path = CONFIG_EXAMPLE_WEB_MOUNT_POINT,
         .partition_label = NULL,
         .max_files = 5,
+
         .format_if_mount_failed = false};
     esp_err_t ret = esp_vfs_spiffs_register(&conf);
 

@@ -67,7 +67,6 @@ function action_send_mqtt_ping() {
       </tr>
     </tbody>
   </table>
-  {{ modalShown }}
   <div v-if="modalShown">
     <mqtt-edit-modal :is-shown="modalShown" @closeModal="modalShown = false" />
   </div>

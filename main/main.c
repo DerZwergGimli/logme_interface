@@ -60,8 +60,7 @@ void app_main(void) {
     ESP_ERROR_CHECK(init_fs());
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
 
-
-    config_read_file("/default_system_config.json");
+    config_read_file();
 
 
     // Initialize WIFI
@@ -78,7 +77,7 @@ void app_main(void) {
     system_info_start(true);
 
     // Initialize Sensor Manager
-    sensor_manager_start(true);
+    //sensor_manager_start(true);
 
     //Time Manger for init periodic tasks
     //time_manager_start(false);

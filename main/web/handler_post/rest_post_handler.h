@@ -13,8 +13,12 @@
 #include "system/system_info.h"
 #include "sensors/sensor_manager.h"
 #include "web/rest_helper.h"
+#include "fs/config.h"
 
 static const char *RESTSERVER_PUT = "RESTSERVER_PUT";
+
+void rest_send_json_response_ok(httpd_req_t *req, char *message);
+
 
 /**
  * POST-Request
@@ -27,6 +31,18 @@ esp_err_t rest_post_restart_handler(httpd_req_t *req);
  * -> '/restart'
  */
 esp_err_t rest_post_mqtt_ping_handler(httpd_req_t *req);
+
+/**
+ * POST-Request
+ * -> '/mqtt'
+ */
+esp_err_t rest_post_mqtt_config_handler(httpd_req_t *req);
+
+/**
+ * POST-Request
+ * -> '/cronjobs'
+ */
+esp_err_t rest_post_cron_jobs_config_handler(httpd_req_t *req);
 
 /**
  * POST-Request

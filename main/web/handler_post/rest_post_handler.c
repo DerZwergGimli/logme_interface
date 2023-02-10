@@ -1,5 +1,19 @@
 #include "web/handler_post/rest_post_handler.h"
 
+void rest_send_json_response_ok(httpd_req_t *req, char *message) {
+    httpd_resp_set_status(req, http_200_hdr);
+    httpd_resp_set_hdr(req, http_cache_control_hdr, http_cache_control_no_cache);
+    httpd_resp_set_hdr(req, http_pragma_hdr, http_pragma_no_cache);
+    cJSON *response_json = cJSON_CreateObject();
+    json_status_response_create(response_json, STATUS_OK, message);
+    httpd_resp_set_type(req, http_content_type_json);
+    const char *json_buff = cJSON_Print(response_json);
+    httpd_resp_sendstr(req, json_buff);
+
+    //Cleanup
+    free((void *) json_buff);
+    cJSON_Delete(response_json);
+}
 
 
 /**
@@ -33,7 +47,7 @@ esp_err_t rest_post_restart_handler(httpd_req_t *req) {
 
 /**
  * POST-Request
- * -> '/restart'
+ * -> '/mqtt/ping'
  */
 esp_err_t rest_post_mqtt_ping_handler(httpd_req_t *req) {
 
@@ -58,6 +72,45 @@ esp_err_t rest_post_mqtt_ping_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+/**
+ * POST-Request
+ * -> '/mqtt'
+ */
+esp_err_t rest_post_mqtt_config_handler(httpd_req_t *req) {
+    //Process Data
+    cJSON *root = cJSON_CreateObject();
+    ESP_ERROR_CHECK(rest_helper_get_json_from_request(req, &root));
+    ESP_ERROR_CHECK(config_parse_mqtt(root));
+    config_write_to_flash();
+
+    //Send response
+    rest_send_json_response_ok(req, "Updated MQTT!");
+
+    //Cleanup
+    cJSON_Delete(root);
+    return ESP_OK;
+
+}
+
+/**
+ * POST-Request
+ * -> '/cronjobs'
+ */
+esp_err_t rest_post_cron_jobs_config_handler(httpd_req_t *req) {
+
+    //Process Data
+    cJSON *root = cJSON_CreateObject();
+    ESP_ERROR_CHECK(rest_helper_get_json_from_request(req, &root));
+    ESP_ERROR_CHECK(config_parse_cron_jobs(root));
+    config_write_to_flash();
+
+    //Send response
+    rest_send_json_response_ok(req, "Updated cron-jobs!");
+
+    //Cleanup
+    cJSON_Delete(root);
+    return ESP_OK;
+}
 
 /**
  * POST-Request
