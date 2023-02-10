@@ -15,7 +15,7 @@ appStore.fetch_default_system_config();
 
 setInterval(() => {
   fetch_endpoints_async();
-}, 3000);
+}, appStore.update_interval);
 
 async function fetch_endpoints_async() {
   await fetch(APP_API_URL + '/sensors')

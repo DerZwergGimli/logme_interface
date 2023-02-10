@@ -3,10 +3,12 @@ import { I_System } from './interfaces/I_System';
 import { I_CronJob } from './interfaces/I_CronJob';
 import { I_Mqtt } from './interfaces/I_Mqtt';
 import { I_WiFi } from './interfaces/I_WiFi';
+import { useStorage } from '@vueuse/core';
 
 export const useAppStore = defineStore('appStore', {
   state: () => {
-    return {
+    return {a
+      update_interval: useStorage('update_interval', 10000),
       themeIsDark: false,
       showHeap: false,
       system: {} as I_System | undefined,
