@@ -7,7 +7,7 @@ import { useStorage } from '@vueuse/core';
 
 export const useAppStore = defineStore('appStore', {
   state: () => {
-    return {a
+    return {
       update_interval: useStorage('update_interval', 10000),
       themeIsDark: false,
       showHeap: false,
