@@ -68,12 +68,11 @@
       </div>
       <div></div>
     </div>
-    <div class="flex p-5 w-full justify-center items-center">
-      <rotate-loader
-        :loading="useSensorStore().sensors.length === 0"
-        color="#4200b9"
-        :size="md"
-      ></rotate-loader>
+    <div
+      class="flex p-5 w-full justify-center items-center"
+      v-if="useSensorStore().sensors.length === 0"
+    >
+      <spinner color="blue" size="12" />
     </div>
   </div>
 </template>
@@ -82,7 +81,7 @@
 import { useSensorStore } from '../../stores/SensorStore.js';
 import ValueElement from '../Elements/Sensors/ValueElement.vue';
 import SmartMeterIcon from '../icons/SmartMeterIcon.vue';
-import RotateLoader from 'vue-spinner/src/RotateLoader.vue';
+import { Spinner } from 'flowbite-vue';
 
 import NoDataElement from '../Elements/Sensors/NoDataElement.vue';
 

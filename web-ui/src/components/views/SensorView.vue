@@ -1,10 +1,9 @@
 <template>
-  <div class="flex p-5 w-full justify-center items-center">
-    <rotate-loader
-      :loading="useSensorStore().sensors.length === 0"
-      color="#4200b9"
-      :size="md"
-    ></rotate-loader>
+  <div
+    class="flex p-5 w-full justify-center items-center"
+    v-if="useSensorStore().sensors.length === 0"
+  >
+    <spinner color="blue" size="12" />
   </div>
   <div class="animate-fade-in flex flex-col" id="glowElement">
     <Accordion>
@@ -54,7 +53,8 @@ import SettingsIcon from '../icons/SettingsIcon.vue';
 import ValueEditModal from '../modals/ValueEditModal.vue';
 import { ref } from 'vue';
 import StatusElement from '../Elements/Sensors/StatusElement.vue';
-import RotateLoader from 'vue-spinner/src/RotateLoader.vue';
+import { Spinner } from 'flowbite-vue';
+
 const isShowModal = ref(false);
 const sensor_index_to_edit = ref();
 
