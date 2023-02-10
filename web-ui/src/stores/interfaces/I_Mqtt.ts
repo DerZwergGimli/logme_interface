@@ -1,6 +1,8 @@
 export interface I_Mqtt {
   enabled: boolean;
-  url: string;
+  ip: string;
+  protocol: string;
+  port: string;
   username: string;
   password: string;
 }

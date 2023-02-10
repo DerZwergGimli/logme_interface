@@ -7,8 +7,17 @@
         :body="[
           ['/system', 'Requests a system-info object'],
           ['/wifi', 'Requests a wifi-info object'],
+          ['/ap', 'Requests a access-points-info object'],
           ['/sensors', 'Requests the sensors object'],
           ['/sensorstore.json', 'Requests the sensors-store form flash'],
+          [
+            '/default_sensor_config.json',
+            'Requests the stored sensors-config form flash',
+          ],
+          [
+            '/default_system_config.json',
+            'Requests the stored system-config form flash',
+          ],
         ]"
         :button_text="'GET'"
         @button_clicked="handle_get_button"
@@ -25,12 +34,6 @@
           ['/sensoredit/#', 'Edit Sensor by Index'],
         ]"
         :button_text="'POST'"
-      />
-      <SimpleTable
-        id="glowElement"
-        :header="['Websocket']"
-        :body="[['/websocket']]"
-        :button_text="'WS'"
       />
     </div>
   </div>

@@ -8,9 +8,9 @@ import { useStorage } from '@vueuse/core';
 export const useAppStore = defineStore('appStore', {
   state: () => {
     return {
-      update_interval: useStorage('update_interval', 10000),
-      themeIsDark: false,
-      showHeap: false,
+      update_interval: useStorage('update_interval', 5000),
+      themeIsDark: useStorage('theme_dark', false),
+      showHeap: useStorage('show_heap', false),
       system: {} as I_System | undefined,
       cron_jobs: [] as Array<I_CronJob>,
       mqtt: {} as I_Mqtt,
