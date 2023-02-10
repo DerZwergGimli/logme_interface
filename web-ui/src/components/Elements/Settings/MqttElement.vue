@@ -3,6 +3,10 @@ import { useAppStore } from '../../../stores/AppStore';
 import { Button } from 'flowbite-vue';
 import { createToast } from 'mosha-vue-toastify';
 import { TOAST_ERROR, TOAST_INFO } from '../../../scripts/toast_config';
+import MqttEditModal from '../../modals/MqttEditModal.vue';
+import { ref } from 'vue';
+
+const modalShown = ref(false);
 
 function action_send_mqtt_ping() {
   fetch(APP_API_URL + '/mqtt/ping', {
@@ -57,8 +61,14 @@ function action_send_mqtt_ping() {
             >Ping</Button
           >
         </td>
-        <td><Button class="float-right">EDIT</Button></td>
+        <td>
+          <Button class="float-right" @click="modalShown = true">EDIT</Button>
+        </td>
       </tr>
     </tbody>
   </table>
+  {{ modalShown }}
+  <div v-if="modalShown">
+    <mqtt-edit-modal :is-shown="modalShown" @closeModal="modalShown = false" />
+  </div>
 </template>

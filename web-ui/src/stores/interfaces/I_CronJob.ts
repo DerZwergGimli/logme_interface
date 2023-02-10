@@ -1,5 +1,5 @@
 export interface I_CronJob {
-  enabled: true;
+  enabled: boolean;
   name: string;
   description: string;
   schedule: string;

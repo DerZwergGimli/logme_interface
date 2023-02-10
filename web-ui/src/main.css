@@ -6,6 +6,8 @@ body {
     @apply  bg-gray-200  dark:bg-gray-900
 }
 
+
+
 h1{
     @apply text-3xl
 }
@@ -51,4 +53,9 @@ th, td {
 }
 th{
    @apply dark:bg-gray-700  bg-gray-300
+}
+
+#modalElement {
+    caret-color: black;
+    @apply bg-amber-100
 }

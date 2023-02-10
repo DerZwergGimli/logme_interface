@@ -8,6 +8,7 @@ import WifiCredentialsModal from '../../modals/WifiCredentialsModal.vue';
 import { createToast } from 'mosha-vue-toastify';
 import { TOAST_INFO } from '../../../scripts/toast_config';
 import { useAppStore } from '../../../stores/AppStore';
+
 const modalShown = ref(false);
 const selected_network_ssid = ref('network_ssid');
 

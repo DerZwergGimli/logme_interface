@@ -13,8 +13,8 @@
 
 #include "timer/timer_manager.h"
 #include "sensors/sensor_helper.h"
-#include "mqtt/mqtt_manager.h"
 #include "fs/config.h"
+#include "mqtt/mqtt_manager.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "[APP] main";
