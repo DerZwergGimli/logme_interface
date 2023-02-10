@@ -38,7 +38,7 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
 
 #### GET
 
-- `/wifi`
+- `/system`
 - `/system`
 - `/sensors`
 - `/sensorstore.json`

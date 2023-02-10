@@ -22,8 +22,6 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
     esp_err_t ret = ESP_OK;
 
     ESP_LOGI(HTTP_SERVER_TAG, "GET %s", req->uri);
-    ESP_LOGI(HTTP_SERVER_TAG, "ROOTURL %s", http_root_url);
-    ESP_LOGI(HTTP_SERVER_TAG, "REDIRECT %s", http_redirect_url);
 
     /* determine if Host is from the STA IP address */
     wifi_manager_lock_sta_ip_string(portMAX_DELAY);
@@ -66,7 +64,7 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
         }
     }
 
-    ESP_LOGI(HTTP_SERVER_TAG, "Got HOST header value: %s", req_hdr_host_val);
+    //ESP_LOGI(HTTP_SERVER_TAG, "Got HOST header value: %s", req_hdr_host_val);
 
     const char redir_trigger_host[] = "connectivitycheck.gstatic.com";
 
@@ -167,6 +165,9 @@ static esp_err_t base_get_handler(httpd_req_t *req) {
 static esp_err_t base_post_handler(httpd_req_t *req) {
     if (strcmp(req->uri, "/restart") == 0) {
         ESP_ERROR_CHECK(rest_post_restart_handler(req));
+        return ESP_OK;
+    } else if (strcmp(req->uri, "/mqtt/ping") == 0) {
+        ESP_ERROR_CHECK(rest_post_mqtt_ping_handler(req));
         return ESP_OK;
     } else if (strcmp(req->uri, "/wifireset") == 0) {
         ESP_ERROR_CHECK(rest_post_wifi_reset_handler(req));

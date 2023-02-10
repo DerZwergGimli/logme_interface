@@ -80,10 +80,7 @@ void system_info(void *pvParameters) {
                     
                 }
                     break;
-                case SI_IDLE: {
-                    ESP_LOGI(SYSTEM_INFO_TAG, "SI_IDLE");
-                }
-                    break;
+
                 case SI_UPDATE: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_UPDATE");
                     if (system_info_lock_info_json_buffer(pdMS_TO_TICKS(1000))) {
@@ -92,7 +89,7 @@ void system_info(void *pvParameters) {
                     } else {
                         ESP_LOGE(SYSTEM_INFO_TAG, "could not get access to json mutex in system_info");
                     }
-                    system_info_send_message(SI_IDLE, NULL);
+
                 }
                     break;
 
