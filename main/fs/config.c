@@ -43,13 +43,12 @@ void config_unlock() {
 
 
 config_mqtt_t *config_get_mqtt() {
-        return config_mqtt;
-
+    return config_mqtt;
 }
 
 
 config_cron_jobs_t *config_get_cron_jobs() {
-        return config_cron_jobs;
+    return config_cron_jobs;
 
 }
 
@@ -212,16 +211,17 @@ void print_config_cron_jobs() {
 
 void config_read_file() {
 
-        ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", FILE_SYSTEM_CONFIG);
-        char filepath[ESP_VFS_PATH_MAX + 128];
-        strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
-        strlcat(filepath, FILE_SYSTEM_CONFIG, sizeof(filepath));
+    ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", FILE_SYSTEM_CONFIG);
+    char filepath[ESP_VFS_PATH_MAX + 128];
+    strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
+    strlcat(filepath, FILE_SYSTEM_CONFIG, sizeof(filepath));
 
-        char buffer[SCRATCH_BUFFER_SIZE_MAX + 1];
-        file_handler_read_file(filepath, buffer, SCRATCH_BUFFER_SIZE_MAX);
-        config_parse_file(buffer);
+    char buffer[SCRATCH_BUFFER_SIZE_MAX + 1];
+    file_handler_read_file(filepath, buffer, SCRATCH_BUFFER_SIZE_MAX);
+    config_parse_file(buffer);
 
-        print_config_mqtt();
-        print_config_cron_jobs();
+
+    print_config_mqtt();
+    print_config_cron_jobs();
 }
 

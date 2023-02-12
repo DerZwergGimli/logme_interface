@@ -34,7 +34,6 @@ sml_smart_meter_sensor_t sensors[SENSORS_LENGTH];
 
 //new sensors
 
-char *sensor_manager_mbus_devices = NULL;
 mbus_device_t mbus_devices[CONFIG_LOGME_MBUS_DEVICES];
 
 
@@ -149,6 +148,7 @@ void sensor_manager(void *pvParameters) {
 
                         mbus_devices[i].status = MBUS_IDLE;
                         if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                            sensor_manager_clear_info_json();
                             ESP_ERROR_CHECK(sensor_manager_generate_json());
                             sensor_manager_unlock_json_buffer();
                         }
@@ -180,7 +180,6 @@ void sensor_manager_start(bool log_enable) {
     sensor_manager_queue = xQueueCreate(3, sizeof(queue_sensor_manager));
 
     sensor_manager_json = (char *) malloc(sizeof(char) * JSON_SENSOR_MANGER_SIZE);
-    sensor_manager_mbus_devices = (char *) malloc(sizeof(char) * JSON_SENSOR_MANGER_SIZE);
     sensor_manager_clear_info_json();
 
     sensor_manager_json_mutex = xSemaphoreCreateMutex();
@@ -370,6 +369,7 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
         const char *error_ptr = cJSON_GetErrorPtr();
         if (error_ptr != NULL) {
             ESP_LOGE("SML-Parser", "Error before: %s\n", error_ptr);
+            return ESP_FAIL;
         }
         cJSON_Delete(sensors_json);
         return ESP_OK;
@@ -415,35 +415,6 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
                 }
             }
         }
-
-//        if (cJSON_IsObject(cJSON_GetObjectItem(sensor, "history"))) {
-//            cJSON *history = cJSON_GetObjectItem(sensor, "history");
-//
-//            if (cJSON_IsArray(cJSON_GetObjectItem(history, "day_24_kw"))) {
-//                cJSON *element = NULL;
-//                int i = 0;
-//                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "day_24_kw")) {
-//                    mbus_devices[index].history.day_24_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
-//                    i++;
-//                }
-//            }
-//            if (cJSON_IsArray(cJSON_GetObjectItem(history, "week_7_kw"))) {
-//                cJSON *element = NULL;
-//                int i = 0;
-//                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "week_7_kw")) {
-//                    mbus_devices[index].history.week_7_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
-//                    i++;
-//                }
-//            }
-//            if (cJSON_IsArray(cJSON_GetObjectItem(history, "month_30_kw"))) {
-//                cJSON *element = NULL;
-//                int i = 0;
-//                cJSON_ArrayForEach(element, cJSON_GetObjectItem(history, "month_30_kw")) {
-//                    mbus_devices[index].history.month_30_kw[i] = (uint32_t) cJSON_GetNumberValue(element);
-//                    i++;
-//                }
-//            }
-//        }
         index++;
     }
 

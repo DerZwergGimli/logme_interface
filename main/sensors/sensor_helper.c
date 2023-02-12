@@ -176,8 +176,6 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
     int retries = 0;
 
 
-    memset((void *) &reply, 0, sizeof(mbus_frame));
-
     mbus_handle *mbus_init = (mbus_handle *) malloc(sizeof(mbus_handle));
     mbus_serial_wakeup(mbus_init);
 
@@ -255,7 +253,9 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
         mbus_frame_free(reply.next);
         return 1;
     }
-
+    
+    if (*json_result)
+        free(*json_result);
     if ((*json_result = mbus_frame_data_json(&reply_data)) == NULL) {
         fprintf(stderr, "Failed to generate JSON representation of MBUS frames: %s\n", mbus_error_str());
         mbus_disconnect(handle);
@@ -266,10 +266,15 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
 
     mbus_frame_data_mqtt(&reply_data);
 
+    // manual free
+    if (reply_data.data_var.record) {
+        mbus_data_record_free(reply_data.data_var.record); // free's up the whole list
+    }
+
+
     // Clean up
     mbus_disconnect(handle);
     mbus_context_free(handle);
-    mbus_frame_free(reply.next);
 
     return 0;
 }
