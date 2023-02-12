@@ -1,6 +1,8 @@
 
 
 idf_component_register(SRCS "main.c"
+        "fs/file_hanlder.c"
+        "fs/config.c"
         "wifi/wifi_manager.c"
         "wifi/dns_server.c"
         "wifi/json.c"
