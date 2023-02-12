@@ -28,6 +28,14 @@ typedef struct config_cron_jobs_t {
 } config_cron_jobs_t;
 
 
+void config_init();
+
+void config_destroy();
+
+bool config_lock(TickType_t xTicksToWait);
+
+void config_unlock();
+
 config_mqtt_t *config_get_mqtt();
 
 config_cron_jobs_t *config_get_cron_jobs();
@@ -44,7 +52,6 @@ esp_err_t config_parse_file(char *json_data);
 esp_err_t config_parse_mqtt(const cJSON *json_mqtt);
 
 esp_err_t config_parse_cron_jobs(const cJSON *json_cron_jobs);
-
 
 void print_config_mqtt();
 

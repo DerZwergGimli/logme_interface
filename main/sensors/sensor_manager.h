@@ -21,7 +21,6 @@
 #define USE_SENSOR SML
 typedef enum message_sensor_manager_t {
     SM_NONE = 0,
-    SM_IDLE = 1,
     SM_INIT = 2,
     SM_MBUS_PULL = 3,
     SM_SAVE_CONFIG = 4,

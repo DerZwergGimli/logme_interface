@@ -11,17 +11,46 @@ static const char *FS_CONFIG_TAG = "fs-config";
 #define FILE_SYSTEM_CONFIG "/default_system_config.json"
 #define NUM_ALPHA  26
 
+SemaphoreHandle_t config_mutex = NULL;
+
 config_mqtt_t *config_mqtt;
 config_cron_jobs_t config_cron_jobs[CRON_JOBS_LENGTH];
 
+void config_init() {
+    config_mutex = xSemaphoreCreateMutex();
+}
+
+void config_destroy() {
+    vSemaphoreDelete(config_mutex);
+    config_mutex = NULL;
+}
+
+bool config_lock(TickType_t xTicksToWait) {
+    if (config_mutex) {
+        if (xSemaphoreTake(config_mutex, xTicksToWait) == pdTRUE) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};
+
+void config_unlock() {
+    xSemaphoreGive(config_mutex);
+}
+
 
 config_mqtt_t *config_get_mqtt() {
-    return config_mqtt;
+        return config_mqtt;
+
 }
 
 
 config_cron_jobs_t *config_get_cron_jobs() {
-    return config_cron_jobs;
+        return config_cron_jobs;
+
 }
 
 cJSON *config_get_mqtt_json() {
@@ -71,32 +100,39 @@ esp_err_t config_write_to_flash() {
 }
 
 esp_err_t config_parse_file(char *json_data) {
-    cJSON *root = cJSON_Parse(json_data);
+    if (config_lock(pdMS_TO_TICKS(portMAX_DELAY))) {
 
-    const cJSON *json_mqtt;
-    const cJSON *json_cron_jobs;
-    
-    if (root == NULL) {
-        const char *error_ptr = cJSON_GetErrorPtr();
-        if (error_ptr != NULL) {
-            ESP_LOGE(FS_CONFIG_TAG, "Error before: %s\n", error_ptr);
+        cJSON *root = cJSON_Parse(json_data);
+
+        const cJSON *json_mqtt;
+        const cJSON *json_cron_jobs;
+
+        if (root == NULL) {
+            const char *error_ptr = cJSON_GetErrorPtr();
+            if (error_ptr != NULL) {
+                ESP_LOGE(FS_CONFIG_TAG, "Error before: %s\n", error_ptr);
+            }
+            cJSON_Delete(root);
+            return ESP_FAIL;
         }
+
+        json_mqtt = cJSON_GetObjectItemCaseSensitive(root, "mqtt");
+        json_cron_jobs = cJSON_GetObjectItemCaseSensitive(root, "cron_jobs");
+
+        if (cJSON_IsArray(json_cron_jobs)) {
+            ESP_ERROR_CHECK(config_parse_cron_jobs(json_cron_jobs));
+        }
+
+        if (cJSON_IsObject(json_mqtt)) {
+            ESP_ERROR_CHECK(config_parse_mqtt(json_mqtt));
+        }
+
         cJSON_Delete(root);
-        return ESP_FAIL;
+        config_unlock();
+    } else {
+        ESP_LOGE(FS_CONFIG_TAG, "could not get access to json mutex in system_info");
     }
 
-    json_mqtt = cJSON_GetObjectItemCaseSensitive(root, "mqtt");
-    json_cron_jobs = cJSON_GetObjectItemCaseSensitive(root, "cron_jobs");
-
-    if (cJSON_IsArray(json_cron_jobs)) {
-        ESP_ERROR_CHECK(config_parse_cron_jobs(json_cron_jobs));
-    }
-
-    if (cJSON_IsObject(json_mqtt)) {
-        ESP_ERROR_CHECK(config_parse_mqtt(json_mqtt));
-    }
-
-    cJSON_Delete(root);
     return ESP_OK;
 }
 
@@ -175,18 +211,17 @@ void print_config_cron_jobs() {
 }
 
 void config_read_file() {
-    ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", FILE_SYSTEM_CONFIG);
-    char filepath[ESP_VFS_PATH_MAX + 128];
-    strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
-    strlcat(filepath, FILE_SYSTEM_CONFIG, sizeof(filepath));
 
-    char buffer[SCRATCH_BUFFER_SIZE_MAX + 1];
-    file_handler_read_file(filepath, buffer, SCRATCH_BUFFER_SIZE_MAX);
-    config_parse_file(buffer);
+        ESP_LOGI(FS_CONFIG_TAG, "Loading file: %s", FILE_SYSTEM_CONFIG);
+        char filepath[ESP_VFS_PATH_MAX + 128];
+        strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
+        strlcat(filepath, FILE_SYSTEM_CONFIG, sizeof(filepath));
 
-    print_config_mqtt();
-    print_config_cron_jobs();
+        char buffer[SCRATCH_BUFFER_SIZE_MAX + 1];
+        file_handler_read_file(filepath, buffer, SCRATCH_BUFFER_SIZE_MAX);
+        config_parse_file(buffer);
 
-
+        print_config_mqtt();
+        print_config_cron_jobs();
 }
 

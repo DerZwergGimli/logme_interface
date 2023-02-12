@@ -59,22 +59,24 @@ void time_manager(void *pvParameters) {
                     break;
                 case CREATE_TASKS: {
                     ESP_LOGI(TIME_MANAGER_TAG, "CREATE_TASKS");
-                    jobs[0] = cron_job_create(
-                            "0 * * * * *",
-                            cron_job_history_callback,
-                            (void *) SM_HISTORY_MINUTE);
-                    jobs[1] = cron_job_create(
-                            "0 0 * * * *",
-                            cron_job_history_callback,
-                            (void *) SM_HISTORY_HOUR);
-                    jobs[2] = cron_job_create(
-                            "0 0 0 * * *",
-                            cron_job_history_callback,
-                            (void *) SM_HISTORY_DAY);
-//                    jobs[3] = cron_job_create(
-//                            config_get_cron_jobs()[0].name,
-//                            cron_job_pull_sensors,
-//                            NULL);
+                    const char *schedule_sensor_pull = config_get_cron_jobs()[0].schedule;
+//
+//                    jobs[0] = cron_job_create(
+//                            "0 * * * * *",
+//                            cron_job_history_callback,
+//                            (void *) SM_HISTORY_MINUTE);
+//                    jobs[1] = cron_job_create(
+//                            "0 0 * * * *",
+//                            cron_job_history_callback,
+//                            (void *) SM_HISTORY_HOUR);
+//                    jobs[2] = cron_job_create(
+//                            "0 0 0 * * *",
+//                            cron_job_history_callback,
+//                            (void *) SM_HISTORY_DAY);
+                    jobs[3] = cron_job_create(
+                            schedule_sensor_pull,
+                            cron_job_pull_sensors,
+                            NULL);
                     //jobs[3] = cron_job_create("* * * * * *", cron_job_history_callback, (void *) SM_HISTORY_SECOUND);
                     cron_start();
                 }
@@ -118,7 +120,7 @@ void time_manager_start(bool log_enable) {
 
     time_manager_event_group = xEventGroupCreate();
 
-    xTaskCreate(&time_manager, "time_manager", 4096, NULL, 1, &time_manager_task);
+    xTaskCreate(&time_manager, "time_manager", 4096 * 2, NULL, 5, &time_manager_task);
 
 }
 

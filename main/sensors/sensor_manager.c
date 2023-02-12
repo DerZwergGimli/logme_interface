@@ -12,6 +12,7 @@
 #include "esp_vfs.h"
 #include "sensor_helper.h"
 #include "mbus_sensor_t.h"
+#include "fs/file_hanlder.h"
 #include <fcntl.h>
 #include <esp_heap_trace.h>
 
@@ -58,72 +59,22 @@ void sensor_manager(void *pvParameters) {
                     // Open renamed file for reading
                     ESP_LOGI(SENSOR_MANAGER_TAG, "Reading file");
 
-//                    char filepath[ESP_VFS_PATH_MAX + 128];
-//                    strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
-//                    strlcat(filepath, "/sensorstore.json", sizeof(filepath));
-//                    int fd = open(filepath, O_RDONLY, 0);
-//                    if (fd == -1) {
-//                        ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for reading: %s", filepath);
-//                    } else {
-//                        ESP_LOGI(SENSOR_MANAGER_TAG, "Opened storage file");
-//                    }
-//
-//                    char *chunk = scratch;
-//                    ssize_t read_bytes;
-//                    do {
-//                        /* Read file in chunks into the scratch buffer */
-//                        read_bytes = read(fd, chunk, SCRATCH_BUFSIZE);
-//                        if (read_bytes == -1) {
-//                            ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to read file : %s", filepath);
-//                        } else if (read_bytes > 0) {
-//                            ESP_LOGI(SENSOR_MANAGER_TAG, "Loading json data...");
-//                            if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
-//                                sensor_manager_json_parse(chunk);
-//                                ESP_ERROR_CHECK(sensor_manager_generate_json());
-//                                sensor_manager_unlock_json_buffer();
-//                            } else {
-//                                ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
-//                            }
-//
-//                        }
-//                    } while (read_bytes > 0);
-//                    /* Close file after sending complete */
-//                    close(fd);
-
-
-
                     char filepath[ESP_VFS_PATH_MAX + 128];
                     strlcpy(filepath, CONFIG_EXAMPLE_WEB_MOUNT_POINT, sizeof(filepath));
                     strlcat(filepath, "/default_sensor_config.json", sizeof(filepath));
-                    int fd = open(filepath, O_RDONLY, 0);
-                    if (fd == -1) {
-                        ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to open file for reading: %s", filepath);
+
+                    char buffer[SCRATCH_BUFFER_SIZE + 1];
+                    file_handler_read_file(filepath, buffer, SCRATCH_BUFFER_SIZE);
+
+                    if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
+                        sensor_manager_json_parse_mbus(buffer);
+                        ESP_ERROR_CHECK(sensor_manager_generate_json());
+                        sensor_manager_unlock_json_buffer();
                     } else {
-                        ESP_LOGI(SENSOR_MANAGER_TAG, "Opened storage file");
+                        ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
                     }
-
-                    char *chunk = scratch;
-                    ssize_t read_bytes;
-                    do {
-                        /* Read file in chunks into the scratch buffer */
-                        read_bytes = read(fd, chunk, SCRATCH_BUFFER_SIZE);
-                        if (read_bytes == -1) {
-                            ESP_LOGE(SENSOR_MANAGER_TAG, "Failed to read file : %s", filepath);
-                        } else if (read_bytes > 0) {
-                            ESP_LOGI(SENSOR_MANAGER_TAG, "Loading json data...");
-                            if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
-                                sensor_manager_json_parse_mbus(chunk);
-                                ESP_ERROR_CHECK(sensor_manager_generate_json());
-                                sensor_manager_unlock_json_buffer();
-                            } else {
-                                ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
-                            }
-
-                        }
-                    } while (read_bytes > 0);
-                    /* Close file after sending complete */
-                    close(fd);
                     sensor_manager_send_message(SM_MBUS_PULL, NULL);
+
                 }
                     break;
                 case SM_SAVE_CONFIG: {
@@ -146,7 +97,6 @@ void sensor_manager(void *pvParameters) {
                         ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
                     }
                     fclose(f);
-                    sensor_manager_send_message(SM_IDLE, NULL);
 
                 }
                     break;
@@ -165,7 +115,7 @@ void sensor_manager(void *pvParameters) {
                         ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
                     }
                     ESP_LOGI(SENSOR_MANAGER_TAG, "...history cleared!");
-                    sensor_manager_send_message(SM_IDLE, NULL);
+
 
                 }
                     break;
@@ -205,6 +155,7 @@ void sensor_manager(void *pvParameters) {
                     }
 
                 }
+                    break;
                 default: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SI_DEFAULT");
                     ESP_LOGE(SENSOR_MANAGER_TAG, "Destroy");
@@ -235,7 +186,7 @@ void sensor_manager_start(bool log_enable) {
     sensor_manager_json_mutex = xSemaphoreCreateMutex();
     sensor_manager_event_group = xEventGroupCreate();
 
-    xTaskCreate(&sensor_manager, "sensor_manager", 4096 * 4, NULL, 3, &sensor_manager_task);
+    xTaskCreate(&sensor_manager, "sensor_manager", 4096 * 6, NULL, 3, &sensor_manager_task);
 
 
 };
