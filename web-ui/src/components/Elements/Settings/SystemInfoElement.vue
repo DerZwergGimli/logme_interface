@@ -1,6 +1,27 @@
 <script setup lang="ts">
 import { useAppStore } from '../../../stores/AppStore';
-import { Progress } from 'flowbite-vue';
+import { Progress, Button } from 'flowbite-vue';
+import { createToast } from 'mosha-vue-toastify';
+import { TOAST_ERROR, TOAST_INFO } from '../../../scripts/toast_config';
+
+function send_post(url: String) {
+  fetch(APP_API_URL + url, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+    .then(response => response.json())
+    .then(response => {
+      console.log(response);
+      createToast(response.message, TOAST_INFO);
+    })
+    .catch(err => {
+      console.error(err);
+      createToast('Error sending ' + url, TOAST_ERROR);
+    });
+}
 
 function convert_time(time_ms: number) {
   if (time_ms / 1000 / 60 / 60 / 24 > 1) {
@@ -76,6 +97,22 @@ function convert_time(time_ms: number) {
               "
             ></Progress>
           </div>
+        </td>
+      </tr>
+      <tr>
+        <td>Wifi-Reset</td>
+        <td>
+          <Button class="float-right" @click="send_post('/wifireset')"
+            >Reset</Button
+          >
+        </td>
+      </tr>
+      <tr>
+        <td>Restart</td>
+        <td>
+          <Button class="float-right" @click="send_post('/restart')"
+            >Restart</Button
+          >
         </td>
       </tr>
     </tbody>
