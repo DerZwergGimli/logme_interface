@@ -72,6 +72,7 @@ void sensor_manager(void *pvParameters) {
                     } else {
                         ESP_LOGE(SENSOR_MANAGER_TAG, "could not get access to json mutex in system_info");
                     }
+                    vTaskDelay(pdMS_TO_TICKS(3000));
                     sensor_manager_send_message(SM_MBUS_PULL, NULL);
 
                 }
@@ -132,7 +133,7 @@ void sensor_manager(void *pvParameters) {
                     break;
                 case SM_MBUS_PULL: {
                     ESP_LOGI(SENSOR_MANAGER_TAG, "SM_MBUS_PULL");
-
+                    //  ESP_ERROR_CHECK(heap_trace_start(HEAP_TRACE_LEAKS));
                     for (int i = 0; i < NELEMS(mbus_devices); i++) {
                         mbus_devices[i].status = MBUS_READING;
                         if (sensor_manager_lock_json_buffer(pdMS_TO_TICKS(portMAX_DELAY))) {
@@ -153,7 +154,8 @@ void sensor_manager(void *pvParameters) {
                             sensor_manager_unlock_json_buffer();
                         }
                     }
-
+                    //      ESP_ERROR_CHECK(heap_trace_stop());
+                    heap_trace_dump();
                 }
                     break;
                 default: {

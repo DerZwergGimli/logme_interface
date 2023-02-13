@@ -16,6 +16,7 @@
 #include "wifi/wifi_manager.h"
 #include "sensors/sensor_manager.h"
 #include "timer/timer_manager.h"
+#include "esp_heap_caps.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "[APP] main";
@@ -44,6 +45,10 @@ void cb_start_mqtt_client(void *pvParameter) {
     send_message_async(message);
 }
 
+#define NUM_RECORDS 100
+static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in internal RAM
+
+
 
 void app_main(void) {
     ESP_LOGI(TAG_MAIN, "--- DEVICE STARTED ---");
@@ -60,6 +65,9 @@ void app_main(void) {
 
     ESP_ERROR_CHECK(init_fs());
     ESP_ERROR_CHECK(nvs_sync_create()); /* semaphore for thread synchronization on NVS memory */
+
+    ESP_ERROR_CHECK(heap_trace_init_standalone(trace_record, NUM_RECORDS));
+
 
     config_init();
     config_read_file();
@@ -85,6 +93,4 @@ void app_main(void) {
 
 
     ESP_LOGI(TAG_MAIN, "--- DEVICE BOOTED ---");
-
-
 }

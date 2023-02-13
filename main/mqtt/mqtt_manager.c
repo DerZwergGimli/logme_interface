@@ -146,7 +146,6 @@ void mqtt5_event_handler(void *handler_args, esp_event_base_t base, int32_t even
 
 
 void send_message_async(mqtt_message_t mqtt_message) {
-    ESP_LOGI("MAIN", "PUBLISH MQTTT MESSAGE %s", mqtt_message.topic);
     char mqtt_topic[60];
     sprintf(mqtt_topic, "%s%s", CONFIG_LOGME_NAME, mqtt_message.topic);
     esp_mqtt_client_publish(client, mqtt_topic, mqtt_message.message, 0, 0, 0);

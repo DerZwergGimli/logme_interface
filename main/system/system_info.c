@@ -77,10 +77,8 @@ void system_info(void *pvParameters) {
                 case SI_INIT: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_INIT");
                     system_info_send_message(SI_UPDATE, NULL);
-                    
                 }
                     break;
-
                 case SI_UPDATE: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_UPDATE");
                     if (system_info_lock_info_json_buffer(pdMS_TO_TICKS(1000))) {
@@ -89,10 +87,8 @@ void system_info(void *pvParameters) {
                     } else {
                         ESP_LOGE(SYSTEM_INFO_TAG, "could not get access to json mutex in system_info");
                     }
-
                 }
                     break;
-
                 case SI_KILL: {
                     ESP_LOGI(SYSTEM_INFO_TAG, "SI_KILL");
                     system_info_destroy();
@@ -106,7 +102,6 @@ void system_info(void *pvParameters) {
             }
         }
     }
-
     vTaskDelete(NULL);
 };
 
