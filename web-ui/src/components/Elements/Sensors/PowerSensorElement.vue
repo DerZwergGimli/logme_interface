@@ -33,18 +33,18 @@
             :value="
               sensor.data?.slave_data.find(
                 data => data.id === sensor_element_id
-              )?.value
+              )?.value ?? 0
             "
             icon="numbers"
             :description="
               sensor.data?.slave_data
                 .find(data => data.id === sensor_element_id)
-                ?.unit?.split('(')[0]
+                ?.quantity ?? '---'
             "
             :unit="
               sensor.data?.slave_data
                 .find(data => data.id === sensor_element_id)
-                ?.unit?.split('(')[1]
+                ?.unit
             "
             :editable="false"
           />

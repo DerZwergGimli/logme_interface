@@ -2,8 +2,6 @@
 import HeaderComponent from './components/header_footer/HeaderComponent.vue';
 import FooterComponent from './components/header_footer/FooterComponent.vue';
 import { useSensorStore } from './stores/SensorStore';
-import { createToast } from 'mosha-vue-toastify';
-import { TOAST_ERROR } from './scripts/toast_config';
 import { useAppStore } from './stores/AppStore';
 
 const appStore = useAppStore();

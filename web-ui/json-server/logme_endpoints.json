@@ -58,30 +58,39 @@
     {
       "name": "Sensor_1",
       "id": 0,
-      "description": "test textxt xtxtxtxtx",
-      "status": 0,
+      "description": "best sensor ever",
+      "status": 2,
       "pin_rx": 4,
       "pin_tx": 5,
       "baudrate": 2400,
       "primary_address": 1,
       "secondary_address": 0,
       "dashboard_config_ids": [
-        [0, 2, -1, -1, -1, -1, -1, -1, -1, -1],
-        [0, 1, 2, 3, -1, -1, -1, -1, -1, -1]
-      ],
-      "history": {
-        "day_24_kw": [
-          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
-          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
-          1999999, 1999999, 1999999, 1999999, 1999999, 1999999, 1999999,
-          1999999, 1999999, 1999999
+        [
+          0,
+          2,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
         ],
-        "week_7_kw": [141, 0, 0, 0, 0, 0, 0],
-        "month_30_kw": [
-          95, 45, 98, 58, 74, 23, 32, 41, 19, 71, 35, 83, 55, 14, 64, 13, 81,
-          65, 47, 91, 53, 97, 30, 17, 33, 66, 70, 12, 59, 96
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          -1,
+          -1
         ]
-      },
+      ],
       "data": {
         "salve_info": {
           "id:": 22975096,
@@ -89,7 +98,7 @@
           "version:": 29,
           "product_name:": "",
           "medium:": "Heat: Inlet",
-          "access_number:": 121,
+          "access_number:": 180,
           "status:": "00",
           "signature:": "0000"
         },
@@ -98,79 +107,81 @@
             "id": 0,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Energy (kWh)",
-            "value": "0",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "Wh",
+            "quantity": "Energy",
+            "value": 0
           },
           {
             "id": 1,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Volume (m m^3)",
-            "value": "13",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "m^3",
+            "quantity": "Volume",
+            "value": 0.013
           },
           {
             "id": 2,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Volume flow (m m^3/h)",
-            "value": "0",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "m^3/h",
+            "quantity": "Volume flow",
+            "value": 1
           },
           {
             "id": 3,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Power (W)",
-            "value": "0",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "W",
+            "quantity": "Power",
+            "value": 0
           },
           {
             "id": 4,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Flow temperature (1e-1 deg C)",
-            "value": "216",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "°C",
+            "quantity": "Flow temperature",
+            "value": 25.3
           },
           {
             "id": 5,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Return temperature (1e-1 deg C)",
-            "value": "219",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "°C",
+            "quantity": "Return temperature",
+            "value": 25.9
           },
           {
             "id": 6,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Temperature Difference (m deg C)",
-            "value": "0",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "K",
+            "quantity": "Temperature difference",
+            "value": 0
           },
           {
             "id": 7,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Fabrication number",
-            "value": "22975096",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "",
+            "quantity": "Fabrication No",
+            "value": 22975096
           },
           {
             "id": 8,
             "function": "Instantaneous value",
             "storage_number": 0,
-            "unit": "Customer location",
-            "value": "22975096",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "unit": "",
+            "quantity": "Customer location",
+            "value": 22975096
           },
           {
             "id": 9,
             "function": "More records follow",
-            "value": "",
-            "timestamp": "1970-01-01T00:00:08Z"
+            "storage_number": 0,
+            "unit": "",
+            "quantity": "",
+            "value": ""
           }
         ]
       }

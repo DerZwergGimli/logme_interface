@@ -24,12 +24,12 @@
             <p class="flex w-full text-md">
               {{
                 sensor.data?.salve_info !== undefined
-                  ? sensor.data?.salve_info['manufacturer:']
+                  ? sensor.data?.salve_info.manufacturer
                   : '---'
               }}
               {{
                 sensor.data?.salve_info !== undefined
-                  ? sensor.data?.salve_info['id:']
+                  ? sensor.data?.salve_info.id
                   : '---'
               }}
             </p>
@@ -44,7 +44,9 @@
               : []"
             :key="sensor_element_id"
           >
+
             <value-element
+              v-if="sensor.data?.slave_data"
               :value="
                 sensor.data?.slave_data.find(
                   data => data.id === sensor_element_id
@@ -53,13 +55,12 @@
               icon="numbers"
               :description="
                 sensor.data?.slave_data
-                  .find(data => data.id === sensor_element_id)
-                  ?.unit?.split('(')[0]
+                  .find(data => data.id === sensor_element_id)?.quantity
               "
               :unit="
                 sensor.data?.slave_data
                   .find(data => data.id === sensor_element_id)
-                  ?.unit?.split('(')[1]
+                  ?.unit
               "
               :editable="false"
             />

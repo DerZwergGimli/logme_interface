@@ -33,26 +33,26 @@ export interface Data {
 }
 
 export interface SalveInfo {
-  'id:': number;
-  'manufacturer:': string;
-  'version:': number;
-  'product_name:': string;
-  'medium:': string;
-  'access_number:': number;
-  'status:': string;
-  'signature:': string;
+  id: number;
+  manufacturer: string;
+  version: number;
+  product_name: string;
+  medium: string;
+  access_number: number;
+  status: string;
+  signature: string;
 }
 
 export interface SlaveData {
   id: number;
-  frame: number;
   function: Function;
-  storage_number?: number;
-  unit?: string;
-  value: string;
+  storage_number?: Number;
+  unit?: String;
+  value: String | Number;
   timestamp: Date;
-  tariff?: number;
-  device?: number;
+  quantity: String
+  tariff?: Number;
+  device?: Number;
 }
 
 export enum Function {
