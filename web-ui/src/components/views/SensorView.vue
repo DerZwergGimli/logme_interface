@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex p-5 w-full justify-center items-center"
+    class="flex p-5 w-full"
     v-if="useSensorStore().sensors.length === 0"
   >
     <spinner color="blue" size="12" />
@@ -13,17 +13,18 @@
       >
         <accordion-header>
           <div class="flex flex-row items-center pr-3 space-x-3">
-            <div class="w-full">
-              {{ sensor.name.length === 0 ? 'none' : sensor.name }}
+            <div class="flex flex-col w-full">
+              <h3>
+                {{ sensor.name.length === 0 ? 'none' : sensor.name }}
+              </h3>
+              <h5>{{ sensor.name.length === 0 ? 'none' : sensor.description }}</h5>
             </div>
-            <status-element
-
-              :status="sensor.status"
-            />
+            <status-element :status="sensor.status" />
             <Button @click="action_edit(idx)">
-              <settings-icon class="w-6"
-            /></Button></div
-        ></accordion-header>
+              <settings-icon class="w-6" />
+            </Button>
+          </div>
+        </accordion-header>
         <accordion-content>
           <div>
             <SensorElement :selected_sensor_index="idx" />

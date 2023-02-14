@@ -61,7 +61,7 @@ function send_sensor_config() {
       </div>
     </template>
     <template #body>
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid grid-cols-3 gap-3 items-center">
         <p>ID:</p>
         <Input
           type="number"
@@ -157,6 +157,34 @@ function send_sensor_config() {
           @input="
             (event: any) =>
               (useSensorStore().sensors[props.index_to_edit].secondary_address =
+                event.target.value)
+          "
+        />
+        <p>Elements[HomeView]:</p>
+        <Input
+          class="col-span-2"
+          type="text"
+          placeholder="enter new value here"
+          :value="
+            useSensorStore().sensors[props.index_to_edit].dashboard_config_ids[0]
+          "
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].dashboard_config_ids[0] =
+                event.target.value)
+          "
+        />
+        <p>Elements[SensorView]:</p>
+        <Input
+          class="col-span-2"
+          type="text"
+          placeholder="enter new value here"
+          :value="
+            useSensorStore().sensors[props.index_to_edit].dashboard_config_ids[1]
+          "
+          @input="
+            (event: any) =>
+              (useSensorStore().sensors[props.index_to_edit].dashboard_config_ids[1] =
                 event.target.value)
           "
         />
