@@ -5,6 +5,57 @@
 #include "sensor_helper.h"
 #include "mbus-json.h"
 #include "mqtt_manager.h"
+#include "mbus-protocol-aux.h"
+#include "mbus-serial.h"
+
+static int
+init_slaves(mbus_handle *handle, int address) {
+    if (CONFIG_LOGME_MBUS_DEBUG)
+        printf("%s: debug: sending init frame #1\n", __PRETTY_FUNCTION__);
+
+    if (mbus_send_ping_frame(handle, address, 1) == -1) {
+        return 0;
+    }
+
+    //
+    // resend SND_NKE, maybe the first get lost
+    //
+
+    if (CONFIG_LOGME_MBUS_DEBUG)
+        printf("%s: debug: sending init frame #2\n", __PRETTY_FUNCTION__);
+
+    if (mbus_send_ping_frame(handle, address, 1) == -1) {
+        return 0;
+    }
+
+    return 1;
+}
+
+int ping_address(mbus_handle *handle, mbus_frame *reply, int address) {
+    int i, ret = MBUS_RECV_RESULT_ERROR;
+
+    memset((void *) reply, 0, sizeof(mbus_frame));
+
+    for (i = 0; i <= handle->max_search_retry; i++) {
+        if (CONFIG_LOGME_MBUS_DEBUG) {
+            printf("%d ", address);
+            fflush(stdout);
+        }
+
+        if (mbus_send_ping_frame(handle, address, 0) == -1) {
+            fprintf(stderr, "Scan failed. Could not send ping frame: %s\n", mbus_error_str());
+            return MBUS_RECV_RESULT_ERROR;
+        }
+
+        ret = mbus_recv_frame(handle, reply);
+
+        if (ret != MBUS_RECV_RESULT_TIMEOUT) {
+            return ret;
+        }
+    }
+
+    return ret;
+}
 
 
 int mbus_scan_full(int rx_pin, int tx_pin, long baudrate) {
@@ -253,7 +304,7 @@ int mbus_request_short(char **json_result, int rx_pin, int tx_pin, long baudrate
         mbus_frame_free(reply.next);
         return 1;
     }
-    
+
     if (*json_result)
         free(*json_result);
     if ((*json_result = mbus_frame_data_json(&reply_data)) == NULL) {

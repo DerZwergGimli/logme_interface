@@ -28,7 +28,6 @@ static EventGroupHandle_t sensor_manager_event_group;
 static TaskHandle_t sensor_manager_task = NULL;
 
 
-//old
 char *sensor_manager_json = NULL;
 sml_smart_meter_sensor_t sensors[SENSORS_LENGTH];
 
@@ -207,7 +206,8 @@ esp_err_t sensor_manager_generate_json() {
                         "\"pin_tx\": %u,"
                         "\"baudrate\": %u,"
                         "\"primary_address\": %u,"
-                        "\"secondary_address\": %u",
+                        "\"secondary_address\": %u"
+                        "\"scan_type\": %u",
                 mbus_devices[i].name,
                 mbus_devices[i].id,
                 mbus_devices[i].description,
@@ -216,7 +216,8 @@ esp_err_t sensor_manager_generate_json() {
                 mbus_devices[i].pin_tx,
                 mbus_devices[i].baudrate,
                 mbus_devices[i].primary_address,
-                mbus_devices[i].secondary_address
+                mbus_devices[i].secondary_address,
+                mbus_devices[i].scan_type
         );
         strcat(sensor_manager_json, buffer);
 
@@ -370,7 +371,7 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
     if (sensors_json == NULL) {
         const char *error_ptr = cJSON_GetErrorPtr();
         if (error_ptr != NULL) {
-            ESP_LOGE("SML-Parser", "Error before: %s\n", error_ptr);
+            ESP_LOGE(SENSOR_MANAGER_TAG, "Error before: %s\n", error_ptr);
             return ESP_FAIL;
         }
         cJSON_Delete(sensors_json);
@@ -381,6 +382,7 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
     cJSON_ArrayForEach(sensor, sensors_json) {
 
         //Mapping JSON
+        mbus_devices[index].id = index;
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "id")))
             mbus_devices[index].id = (uint16_t) cJSON_GetObjectItem(sensor, "id")->valueint;
         if (cJSON_IsString(cJSON_GetObjectItem(sensor, "name")))
@@ -391,6 +393,9 @@ esp_err_t sensor_manager_json_parse_mbus(const char *json_data) {
             mbus_devices[index].pin_rx = cJSON_GetObjectItem(sensor, "pin_rx")->valueint;
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "pin_tx")))
             mbus_devices[index].pin_tx = cJSON_GetObjectItem(sensor, "pin_tx")->valueint;
+        mbus_devices[index].scan_type = MBUS_SCAN_DEFAULT;
+        if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "scan_type")))
+            mbus_devices[index].scan_type = cJSON_GetObjectItem(sensor, "scan_type")->valueint;
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "baudrate")))
             mbus_devices[index].baudrate = cJSON_GetObjectItem(sensor, "baudrate")->valueint;
         if (cJSON_IsNumber(cJSON_GetObjectItem(sensor, "primary_address")))

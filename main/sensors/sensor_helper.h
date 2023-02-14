@@ -7,7 +7,7 @@
 
 #include <string.h>
 #include "esp_err.h"
-#include "mbus_serial_scan.h"
+#include "mbus-protocol-aux.h"
 
 static esp_err_t mbus_init_slaves(mbus_handle *handle, int address) {
     if (CONFIG_LOGME_MBUS_DEBUG)

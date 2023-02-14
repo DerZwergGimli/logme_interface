@@ -30,6 +30,7 @@ esp_err_t rest_get_system_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
+
 /**
  * GET-Request
  * -> '/wifi'

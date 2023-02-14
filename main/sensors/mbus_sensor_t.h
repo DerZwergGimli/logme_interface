@@ -9,6 +9,10 @@ typedef enum mbus_status_e {
     MBUS_READING = 3,
 } mbus_status_e;
 
+typedef enum mbus_scan_type_e {
+    MBUS_SCAN_DEFAULT = 0,
+    MBUS_SCAN_EXTENDED = 1,
+} mbus_scan_type_e;
 
 #ifndef LOGME_INTERFACE_MBUS_SENSOR_T_H
 #define LOGME_INTERFACE_MBUS_SENSOR_T_H
@@ -20,6 +24,7 @@ typedef struct mbus_device_t {
     int baudrate;
     int primary_address;
     int secondary_address;
+    mbus_scan_type_e scan_type;
     char name[20];
     char *data;
     mbus_status_e status;

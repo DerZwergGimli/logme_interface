@@ -4,7 +4,6 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "esp_log.h"
-#include "mbus_serial_scan.h"
 #include "fs/fs.h"
 #include <esp_heap_trace.h>
 #include "wifi/nvs_sync.h"

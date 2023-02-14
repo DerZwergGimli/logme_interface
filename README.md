@@ -39,9 +39,130 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
 #### GET
 
 - `/system`
-- `/system`
+
+```json 
+{
+   "info": {
+      "target": "esp32",
+      "cores": 2,
+      "major_rev": 3,
+      "minor_rev": 0,
+      "flash_size_MB": 8,
+      "total_heap": 272232,
+      "free_heap": 50612,
+      "uptime_ms": 435915,
+      "time": "Tue Feb 14 21:38:04",
+      "bin_version": "0.0.4"
+}
+```
+
 - `/sensors`
-- `/sensorstore.json`
+  Response for one sensor
+
+```json
+[
+  {
+    "name": "Sensor_1",
+    "id": 0,
+    "description": "best sensor ever",
+    "status": 2,
+    "pin_rx": 0,
+    "pin_tx": 0,
+    "baudrate": 0,
+    "primary_address": 0,
+    "secondary_address": 0,
+    "dashboard_config_ids": [
+      [
+        0,
+        2,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        -1,
+        -1
+      ]
+    ],
+    "data": {
+      "salve_info": {
+        "id": 22975096,
+        "manufacturer": "SEN",
+        "version": 29,
+        "product_name": "",
+        "medium": "Heat: Inlet",
+        "access_number": 136,
+        "status": "00",
+        "signature": "0000"
+      },
+      "slave_data": [
+        {
+          "id": 0,
+          "function": "Instantaneous value",
+          "storage_number": 0,
+          "unit": "Wh",
+          "quantity": "Energy",
+          "value": 0
+        },
+        {
+          "id": 1,
+          "function": "Instantaneous value",
+          "storage_number": 0,
+          "unit": "m^3",
+          "quantity": "Volume",
+          "value": 0.013
+        }
+      ]
+    }
+  }
+]
+```
+
+- `/default_sensor_config.json`
+
+```json
+[
+  {
+    "id": "001",
+    "name": "Sensor_1",
+    "description": "best sensor ever",
+    "pin_rx": 4,
+    "pin_tx": 5,
+    "baudrate": 2400,
+    "primary_address": 1,
+    "secondary_address": 0,
+    "dashboard_config_ids": [
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    ]
+  }
+]
+```
 
 #### PUT
 
@@ -52,10 +173,6 @@ LogMe supports some basic REST-Requests for providing data back and forth from t
 - `/sensorhistoryclear`
 - `/sensor_edit_name/#`
 - `/sensor_edit_description/#`
-
-#### Websocket
-
-- `/websocket`
 
 ## Flash Project
 
