@@ -1,19 +1,27 @@
 <template>
-  <div v-if="sensor" class="space-y-3">
+  <div v-if="sensor" class="">
     <div class="flex flex-col md:flex-row space-y-3 md:space-y-1 md:space-x-4">
       <div
-        class="flex flex-col items-center space-y-3 bg-gray-100 dark:bg-gray-800 p-2 rounded-lg"
+        class="flex flex-col items-center space-y-3 bg-gray-300 dark:bg-gray-800  rounded-lg px-2 pb-2"
       >
-        <div class="flex justify-center">
+        <div class="flex justify-center w-full rounded-b-xl bg-gray-400  dark:bg-gray-700">
+
           <smart-meter-icon class="w-24 dark:text-gray-100"></smart-meter-icon>
+
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
           <h4>Name:</h4>
           <h3>{{ sensor.name }}</h3>
           <h4>Status:</h4>
-          <h3>{{ sensorstatus_toString(sensor.status) }}</h3>
-          <h4>Description:</h4>
+          <h4>{{ sensorstatus_toString(sensor.status) }}</h4>
+          <h4>Manuf.:</h4>
+          <h4>{{ sensor.data?.salve_info.manufacturer }}</h4>
+          <h4>Medium:</h4>
+          <h4>{{ sensor.data?.salve_info.medium }}</h4>
+          <h4>Desc:</h4>
           <h4>{{ sensor.description }}</h4>
+
         </div>
       </div>
 
@@ -33,56 +41,56 @@
             :value="
               sensor.data?.slave_data.find(
                 data => data.id === sensor_element_id
-              )?.value ?? 0
+              )?.value.toString()
             "
             icon="numbers"
             :description="
               sensor.data?.slave_data
                 .find(data => data.id === sensor_element_id)
-                ?.quantity ?? '---'
+                ?.quantity.toString()
             "
             :unit="
               sensor.data?.slave_data
                 .find(data => data.id === sensor_element_id)
-                ?.unit
+                ?.unit.toString()
             "
-            :editable="false"
+
           />
         </div>
       </div>
     </div>
 
-    <area-chart
-      chart_heading="Consumption"
-      class="border-4 rounded-md shadow-inner dark:border-gray-800"
-      :data_values="sensor.live_data?.chart_data"
-      :time_values="sensor.live_data?.chart_timestamps"
-      :is_dark="!useAppStore().themeIsDark"
-    />
-    <BarChart
-      class="border- p-1"
-      chart_heading="Daily"
-      :time_values="time_values_hourly ?? []"
-      :data_values="sensor.history?.day_24_kw"
-      unit_text="kWh"
-      :is_dark="!useAppStore().themeIsDark"
-    />
-    <BarChart
-      class="border-2 p-1"
-      chart_heading="Weekly"
-      :time_values="time_values_weekly"
-      :data_values="sensor.history?.week_7_kw"
-      unit_text="kWh"
-      :is_dark="!useAppStore().themeIsDark"
-    />
-    <BarChart
-      class="border-2 p-1"
-      chart_heading="Monthly"
-      :time_values="time_values_monthly"
-      :data_values="sensor.history?.month_30_kw"
-      unit_text="kWh"
-      :is_dark="!useAppStore().themeIsDark"
-    />
+<!--    <area-chart-->
+<!--      chart_heading="Consumption"-->
+<!--      class="border-4 rounded-md shadow-inner dark:border-gray-800"-->
+<!--      :data_values="sensor.live_data?.chart_data"-->
+<!--      :time_values="sensor.live_data?.chart_timestamps"-->
+<!--      :is_dark="!useAppStore().themeIsDark"-->
+<!--    />-->
+<!--    <BarChart-->
+<!--      class="border- p-1"-->
+<!--      chart_heading="Daily"-->
+<!--      :time_values="time_values_hourly ?? []"-->
+<!--      :data_values="sensor.history?.day_24_kw"-->
+<!--      unit_text="kWh"-->
+<!--      :is_dark="!useAppStore().themeIsDark"-->
+<!--    />-->
+<!--    <BarChart-->
+<!--      class="border-2 p-1"-->
+<!--      chart_heading="Weekly"-->
+<!--      :time_values="time_values_weekly"-->
+<!--      :data_values="sensor.history?.week_7_kw"-->
+<!--      unit_text="kWh"-->
+<!--      :is_dark="!useAppStore().themeIsDark"-->
+<!--    />-->
+<!--    <BarChart-->
+<!--      class="border-2 p-1"-->
+<!--      chart_heading="Monthly"-->
+<!--      :time_values="time_values_monthly"-->
+<!--      :data_values="sensor.history?.month_30_kw"-->
+<!--      unit_text="kWh"-->
+<!--      :is_dark="!useAppStore().themeIsDark"-->
+<!--    />-->
   </div>
 </template>
 

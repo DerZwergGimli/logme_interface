@@ -14,12 +14,12 @@
     </Button>
   </div>
   <div v-else-if="props.status === E_SensorStatus.ERROR">
-    <Button color="red" class="w-14">
+    <Button color="red" class="w-14 animate-pulse animate-duration-1s">
       <error-icon />
     </Button>
   </div>
   <div v-else-if="props.status === E_SensorStatus.READING">
-    <Button color="yellow" class="w-14">
+    <Button color="yellow" class="w-14 animate-pulse animate-duration-2s">
       <reading-icon />
     </Button>
   </div>

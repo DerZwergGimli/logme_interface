@@ -1,8 +1,9 @@
 <template>
   <div class="mx-3 flex flex-col space-y-3">
     <div
-      id="glowElement"
       v-for="(sensor, idx) in useSensorStore().sensors"
+      v-if="useSensorStore().sensors"
+      id="glowElement"
       :key="idx"
       class="animate-fade-in"
     >
@@ -36,55 +37,29 @@
           </div>
         </div>
         <div class="flex flex-col basis-1/2 justify-center space-y-2">
-          <no-data-element v-if="sensor.data?.salve_info === undefined" />
-          <div
-            v-else
-            v-for="sensor_element_id in sensor.dashboard_config_ids
-              ? sensor.dashboard_config_ids[0].filter(id => id !== -1)
-              : []"
-            :key="sensor_element_id"
-          >
-
-            <value-element
-              v-if="sensor.data?.slave_data"
-              :value="
-                sensor.data?.slave_data.find(
-                  data => data.id === sensor_element_id
-                )?.value
-              "
-              icon="numbers"
-              :description="
-                sensor.data?.slave_data
-                  .find(data => data.id === sensor_element_id)?.quantity
-              "
-              :unit="
-                sensor.data?.slave_data
-                  .find(data => data.id === sensor_element_id)
-                  ?.unit
-              "
-              :editable="false"
-            />
+          <no-data-element v-if="sensor.data?.slave_data === undefined" />
+          <div v-else  class="flex flex-col space-y-2">
+            <div
+              v-for="(datapoint, idx) in sensor.data?.slave_data.filter(data => sensor.dashboard_config_ids[0].some(cid => cid === data.id))" :key="idx"
+            >
+              <value-element :value="datapoint.value.toString()" :unit="datapoint.unit.toString()" :description="datapoint.quantity.toString()"></value-element>
+            </div>
           </div>
         </div>
       </div>
-      <div></div>
     </div>
-    <div
-      class="flex p-5 w-full justify-center items-center"
-      v-if="useSensorStore().sensors.length === 0"
-    >
+
+    <div v-if="useSensorStore().sensors.length === 0" class="flex p-5 w-full justify-center items-center">
       <spinner color="blue" size="12" />
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useSensorStore } from '../../stores/SensorStore.js';
-import ValueElement from '../Elements/Sensors/ValueElement.vue';
 import SmartMeterIcon from '../icons/SmartMeterIcon.vue';
 import { Spinner } from 'flowbite-vue';
-
 import NoDataElement from '../Elements/Sensors/NoDataElement.vue';
-
-const sensorStore = useSensorStore();
+import ValueElement from "../Elements/Sensors/ValueElement.vue";
+import { I_SalveData_Function } from "../../stores/interfaces/I_Sensor.js";
 </script>

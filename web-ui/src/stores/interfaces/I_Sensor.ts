@@ -8,54 +8,45 @@ export interface I_LIVEDATA {
 }
 
 export interface I_Sensor {
-  live_data?: I_LIVEDATA;
-  name: string;
-  id: number;
-  description: string;
-  status: E_SensorStatus;
-  pin_rx: number;
-  pin_tx: number;
-  baudrate: number;
-  primary_address: number;
-  secondary_address: number;
-  data?: Data;
-  dashboard_config_ids: Array<number[]> | undefined;
-  history?: {
-    day_24_kw: Array<number>;
-    week_7_kw: Array<number>;
-    month_30_kw: Array<number>;
-  };
+  name:                 string;
+  id:                   number;
+  description:          string;
+  status:               number;
+  pin_rx:               number;
+  pin_tx:               number;
+  baudrate:             number;
+  primary_address:      number;
+  secondary_address:    number;
+  dashboard_config_ids: Array<number[]>;
+  data:                 I_Data;
 }
 
-export interface Data {
-  salve_info: SalveInfo;
-  slave_data: SlaveData[];
+export interface I_Data {
+  salve_info: I_SalveInfo;
+  slave_data: I_SlaveData[];
 }
 
-export interface SalveInfo {
-  id: number;
-  manufacturer: string;
-  version: number;
-  product_name: string;
-  medium: string;
+export interface I_SalveInfo {
+  id:            number;
+  manufacturer:  string;
+  version:       number;
+  product_name:  string;
+  medium:        string;
   access_number: number;
-  status: string;
-  signature: string;
+  status:        string;
+  signature:     string;
 }
 
-export interface SlaveData {
-  id: number;
-  function: Function;
-  storage_number?: Number;
-  unit?: String;
-  value: String | Number;
-  timestamp: Date;
-  quantity: String
-  tariff?: Number;
-  device?: Number;
+export interface I_SlaveData {
+  id:             number;
+  function:       I_SalveData_Function;
+  storage_number: number;
+  unit:           string;
+  quantity:       string;
+  value:          number | string;
 }
 
-export enum Function {
+export enum I_SalveData_Function {
   InstantaneousValue = 'Instantaneous value',
   MaximumValue = 'Maximum value',
   MoreRecordsFollow = 'More records follow',

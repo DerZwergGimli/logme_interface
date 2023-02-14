@@ -17,7 +17,7 @@
               {{ sensor.name.length === 0 ? 'none' : sensor.name }}
             </div>
             <status-element
-              class="animate-pulse animate-duration-2s"
+
               :status="sensor.status"
             />
             <Button @click="action_edit(idx)">

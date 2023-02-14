@@ -4,6 +4,7 @@ import FooterComponent from './components/header_footer/FooterComponent.vue';
 import { useSensorStore } from './stores/SensorStore';
 import { useAppStore } from './stores/AppStore';
 
+
 const appStore = useAppStore();
 const sensorStore = useSensorStore();
 
@@ -16,12 +17,14 @@ setInterval(() => {
 }, appStore.update_interval);
 
 async function fetch_endpoints_async() {
+
   await fetch(APP_API_URL + '/sensors')
     .then(resp => resp.json())
     .then(json => {
-      useSensorStore().sensors = json;
+      sensorStore.sensors = json ;
     })
-    .catch(() => {
+    .catch(err => {
+      console.error(err);
       // createToast('Error fetching /sensors', TOAST_ERROR);
       // return;
     });
@@ -29,9 +32,10 @@ async function fetch_endpoints_async() {
   await fetch(APP_API_URL + '/system')
     .then(resp => resp.json())
     .then(json => {
-      useAppStore().system = json;
+      appStore.system = json;
     })
-    .catch(() => {
+    .catch(err => {
+      console.error(err);
       // createToast('Error fetching /system', TOAST_ERROR);
       // return;
     });

@@ -4,6 +4,7 @@
   "version": "0.2.0",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf ./node-modules",
     "json-server": "json-server --watch json-server/logme_endpoints.json",
     "dev": "vite",
     "build": "vue-tsc && vite build",
