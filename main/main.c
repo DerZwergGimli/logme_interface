@@ -16,6 +16,7 @@
 #include "sensors/sensor_manager.h"
 #include "timer/timer_manager.h"
 #include "esp_heap_caps.h"
+#include "ota/ota_manager.h"
 
 // GLOBALS
 static const char TAG_MAIN[] = "[APP] main";
@@ -30,7 +31,10 @@ void cb_restart_rest_server(void *pvParameter) {
 
 }
 
-void cb_start_mqtt_client(void *pvParameter) {
+void cb_start_internet_dependent_services(void *pvParameter) {
+    ESP_LOGI(TAG_MAIN, "Staring OTA...");
+    ota_manager_start();
+
     ESP_LOGI(TAG_MAIN, "Staring MQTT...");
 
     config_mqtt_t *config = config_get_mqtt();
@@ -44,8 +48,11 @@ void cb_start_mqtt_client(void *pvParameter) {
     send_message_async(message);
 }
 
+
 #define NUM_RECORDS 100
 static heap_trace_record_t trace_record[NUM_RECORDS]; // This buffer must be in internal RAM
+
+
 
 
 
@@ -53,6 +60,7 @@ void app_main(void) {
     ESP_LOGI(TAG_MAIN, "--- DEVICE STARTED ---");
     ESP_LOGI(TAG_MAIN, "--- VERSION= %s ---", CONFIG_LOGME_VERSION);
 
+    ota_manager_init();
 
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -78,7 +86,8 @@ void app_main(void) {
     ESP_ERROR_CHECK(start_rest_server(CONFIG_EXAMPLE_WEB_MOUNT_POINT, true));
     wifi_manager_set_callback(WM_ORDER_START_AP, &cb_restart_rest_server);
     wifi_manager_set_callback(WM_ORDER_STOP_AP, &cb_restart_rest_server);
-    wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_start_mqtt_client);
+    wifi_manager_set_callback(WM_EVENT_STA_GOT_IP, &cb_start_internet_dependent_services);
+
 
 
     // Initialize SystemInfo
@@ -93,3 +102,4 @@ void app_main(void) {
 
     ESP_LOGI(TAG_MAIN, "--- DEVICE BOOTED ---");
 }
+

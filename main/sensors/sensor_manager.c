@@ -206,7 +206,7 @@ esp_err_t sensor_manager_generate_json() {
                         "\"pin_tx\": %u,"
                         "\"baudrate\": %u,"
                         "\"primary_address\": %u,"
-                        "\"secondary_address\": %u"
+                        "\"secondary_address\": %u,"
                         "\"scan_type\": %u",
                 mbus_devices[i].name,
                 mbus_devices[i].id,

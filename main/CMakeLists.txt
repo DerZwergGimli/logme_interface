@@ -17,7 +17,9 @@ idf_component_register(SRCS "main.c"
         "web/rest_server_helper.c"
         "web/handler_get/rest_get_handler.c"
         "web/handler_post/rest_post_handler.c"
+        "ota/ota_manager.c"
         INCLUDE_DIRS "."
+        EMBED_TXTFILES ${project_dir}/main/server_certs/ca_cert.pem
         )
 
 if (CONFIG_EXAMPLE_WEB_DEPLOY_SF)
